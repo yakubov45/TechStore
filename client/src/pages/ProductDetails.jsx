@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { ShoppingCart, Heart, Star, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import api from '../services/api';
 import { useCartStore } from '../store/cartStore';
 import { useCurrencyStore } from '../store/currencyStore';
@@ -21,6 +22,7 @@ export default function ProductDetails() {
     const addItem = useCartStore(state => state.addItem);
     const { user, addToWishlist, removeFromWishlist } = useAuthStore();
     const { formatPrice } = useCurrencyStore();
+    const { t } = useTranslation();
 
     useEffect(() => {
         fetchProduct();
@@ -60,27 +62,27 @@ export default function ProductDetails() {
 
     const handleAddToCart = () => {
         addItem(product, quantity);
-        toast.success(`Added ${quantity} item(s) to cart!`);
+        toast.success(t('cart.addedToCart', { count: quantity }));
     };
 
     const isWishlisted = user?.wishlist?.includes(product?._id);
 
     const handleWishlist = async () => {
         if (!user) {
-            toast.error('Please login to use wishlist');
+            toast.error(t('auth_messages.loginRequired'));
             return;
         }
 
         try {
             if (isWishlisted) {
                 await removeFromWishlist(product._id);
-                toast.success('Removed from wishlist');
+                toast.success(t('auth_messages.removedFromWishlist'));
             } else {
                 await addToWishlist(product._id);
-                toast.success('Added to wishlist');
+                toast.success(t('auth_messages.addedToWishlist'));
             }
         } catch (error) {
-            toast.error('Failed to update wishlist');
+            toast.error(t('auth_messages.wishlistFailed'));
         }
     };
 
@@ -100,7 +102,7 @@ export default function ProductDetails() {
     if (!product) {
         return (
             <div className="container mx-auto px-4 py-8 text-center">
-                <h1 className="text-2xl">Product not found</h1>
+                <h1 className="text-2xl">{t('products.notFound')}</h1>
             </div>
         );
     }
@@ -141,7 +143,7 @@ export default function ProductDetails() {
                                 </>
                             ) : (
                                 <div className="flex items-center justify-center h-full text-gray-600">
-                                    No Image
+                                    {t('products.noImage')}
                                 </div>
                             )}
                         </div>
@@ -174,7 +176,7 @@ export default function ProductDetails() {
                             <span className="font-bold">{product.averageRating?.toFixed(1) || '0.0'}</span>
                         </div>
                         <span className="text-text-secondary text-sm">
-                            {product.reviewCount || 0} customer reviews
+                            {product.reviewCount || 0} {t('products.customerReviews')}
                         </span>
                         <div className="h-4 w-px bg-gray-800"></div>
                         <span className="text-xs text-green-500 font-medium">98% would recommend</span>
@@ -200,9 +202,9 @@ export default function ProductDetails() {
                     {/* Stock */}
                     <div className="mb-6">
                         {product.stock > 0 ? (
-                            <span className="text-green-500">✓ In Stock ({product.stock} available)</span>
+                            <span className="text-green-500">✓ {t('products.inStock', { count: product.stock })}</span>
                         ) : (
-                            <span className="text-red-500">✗ Out of Stock</span>
+                            <span className="text-red-500">✗ {t('products.outOfStock')}</span>
                         )}
                     </div>
 
@@ -211,7 +213,7 @@ export default function ProductDetails() {
 
                     {/* Quantity */}
                     <div className="mb-6">
-                        <label className="block mb-2 font-semibold">Quantity</label>
+                        <label className="block mb-2 font-semibold">{t('products.quantity')}</label>
                         <div className="flex items-center gap-4">
                             <div className="flex items-center border-2 border-gray-700 rounded-lg">
                                 <button
@@ -239,7 +241,7 @@ export default function ProductDetails() {
                             className="btn-primary flex-1 flex items-center justify-center gap-2"
                         >
                             <ShoppingCart />
-                            Add to Cart
+                            {t('products.addToCart')}
                         </button>
                         <button
                             onClick={handleWishlist}
@@ -255,7 +257,7 @@ export default function ProductDetails() {
                     {/* Specifications */}
                     {specs.length > 0 && (
                         <div className="card p-6">
-                            <h3 className="font-bold mb-4">Specifications</h3>
+                            <h3 className="font-bold mb-4">{t('products.specifications')}</h3>
                             <table className="w-full text-sm">
                                 <tbody>
                                     {specs.map(([key, value], idx) => (
@@ -279,9 +281,9 @@ export default function ProductDetails() {
             />
 
             {/* Related Products */}
-            {relatedProducts.length > 0 && (
+                    {relatedProducts.length > 0 && (
                 <section>
-                    <h2 className="section-title">Related Products</h2>
+                    <h2 className="section-title">{t('products.related')}</h2>
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
                         {relatedProducts.map(product => (
                             <ProductCard key={product._id} product={product} />

@@ -76,18 +76,18 @@ export default function Home() {
 
     const heroSlides = [
         {
-            title: "Performance Gaming Laptops",
-            subtitle: "RTX 40-Series graphics for ultimate performance",
-            cta1: "Shop Now",
-            cta2: "View Catalog",
-            image: "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=1200"
+            title: 'home.hero.slides.0.title',
+            subtitle: 'home.hero.slides.0.subtitle',
+            cta1: 'home.hero.cta.shopNow',
+            cta2: 'home.hero.cta.viewCatalog',
+            image: 'https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=1200'
         },
         {
-            title: "Build Your Dream Setup",
-            subtitle: "Custom components for every enthusiast",
-            cta1: "Build PC",
-            cta2: "Browse Parts",
-            image: "https://images.unsplash.com/photo-1593640408182-31c70c8268f5?w=1200"
+            title: 'home.hero.slides.1.title',
+            subtitle: 'home.hero.slides.1.subtitle',
+            cta1: 'home.hero.cta.buildPC',
+            cta2: 'home.hero.cta.browseParts',
+            image: 'https://images.unsplash.com/photo-1593640408182-31c70c8268f5?w=1200'
         }
     ];
 
@@ -133,7 +133,7 @@ export default function Home() {
                             <div className="max-w-2xl">
                                 <h1 className={`text-5xl md:text-6xl font-bold mb-4 text-glow transition-all duration-700 ${index === currentSlide ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
                                     }`}>
-                                    {slide.title}
+                                    {t(slide.title)}
                                 </h1>
                                 <p className={`text-xl md:text-2xl text-text-secondary mb-8 transition-all duration-700 delay-100 ${index === currentSlide ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
                                     }`}>
@@ -142,10 +142,10 @@ export default function Home() {
                                 <div className={`flex flex-wrap gap-4 transition-all duration-700 delay-200 ${index === currentSlide ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
                                     }`}>
                                     <Link to="/products" className="btn-primary px-8 py-3">
-                                        {slide.cta1}
+                                        {t(slide.cta1)}
                                     </Link>
                                     <Link to="/products" className="bg-white/10 hover:bg-white/20 backdrop-blur-md text-white px-8 py-3 rounded-full font-bold transition">
-                                        {slide.cta2}
+                                        {t(slide.cta2)}
                                     </Link>
                                 </div>
 
@@ -153,15 +153,15 @@ export default function Home() {
                                 <div className={`mt-12 flex flex-wrap gap-6 transition-all duration-700 delay-300 ${index === currentSlide ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
                                     <div className="flex items-center gap-2 text-sm text-white/80">
                                         <div className="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center text-primary italic">✓</div>
-                                        Rasmiy kafolat
+                                        {t('home.features.shipping')}
                                     </div>
                                     <div className="flex items-center gap-2 text-sm text-white/80">
                                         <div className="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center text-primary italic">✓</div>
-                                        24 soatda yetkazish
+                                        {t('home.features.support')}
                                     </div>
                                     <div className="flex items-center gap-2 text-sm text-white/80">
                                         <div className="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center text-primary italic">✓</div>
-                                        Qaytarish mavjud
+                                        {t('home.features.warranty')}
                                     </div>
                                 </div>
                             </div>
@@ -202,26 +202,26 @@ export default function Home() {
             <div className="container mx-auto px-4">
                 {/* Features Section */}
                 <div className="py-12 border-y border-gray-800 my-8">
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
                         <div className="flex flex-col items-center text-center p-6 bg-dark-secondary/50 rounded-2xl border border-gray-800 hover:border-primary transition group">
                             <Truck className="text-primary mb-4 group-hover:scale-110 transition" size={32} />
-                            <h3 className="font-bold mb-1">Free Delivery 1M+</h3>
-                            <p className="text-xs text-text-secondary">On orders over 1,000,000 UZS</p>
+                            <h3 className="font-bold mb-1">{t('home.features.shipping')}</h3>
+                            <p className="text-xs text-text-secondary">{t('home.features.shippingDesc')}</p>
                         </div>
                         <div className="flex flex-col items-center text-center p-6 bg-dark-secondary/50 rounded-2xl border border-gray-800 hover:border-primary transition group">
                             <Shield className="text-primary mb-4 group-hover:scale-110 transition" size={32} />
-                            <h3 className="font-bold mb-1">Secure Payment</h3>
-                            <p className="text-xs text-text-secondary">100% security guarantee</p>
+                            <h3 className="font-bold mb-1">{t('home.features.paymentTitle')}</h3>
+                            <p className="text-xs text-text-secondary">{t('home.features.paymentDesc')}</p>
                         </div>
                         <div className="flex flex-col items-center text-center p-6 bg-dark-secondary/50 rounded-2xl border border-gray-800 hover:border-primary transition group">
                             <RotateCcw className="text-primary mb-4 group-hover:scale-110 transition" size={32} />
-                            <h3 className="font-bold mb-1">7 Day Return</h3>
-                            <p className="text-xs text-text-secondary">Easy money back guarantee</p>
+                            <h3 className="font-bold mb-1">{t('home.features.returnTitle')}</h3>
+                            <p className="text-xs text-text-secondary">{t('home.features.returnDesc')}</p>
                         </div>
                         <div className="flex flex-col items-center text-center p-6 bg-dark-secondary/50 rounded-2xl border border-gray-800 hover:border-primary transition group">
                             <Headphones className="text-primary mb-4 group-hover:scale-110 transition" size={32} />
-                            <h3 className="font-bold mb-1">Official Warranty</h3>
-                            <p className="text-xs text-text-secondary">Authorized service centers</p>
+                            <h3 className="font-bold mb-1">{t('home.features.warranty')}</h3>
+                            <p className="text-xs text-text-secondary">{t('home.features.warrantyDesc')}</p>
                         </div>
                     </div>
                 </div>
@@ -232,7 +232,7 @@ export default function Home() {
                         <div className="flex items-center gap-6">
                             <h2 className="text-2xl font-bold flex items-center gap-2">
                                 <Zap className="text-red-500 fill-red-500" />
-                                Bugungi chegirmalar
+                                {t('home.flashDeals')}
                             </h2>
                             <div className="flex items-center gap-2">
                                 <Clock size={18} className="text-text-secondary" />
@@ -249,7 +249,7 @@ export default function Home() {
                                         {timeLeft.seconds.toString().padStart(2, '0')}
                                     </span>
                                 </div>
-                                <span className="text-xs text-text-secondary uppercase ml-2">qoldi</span>
+                                <span className="text-xs text-text-secondary uppercase ml-2">{t('home.endsIn')}</span>
                             </div>
                         </div>
                         <Link to="/products?sort=discount" className="text-red-500 font-bold hover:underline flex items-center gap-1">
@@ -314,7 +314,7 @@ export default function Home() {
                     <div className="flex items-center justify-between mb-8">
                         <h2 className="section-title mb-0">{t('home.featured')}</h2>
                         <Link to="/products" className="btn-secondary px-4 py-2 text-sm">
-                            View All
+                            {t('home.viewAll')}
                         </Link>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -380,7 +380,7 @@ export default function Home() {
                 {/* Recently Viewed */}
                 {recentlyViewed.length > 0 && (
                     <section className="my-16">
-                        <h2 className="section-title">Siz ko'rgan mahsulotlar</h2>
+                        <h2 className="section-title">{t('home.recentlyViewed')}</h2>
                         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
                             {recentlyViewed.slice(0, 6).map(product => (
                                 <Link key={product._id} to={`/product/${product.slug}`} className="bg-dark-secondary/30 p-4 rounded-xl border border-gray-800 hover:border-primary transition group text-center">

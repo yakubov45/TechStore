@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
 
 export default function SignUp() {
     const [formData, setFormData] = useState({
@@ -14,12 +15,13 @@ export default function SignUp() {
     const [loading, setLoading] = useState(false);
     const register = useAuthStore(state => state.register);
     const navigate = useNavigate();
+    const { t } = useTranslation();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         if (formData.password !== formData.confirmPassword) {
-            toast.error('Passwords do not match');
+            toast.error(t('auth.passwordsMismatch'));
             return;
         }
 
@@ -28,10 +30,10 @@ export default function SignUp() {
         try {
             const { confirmPassword, ...userData } = formData;
             await register(userData);
-            toast.success('Account created successfully! Please verify your identity.');
+            toast.success(t('auth.accountCreated'));
             navigate('/verify-otp');
         } catch (error) {
-            toast.error(error.response?.data?.message || 'Registration failed');
+            toast.error(error.response?.data?.message || t('auth.registrationFailed'));
         } finally {
             setLoading(false);
         }
@@ -40,11 +42,11 @@ export default function SignUp() {
     return (
         <div className="container mx-auto px-4 py-16">
             <div className="max-w-md mx-auto card p-8">
-                <h1 className="text-3xl font-bold mb-6 text-center">Sign Up</h1>
+                <h1 className="text-3xl font-bold mb-6 text-center">{t('auth.signUp')}</h1>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                        <label className="block mb-2 font-semibold">Full Name</label>
+                        <label className="block mb-2 font-semibold">{t('auth.fullName')}</label>
                         <input
                             type="text"
                             value={formData.name}
@@ -55,7 +57,7 @@ export default function SignUp() {
                     </div>
 
                     <div>
-                        <label className="block mb-2 font-semibold">Email</label>
+                        <label className="block mb-2 font-semibold">{t('auth.email')}</label>
                         <input
                             type="email"
                             value={formData.email}
@@ -66,7 +68,7 @@ export default function SignUp() {
                     </div>
 
                     <div>
-                        <label className="block mb-2 font-semibold">Phone</label>
+                        <label className="block mb-2 font-semibold">{t('auth.phone')}</label>
                         <input
                             type="tel"
                             placeholder="+998901234567"
@@ -77,7 +79,7 @@ export default function SignUp() {
                     </div>
 
                     <div>
-                        <label className="block mb-2 font-semibold">Password</label>
+                        <label className="block mb-2 font-semibold">{t('auth.password')}</label>
                         <input
                             type="password"
                             value={formData.password}
@@ -89,7 +91,7 @@ export default function SignUp() {
                     </div>
 
                     <div>
-                        <label className="block mb-2 font-semibold">Confirm Password</label>
+                        <label className="block mb-2 font-semibold">{t('auth.confirmPassword')}</label>
                         <input
                             type="password"
                             value={formData.confirmPassword}
@@ -104,14 +106,14 @@ export default function SignUp() {
                         disabled={loading}
                         className="btn-primary w-full"
                     >
-                        {loading ? 'Creating Account...' : 'Sign Up'}
+                        {loading ? t('auth.creatingAccount') : t('auth.signUp')}
                     </button>
                 </form>
 
                 <p className="text-center mt-6 text-text-secondary">
-                    Already have an account?{' '}
+                    {t('auth.alreadyHaveAccount')}{' '}
                     <Link to="/signin" className="text-primary hover:underline">
-                        Sign In
+                        {t('nav.signIn')}
                     </Link>
                 </p>
             </div>

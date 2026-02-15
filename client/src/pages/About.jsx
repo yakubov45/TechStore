@@ -1,7 +1,9 @@
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { Target, Users, BookOpen, MapPin, Clock, CheckCircle2 } from 'lucide-react';
 
 export default function About() {
+    const { t } = useTranslation();
     const fadeIn = {
         hidden: { opacity: 0, y: 20 },
         visible: { opacity: 1, y: 0 }
@@ -28,7 +30,7 @@ export default function About() {
                         animate={{ opacity: 1, y: 0 }}
                         className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-white via-primary to-white bg-clip-text text-transparent"
                     >
-                        About TechStore
+                        {t('about.hero.title')}
                     </motion.h1>
                     <motion.p
                         initial={{ opacity: 0 }}
@@ -36,7 +38,7 @@ export default function About() {
                         transition={{ delay: 0.3 }}
                         className="text-xl text-text-secondary max-w-2xl mx-auto"
                     >
-                        We are more than just a repair shop. We are your partners in technology, providing premium hardware and expert solutions since 2018.
+                        {t('about.hero.subtitle')}
                     </motion.p>
                 </div>
             </div>
@@ -57,10 +59,8 @@ export default function About() {
                                 <div className="p-3 bg-primary/10 rounded-xl w-fit mb-6">
                                     <BookOpen className="text-primary" size={28} />
                                 </div>
-                                <h2 className="text-3xl font-bold mb-4">Our Story</h2>
-                                <p className="text-text-secondary leading-relaxed">
-                                    Founded in Tashkent, Uzbekistan, TechStore has been serving the tech community with premium computer hardware and IT accessories. We started as a small enthusiast shop and grew into a leading technology provider.
-                                </p>
+                                <h2 className="text-3xl font-bold mb-4">{t('about.story.title')}</h2>
+                                <p className="text-text-secondary leading-relaxed">{t('about.story.text')}</p>
                             </div>
                         </motion.section>
 
@@ -70,10 +70,8 @@ export default function About() {
                                 <div className="p-3 bg-primary/10 rounded-xl w-fit mb-6">
                                     <Target className="text-primary" size={28} />
                                 </div>
-                                <h2 className="text-3xl font-bold mb-4">Our Mission</h2>
-                                <p className="text-text-secondary leading-relaxed">
-                                    To empower our customers with cutting-edge technology solutions that enhance productivity, creativity, and gaming experiences. We strive to be the most trusted source for computer hardware in Uzbekistan.
-                                </p>
+                                <h2 className="text-3xl font-bold mb-4">{t('about.mission.title')}</h2>
+                                <p className="text-text-secondary leading-relaxed">{t('about.mission.text')}</p>
                             </div>
                         </motion.section>
                     </div>
@@ -81,10 +79,10 @@ export default function About() {
                     {/* Stats */}
                     <motion.div variants={fadeIn} className="grid grid-cols-2 md:grid-cols-4 gap-8">
                         {[
-                            { label: 'Happy Clients', value: '15K+' },
-                            { label: 'Products', value: '2.5K+' },
-                            { label: 'Years Experience', value: '6+' },
-                            { label: 'Service Point', value: '3' }
+                            { label: t('about.stats.clients'), value: '15K+' },
+                            { label: t('about.stats.products'), value: '2.5K+' },
+                            { label: t('about.stats.years'), value: '6+' },
+                            { label: t('about.stats.points'), value: '3' }
                         ].map((stat, i) => (
                             <div key={i} className="text-center">
                                 <div className="text-4xl font-bold text-primary mb-2 tracking-tighter">{stat.value}</div>
@@ -95,13 +93,13 @@ export default function About() {
 
                     {/* Why Choose Us */}
                     <motion.section variants={fadeIn} className="text-center">
-                        <h2 className="text-4xl font-bold mb-12">Nima uchun biz?</h2>
+                        <h2 className="text-4xl font-bold mb-12">{t('about.why.title')}</h2>
                         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 text-left">
                             {[
-                                { title: 'Authentic Products', desc: '100% genuine products from authorized distributors', icon: CheckCircle2 },
-                                { title: 'Warranty & Support', desc: 'Comprehensive warranty and after-sales support', icon: CheckCircle2 },
-                                { title: 'Expert Advice', desc: 'Knowledgeable staff to help you make the right choice', icon: CheckCircle2 },
-                                { title: 'Fast Delivery', desc: 'Quick and reliable delivery across Tashkent', icon: CheckCircle2 }
+                                { title: t('about.why.items.authentic.title'), desc: t('about.why.items.authentic.desc'), icon: CheckCircle2 },
+                                { title: t('about.why.items.warranty.title'), desc: t('about.why.items.warranty.desc'), icon: CheckCircle2 },
+                                { title: t('about.why.items.advice.title'), desc: t('about.why.items.advice.desc'), icon: CheckCircle2 },
+                                { title: t('about.why.items.delivery.title'), desc: t('about.why.items.delivery.desc'), icon: CheckCircle2 }
                             ].map((item, i) => (
                                 <div key={i} className="p-6 bg-dark-secondary rounded-2xl border border-gray-800 hover:border-primary transition group">
                                     <item.icon className="text-primary mb-4 group-hover:scale-110 transition" size={32} />
@@ -116,18 +114,16 @@ export default function About() {
                     <motion.section variants={fadeIn} className="relative rounded-3xl overflow-hidden bg-dark-card border border-gray-800 p-12">
                         <div className="grid md:grid-cols-2 gap-12 items-center">
                             <div>
-                                <h2 className="text-3xl font-bold mb-6">Bizning Manzilimiz</h2>
-                                <p className="text-text-secondary mb-8 leading-relaxed">
-                                    Visit our showroom in the Tech Park district of Tashkent. Browse products in person, get expert recommendations, and pick up your orders.
-                                </p>
+                                <h2 className="text-3xl font-bold mb-6">{t('about.location.title')}</h2>
+                                <p className="text-text-secondary mb-8 leading-relaxed">{t('about.location.text')}</p>
                                 <div className="space-y-6">
                                     <div className="flex items-center gap-4">
                                         <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
                                             <MapPin />
                                         </div>
                                         <div>
-                                            <p className="text-xs text-text-secondary uppercase font-bold tracking-wider">Address</p>
-                                            <p className="text-white">Tech Park District, Tashkent, Uzbekistan</p>
+                                            <p className="text-xs text-text-secondary uppercase font-bold tracking-wider">{t('about.location.addressLabel')}</p>
+                                            <p className="text-white">{t('about.location.address')}</p>
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-4">
@@ -135,8 +131,8 @@ export default function About() {
                                             <Clock />
                                         </div>
                                         <div>
-                                            <p className="text-xs text-text-secondary uppercase font-bold tracking-wider">Hours</p>
-                                            <p className="text-white">Mon-Sat 09:00-20:00, Sun 10:00-18:00</p>
+                                            <p className="text-xs text-text-secondary uppercase font-bold tracking-wider">{t('about.location.hoursLabel')}</p>
+                                            <p className="text-white">{t('about.location.hours')}</p>
                                         </div>
                                     </div>
                                 </div>

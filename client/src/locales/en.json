@@ -12,11 +12,22 @@
     },
     "home": {
         "hero": {
-            "subtitle": "Premium tech gear for enthusiasts",
-            "shopNow": "Shop Now",
-            "viewCatalog": "View Catalog",
-            "buildPC": "Build PC",
-            "browseParts": "Browse Parts"
+            "slides": {
+                "0": {
+                    "title": "Performance Gaming Laptops",
+                    "subtitle": "RTX 40-Series graphics for ultimate performance"
+                },
+                "1": {
+                    "title": "Build Your Dream Setup",
+                    "subtitle": "Custom components for every enthusiast"
+                }
+            },
+            "cta": {
+                "shopNow": "Shop Now",
+                "viewCatalog": "View Catalog",
+                "buildPC": "Build PC",
+                "browseParts": "Browse Parts"
+            }
         },
         "trending": "Trending Now",
         "flashDeals": "Flash Deals",
@@ -27,7 +38,11 @@
             "warranty": "Official Warranty",
             "warrantyDesc": "1 year warranty on all products",
             "support": "24/7 Support",
-            "supportDesc": "Expert assistance anytime"
+            "supportDesc": "Expert assistance anytime",
+            "paymentTitle": "Secure Payment",
+            "paymentDesc": "100% security guarantee",
+            "returnTitle": "7 Day Return",
+            "returnDesc": "Easy money back guarantee"
         },
         "categories": "Shop by Category",
         "featured": "Featured Products",
@@ -40,13 +55,58 @@
             "success": "Successfully subscribed!"
         }
     },
+    "home_extra": {
+        "viewAll": "View All",
+        "flashDeals": "Flash Deals",
+        "endsIn": "Ends in",
+        "recentlyViewed": "Recently Viewed"
+    },
     "products": {
         "filter": "Filters",
         "sort": "Sort by",
         "price": "Price",
         "addToCart": "Add to Cart",
         "outOfStock": "Out of Stock",
-        "loadMore": "Load More"
+        "loadMore": "Load More",
+        "notFound": "Product not found",
+        "noImage": "No image available",
+        "customerReviews": "customer reviews",
+        "inStock": "In Stock ({{count}} available)",
+        "quantity": "Quantity",
+        "specifications": "Specifications",
+        "related": "Related Products"
+    },
+    "auth": {
+        "welcomeBack": "Welcome back!",
+        "loginFailed": "Login failed",
+        "email": "Email",
+        "password": "Password",
+        "signingIn": "Signing in...",
+        "noAccount": "Don't have an account?",
+        "signUp": "Sign Up",
+        "passwordsMismatch": "Passwords do not match",
+        "accountCreated": "Account created successfully! Please verify your identity.",
+        "registrationFailed": "Registration failed",
+        "fullName": "Full Name",
+        "phone": "Phone",
+        "confirmPassword": "Confirm Password",
+        "creatingAccount": "Creating Account...",
+        "alreadyHaveAccount": "Already have an account?"
+    },
+    "auth_messages": {
+        "loginRequired": "Please login to continue",
+        "removedFromWishlist": "Removed from wishlist",
+        "addedToWishlist": "Added to wishlist",
+        "wishlistFailed": "Failed to update wishlist"
+    },
+    "auth_extra": {
+        "loginRequired": "Please login to continue",
+        "removedFromWishlist": "Removed from wishlist",
+        "addedToWishlist": "Added to wishlist",
+        "wishlistFailed": "Failed to update wishlist"
+    },
+    "cart": {
+        "addedToCart": "Added {{count}} item(s) to cart"
     },
     "cart": {
         "title": "Shopping Cart",
@@ -82,6 +142,71 @@
         "scanQr": "Scan to verify order",
         "returnHome": "Return Home",
         "continueShopping": "Continue Shopping",
-        "print": "Print Receipt"
+        "print": "Print Receipt",
+        "checkout": "Checkout",
+        "shippingDetails": "Shipping Details",
+        "streetAddress": "Street Address",
+        "city": "City",
+        "country": "Country",
+        "deliveryOption": "Delivery Option",
+        "paymentMethod": "Payment Method",
+        "notesOptional": "Order Notes (Optional)",
+        "summary": "Order Summary",
+        "subtotal": "Subtotal",
+        "deliveryFee": "Delivery Fee",
+        "processing": "Processing...",
+        "placeOrder": "Place Order",
+        "successPlaced": "Order placed successfully!",
+        "failed": "Order failed"
+    }
+    ,
+    "about": {
+        "hero": {
+            "title": "About TechStore",
+            "subtitle": "TechStore is an online store for computer equipment. One of the largest in Uzbekistan, we offer customers the latest, high-quality computer hardware. Our selection includes laptops, monitors, graphics cards, processors and many other devices at affordable prices.\n\nWhy choose us? The TechStore team treats every customer personally. We sell only officially guaranteed products and guarantee delivery across Tashkent within 24 hours. We also offer convenient payment options and installment plans."
+        },
+        "story": {
+            "title": "Our Story",
+            "text": "Founded in Tashkent, TechStore began as a small enthusiast shop and has grown into a leading provider of premium computer hardware and IT accessories across Uzbekistan."
+        },
+        "mission": {
+            "title": "Our Mission",
+            "text": "To empower our customers with cutting-edge technology that enhances productivity, creativity, and play. We aim to be Uzbekistan's most trusted hardware provider."
+        },
+        "stats": {
+            "clients": "Happy Clients",
+            "products": "Products",
+            "years": "Years of Experience",
+            "points": "Service Points"
+        },
+        "why": {
+            "title": "Why Choose Us?",
+            "items": {
+                "authentic": {
+                    "title": "Authentic Products",
+                    "desc": "100% genuine products from authorized distributors."
+                },
+                "warranty": {
+                    "title": "Warranty & Support",
+                    "desc": "Official warranties and reliable after-sales service."
+                },
+                "advice": {
+                    "title": "Expert Advice",
+                    "desc": "Experienced staff to help you choose the right components."
+                },
+                "delivery": {
+                    "title": "Fast Delivery",
+                    "desc": "Fast and reliable delivery across Tashkent."
+                }
+            }
+        },
+        "location": {
+            "title": "Our Location",
+            "text": "Visit our showroom in the Tech Park district of Tashkent to see products in person, get expert recommendations, and pick up your orders.",
+            "addressLabel": "Address",
+            "address": "Tech Park District, Tashkent, Uzbekistan",
+            "hoursLabel": "Hours",
+            "hours": "Mon–Sat 09:00–20:00, Sun 10:00–18:00"
+        }
     }
 }

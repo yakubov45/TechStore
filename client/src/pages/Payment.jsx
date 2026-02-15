@@ -6,6 +6,7 @@ import { useAuthStore } from '../store/authStore';
 import { useCurrencyStore } from '../store/currencyStore';
 import api from '../services/api';
 import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
 
 export default function Payment() {
     const { items, updateQuantity, removeItem, getTotal, clearCart } = useCartStore();
@@ -13,6 +14,7 @@ export default function Payment() {
     const { formatPrice, currency, uzsRate } = useCurrencyStore();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
+    const { t } = useTranslation();
 
     const [formData, setFormData] = useState({
         street: '',
@@ -38,13 +40,13 @@ export default function Payment() {
         e.preventDefault();
 
         if (!isAuthenticated) {
-            toast.error('Please sign in to place an order');
+            toast.error(t('auth_messages.loginRequired'));
             navigate('/signin');
             return;
         }
 
         if (items.length === 0) {
-            toast.error('Your cart is empty');
+            toast.error(t('cart.empty'));
             return;
         }
 
@@ -67,11 +69,11 @@ export default function Payment() {
             };
 
             const response = await api.post('/orders', orderData);
-            toast.success('Order placed successfully!');
+            toast.success(t('order.successPlaced'));
             clearCart();
             navigate('/order-success', { state: { order: response.data.data } });
         } catch (error) {
-            toast.error(error.response?.data?.message || 'Order failed');
+            toast.error(error.response?.data?.message || t('order.failed'));
         } finally {
             setLoading(false);
         }
@@ -79,16 +81,16 @@ export default function Payment() {
 
     return (
         <div className="container mx-auto px-4 py-8">
-            <h1 className="text-4xl font-bold mb-8">Checkout</h1>
+            <h1 className="text-4xl font-bold mb-8">{t('order.checkout')}</h1>
 
             <div className="grid md:grid-cols-3 gap-8">
                 {/* Cart Items */}
                 <div className="md:col-span-2 space-y-4">
                     <div className="card p-6">
-                        <h2 className="text-2xl font-bold mb-4">Cart Items</h2>
+                        <h2 className="text-2xl font-bold mb-4">{t('cart.title')}</h2>
 
                         {items.length === 0 ? (
-                            <p className="text-text-secondary text-center py-8">Your cart is empty</p>
+                            <p className="text-text-secondary text-center py-8">{t('cart.empty')}</p>
                         ) : (
                             <div className="space-y-4">
                                 {items.map(item => (
@@ -134,11 +136,11 @@ export default function Payment() {
 
                     {/* Shipping Form */}
                     <form onSubmit={handleSubmit} className="card p-6">
-                        <h2 className="text-2xl font-bold mb-4">Shipping Details</h2>
+                        <h2 className="text-2xl font-bold mb-4">{t('order.shippingDetails')}</h2>
 
                         <div className="space-y-4">
                             <div>
-                                <label className="block mb-2">Street Address</label>
+                                <label className="block mb-2">{t('order.streetAddress')}</label>
                                 <input
                                     type="text"
                                     value={formData.street}
@@ -150,7 +152,7 @@ export default function Payment() {
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block mb-2">City</label>
+                                    <label className="block mb-2">{t('order.city')}</label>
                                     <input
                                         type="text"
                                         value={formData.city}
@@ -160,7 +162,7 @@ export default function Payment() {
                                     />
                                 </div>
                                 <div>
-                                    <label className="block mb-2">Country</label>
+                                    <label className="block mb-2">{t('order.country')}</label>
                                     <input
                                         type="text"
                                         value={formData.country}
@@ -171,7 +173,7 @@ export default function Payment() {
                             </div>
 
                             <div>
-                                <label className="block mb-2">Delivery Option</label>
+                                <label className="block mb-2">{t('order.deliveryOption')}</label>
                                 <select
                                     value={formData.deliveryOption}
                                     onChange={(e) => setFormData({ ...formData, deliveryOption: e.target.value })}
@@ -184,7 +186,7 @@ export default function Payment() {
                             </div>
 
                             <div>
-                                <label className="block mb-2">Payment Method</label>
+                                <label className="block mb-2">{t('order.paymentMethod')}</label>
                                 <select
                                     value={formData.paymentMethod}
                                     onChange={(e) => setFormData({ ...formData, paymentMethod: e.target.value })}
@@ -197,7 +199,7 @@ export default function Payment() {
                             </div>
 
                             <div>
-                                <label className="block mb-2">Order Notes (Optional)</label>
+                                <label className="block mb-2">{t('order.notesOptional')}</label>
                                 <textarea
                                     value={formData.notes}
                                     onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
@@ -212,19 +214,19 @@ export default function Payment() {
                 {/* Order Summary */}
                 <div>
                     <div className="card p-6 sticky top-20">
-                        <h2 className="text-2xl font-bold mb-4">Order Summary</h2>
+                        <h2 className="text-2xl font-bold mb-4">{t('order.summary')}</h2>
 
                         <div className="space-y-3 mb-6">
                             <div className="flex justify-between">
-                                <span>Subtotal</span>
+                                <span>{t('order.subtotal')}</span>
                                 <span>{formatPrice(subtotal)}</span>
                             </div>
                             <div className="flex justify-between">
-                                <span>Delivery Fee</span>
+                                <span>{t('order.deliveryFee')}</span>
                                 <span>{formatPrice(deliveryFee)}</span>
                             </div>
                             <div className="border-t border-gray-800 pt-3 flex justify-between font-bold text-lg">
-                                <span>Total</span>
+                                <span>{t('order.total')}</span>
                                 <span className="text-primary">{formatPrice(total)}</span>
                             </div>
                         </div>
@@ -235,7 +237,7 @@ export default function Payment() {
                             disabled={loading || items.length === 0}
                             className="btn-primary w-full"
                         >
-                            {loading ? 'Processing...' : 'Place Order'}
+                            {loading ? t('order.processing') : t('order.placeOrder')}
                         </button>
                     </div>
                 </div>

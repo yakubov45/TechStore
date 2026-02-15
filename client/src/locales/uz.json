@@ -12,22 +12,37 @@
     },
     "home": {
         "hero": {
-            "subtitle": "Texnologiya ixlosmandlari uchun premium jihozlar",
-            "shopNow": "Xarid qilish",
-            "viewCatalog": "Katalogni ko'rish",
-            "buildPC": "Kompyuter yig'ish",
-            "browseParts": "Qismlarni ko'rish"
+            "slides": {
+                "0": {
+                    "title": "Ishlash uchun mo'ljallangan o'yin noutbuklari",
+                    "subtitle": "RTX 40-Series grafikalari bilan maksimal ishlash"
+                },
+                "1": {
+                    "title": "O'zingizning orzu konfiguratsiyangizni yarating",
+                    "subtitle": "Har bir ixlosmand uchun komponentlar"
+                }
+            },
+            "cta": {
+                "shopNow": "Xarid qilish",
+                "viewCatalog": "Katalogni ko'rish",
+                "buildPC": "Kompyuter yig'ish",
+                "browseParts": "Qismlarni ko'rish"
+            }
         },
         "trending": "Trenddagilar",
         "flashDeals": "Bugungi chegirmalar",
-        "endsIn": "Tugashiga",
+        "endsIn": "qoldi",
         "features": {
             "shipping": "Tezkor Yetkazib Berish",
             "shippingDesc": "1 mln so'mdan ortiq buyurtmalarga bepul yetkazib berish",
             "warranty": "Rasmiy Kafolat",
             "warrantyDesc": "Barcha mahsulotlarga kafolat beriladi",
             "support": "24/7 Qo'llab-quvvatlash",
-            "supportDesc": "Har qanday vaqtda ekspert yordami"
+            "supportDesc": "Har qanday vaqtda ekspert yordami",
+            "paymentTitle": "Xavfsiz to'lov",
+            "paymentDesc": "100% xavfsizlik kafolati",
+            "returnTitle": "7 kun ichida qaytarish",
+            "returnDesc": "Oson pulni qaytarish"
         },
         "categories": "Kategoriyalar bo'yicha",
         "featured": "Tanlangan Mahsulotlar",
@@ -39,13 +54,58 @@
             "button": "Obuna bo'lish"
         }
     },
+    "home_extra": {
+        "viewAll": "Hammasini ko'rish",
+        "flashDeals": "Bugungi chegirmalar",
+        "endsIn": "qoldi",
+        "recentlyViewed": "Siz ko'rgan mahsulotlar"
+    },
     "products": {
         "filter": "Filtrlar",
         "sort": "Saralash",
         "price": "Narx",
         "addToCart": "Savatga qo'shish",
         "outOfStock": "Sotuvda yo'q",
-        "loadMore": "Ko'proq yuklash"
+        "loadMore": "Ko'proq yuklash",
+        "notFound": "Mahsulot topilmadi",
+        "noImage": "Rasm mavjud emas",
+        "customerReviews": "mijoz fikrlari",
+        "inStock": "Mavjud ({{count}} ta mavjud)",
+        "quantity": "Soni",
+        "specifications": "Texnik xususiyatlar",
+        "related": "Boshqa mahsulotlar"
+    },
+    "auth": {
+        "welcomeBack": "Xush kelibsiz!",
+        "loginFailed": "Kirishda xato",
+        "email": "Email",
+        "password": "Parol",
+        "signingIn": "Kirish...",
+        "noAccount": "Hisobingiz yo'qmi?",
+        "signUp": "Ro'yxatdan o'tish",
+        "passwordsMismatch": "Parollar mos emas",
+        "accountCreated": "Hisob muvaffaqiyatli yaratildi! Iltimos, shaxsiyatingizni tasdiqlang.",
+        "registrationFailed": "Ro'yxatdan o'tishda xato",
+        "fullName": "To'liq ism",
+        "phone": "Telefon",
+        "confirmPassword": "Parolni tasdiqlang",
+        "creatingAccount": "Hisob yaratilmoqda...",
+        "alreadyHaveAccount": "Allaqachon hisobingiz bormi?"
+    },
+    "auth_messages": {
+        "loginRequired": "Iltimos, davom ettirish uchun tizimga kiring",
+        "removedFromWishlist": "Xohlaganlar ro'yxatidan o'chirildi",
+        "addedToWishlist": "Xohlaganlar ro'yxatiga qo'shildi",
+        "wishlistFailed": "Xohlaganlar ro'yxatini yangilash muvaffaqiyatsiz"
+    },
+    "auth_extra": {
+        "loginRequired": "Iltimos, davom ettirish uchun tizimga kiring",
+        "removedFromWishlist": "Xohlaganlar ro'yxatidan o'chirildi",
+        "addedToWishlist": "Xohlaganlar ro'yxatiga qo'shildi",
+        "wishlistFailed": "Xohlaganlar ro'yxatini yangilash muvaffaqiyatsiz"
+    },
+    "cart": {
+        "addedToCart": "{{count}} ta mahsulot savatga qo'shildi"
     },
     "cart": {
         "title": "Savat",
@@ -61,5 +121,91 @@
         "cancel": "Bekor qilish",
         "delete": "O'chirish",
         "edit": "Tahrirlash"
+    },
+    "reviews": {
+        "title": "Sharhlar",
+        "writeReview": "Fikr qoldiring",
+        "rating": "Reyting",
+        "comment": "Izoh",
+        "placeholder": "Mahsulot haqida fikringizni yozing...",
+        "submit": "Yuborish",
+        "submitting": "Yuborilmoqda...",
+        "loginRequired": "Fikr qoldirish uchun tizimga kiring",
+        "noReviews": "Hozirgacha sharh yo'q. Birinchi bo'ling!"
+    },
+    "order": {
+        "successTitle": "Buyurtma tasdiqlandi!",
+        "id": "Buyurtma raqami",
+        "details": "Buyurtma tafsilotlari",
+        "total": "Jami",
+        "scanQr": "Tekshirish uchun skaner qiling",
+        "returnHome": "Bosh sahifaga qaytish",
+        "continueShopping": "Xaridni davom ettirish",
+        "print": "Chekni chop etish",
+        "checkout": "To'lov",
+        "shippingDetails": "Yetkazib berish ma'lumotlari",
+        "streetAddress": "Manzil",
+        "city": "Shahar",
+        "country": "Mamlakat",
+        "deliveryOption": "Yetkazib berish turi",
+        "paymentMethod": "To'lov usuli",
+        "notesOptional": "Buyurtma uchun izoh (ixtiyoriy)",
+        "summary": "Buyurtma tafsiloti",
+        "subtotal": "Oraliq summa",
+        "deliveryFee": "Yetkazib berish to'lovi",
+        "processing": "Qayta ishlanmoqda...",
+        "placeOrder": "Buyurtmani joylashtirish",
+        "successPlaced": "Buyurtma muvaffaqiyatli joylashtirildi!",
+        "failed": "Buyurtma muvaffaqiyatsiz tugadi"
+    }
+    ,
+    "about": {
+        "hero": {
+            "title": "TechStore haqida",
+            "subtitle": "TechStore — kompyuter texnikalari onlayn do'koni. TechStore O'zbekistondagi eng yirik onlayn do'konlardan biri bo'lib, biz mijozlarimizga eng so'nggi va yuqori sifatli kompyuter texnikalarini taklif etamiz. Bizning assortimentimizda noutbuklar, monitorlar, videokartalar, protsessorlar va boshqa ko'plab qurilmalarni hamyonbop narxlarda topishingiz mumkin.\n\nNima uchun aynan bizni tanlashadi? TechStore jamoasi har bir mijozga individual yondashadi. Biz faqat rasmiy kafolatga ega mahsulotlarni sotamiz va Toshkent bo'ylab 24 soat ichida yetkazib berishni kafolatlaymiz. Shuningdek, bizda qulay to'lov tizimlari va muddatli to'lov imkoniyatlari mavjud."
+        },
+        "story": {
+            "title": "Bizning tariximiz",
+            "text": "TechStore Toshkentda tashkil topgan bo'lib, kichik ixlosmand do'kondan boshlab O'zbekistonda premium kompyuter uskunalari va IT aksessuarlarining yetakchi yetkazib beruvchisiga aylandi."
+        },
+        "mission": {
+            "title": "Bizning maqsadimiz",
+            "text": "Mijozlarimizni samaradorlik, ijodkorlik va o'yin tajribasini oshiruvchi ilg'or texnologiyalar bilan ta'minlash. Biz O'zbekistonda eng ishonchli uskuna provayderi bo'lishni maqsad qilganmiz."
+        },
+        "stats": {
+            "clients": "Mamnun mijozlar",
+            "products": "Mahsulotlar",
+            "years": "Tajriba yillari",
+            "points": "Xizmat punktlari"
+        },
+        "why": {
+            "title": "Nima uchun bizni tanlaysiz?",
+            "items": {
+                "authentic": {
+                    "title": "Haqiqiy mahsulotlar",
+                    "desc": "Rasmiy dilerlardan 100% asl mahsulotlar."
+                },
+                "warranty": {
+                    "title": "Kafolat va yordam",
+                    "desc": "Rasmiy kafolatlar va ishonchli sotuvdan keyingi xizmat."
+                },
+                "advice": {
+                    "title": "Mutaxassis maslahatlari",
+                    "desc": "Tajriba egasi xodimlar sizga mos komponentlarni tanlashda yordam beradi."
+                },
+                "delivery": {
+                    "title": "Tez yetkazib berish",
+                    "desc": "Toshkent bo'ylab tez va ishonchli yetkazib berish."
+                }
+            }
+        },
+        "location": {
+            "title": "Bizning manzil",
+            "text": "Toshkentdagi Tech Park hududidagi ko'rgazma zaliimizga tashrif buyuring — mahsulotlarni shaxsan ko'ring, mutaxassis maslahatini oling va buyurtmalaringizni oling.",
+            "addressLabel": "Manzil",
+            "address": "Tech Park tumani, Toshkent, O'zbekiston",
+            "hoursLabel": "Ish vaqti",
+            "hours": "Dush–Shan 09:00–20:00, Yak 10:00–18:00"
+        }
     }
 }
