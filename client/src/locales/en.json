@@ -151,7 +151,13 @@
         "processing": "Processing...",
         "placeOrder": "Place Order",
         "successPlaced": "Order placed successfully!",
-        "failed": "Order failed"
+        "failed": "Order failed",
+        "cashOnDelivery": "Cash on Delivery",
+        "creditCard": "Credit/Debit Card",
+        "onlinePayment": "Online Payment",
+        "cardDetails": "Card Details",
+        "cardNumber": "Card Number",
+        "expiryDate": "Expiry Date"
     },
     "about": {
         "hero": {

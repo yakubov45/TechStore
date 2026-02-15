@@ -150,7 +150,13 @@
         "processing": "Qayta ishlanmoqda...",
         "placeOrder": "Buyurtmani joylashtirish",
         "successPlaced": "Buyurtma muvaffaqiyatli joylashtirildi!",
-        "failed": "Buyurtma muvaffaqiyatsiz tugadi"
+        "failed": "Buyurtma muvaffaqiyatsiz tugadi",
+        "cashOnDelivery": "Naqd yetkazish orqali",
+        "creditCard": "Plastik karta orqali",
+        "onlinePayment": "Online to'lov (Payme/Click)",
+        "cardDetails": "Karta ma'lumotlari",
+        "cardNumber": "Karta raqami",
+        "expiryDate": "Amal qilish muddati"
     },
     "about": {
         "hero": {
