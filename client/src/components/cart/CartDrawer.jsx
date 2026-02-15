@@ -58,7 +58,7 @@ export default function CartDrawer({ isOpen, onClose }) {
                                             <div>
                                                 <h4 className="font-semibold text-sm line-clamp-1">{item.name}</h4>
                                                 <p className="text-primary font-bold text-sm mt-1">
-                                                    {item.price.toLocaleString()} UZS
+                                                    {item?.price?.toLocaleString() || '0'} UZS
                                                 </p>
                                             </div>
                                             <div className="flex items-center justify-between mt-2">
@@ -98,7 +98,7 @@ export default function CartDrawer({ isOpen, onClose }) {
                                 <div className="flex items-center justify-between mb-6">
                                     <span className="text-text-secondary">Subtotal</span>
                                     <span className="text-2xl font-bold text-primary">
-                                        {getTotalPrice().toLocaleString()} UZS
+                                        {getTotalPrice()?.toLocaleString() || '0'} UZS
                                     </span>
                                 </div>
                                 <div className="space-y-3">

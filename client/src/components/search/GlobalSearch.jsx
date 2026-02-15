@@ -142,7 +142,7 @@ export default function GlobalSearch({ isOpen, onClose }) {
                                                     <p className="font-semibold">{product.name}</p>
                                                     <p className="text-sm text-text-secondary">{product.brand?.name}</p>
                                                 </div>
-                                                <p className="text-primary font-bold">{product.price.toLocaleString()} UZS</p>
+                                                <p className="text-primary font-bold">{product?.price?.toLocaleString() || '0'} UZS</p>
                                             </button>
                                         ))}
                                     </div>

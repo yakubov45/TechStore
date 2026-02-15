@@ -322,7 +322,7 @@ export const sendOTP = async (req, res) => {
                 message: 'Tasdiqlash kodi qaytadan yuborildi'
             });
         } catch (emailError) {
-            console.error('Failed to send OTP:', emailError);
+            console.error('❌ Failed to send OTP:', emailError.message || emailError);
             // Do not expose internal error details to client
             return res.status(503).json({
                 success: false,

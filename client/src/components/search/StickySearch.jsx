@@ -67,8 +67,8 @@ export default function StickySearch() {
         <div
             ref={containerRef}
             className={`transition-all duration-300 ${isScrolled
-                    ? 'fixed top-2 left-1/2 -translate-x-1/2 w-full max-w-xl z-[60] px-4'
-                    : 'relative w-full max-w-md hidden md:block'
+                ? 'fixed top-2 left-1/2 -translate-x-1/2 w-full max-w-xl z-[60] px-4'
+                : 'relative w-full max-w-md hidden md:block'
                 }`}
         >
             <div className={`relative flex items-center bg-dark-card border rounded-full transition-all ${isOpen ? 'border-primary ring-2 ring-primary/20 shadow-glow' : 'border-gray-800'
@@ -128,7 +128,7 @@ export default function StickySearch() {
                                                     </div>
                                                     <div className="flex-1 min-w-0">
                                                         <p className="text-sm font-medium truncate">{product.name}</p>
-                                                        <p className="text-xs text-primary font-bold">{product.price.toLocaleString()} UZS</p>
+                                                        <p className="text-xs text-primary font-bold">{product?.price?.toLocaleString() || '0'} UZS</p>
                                                     </div>
                                                     <ArrowRight size={14} className="text-text-secondary opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all" />
                                                 </button>
