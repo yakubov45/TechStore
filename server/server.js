@@ -38,10 +38,19 @@ const app = express();
 connectDB();
 
 // Security middleware
-app.use(helmet());
+app.use(helmet({
+    crossOriginResourcePolicy: false,
+}));
 
-// CORS configuration - allow configured client URL and localhost for local dev
-const allowedOrigins = [config.clientUrl, 'http://localhost:5173'];
+// CORS configuration - allow configured client URL and common local dev ports
+const allowedOrigins = [
+    config.clientUrl,
+    'http://localhost:5173',
+    'http://localhost:3000',
+    'http://127.0.0.1:5173',
+    'http://127.0.0.1:3000'
+];
+
 // Allow additional origins via env (comma separated)
 if (process.env.ADDITIONAL_CLIENT_ORIGINS) {
     process.env.ADDITIONAL_CLIENT_ORIGINS.split(',').forEach(o => {
@@ -54,13 +63,29 @@ app.use(cors({
     origin: function (origin, callback) {
         // allow requests with no origin (like mobile apps, curl, Postman)
         if (!origin) return callback(null, true);
-        if (allowedOrigins.indexOf(origin) !== -1) {
+
+        const isAllowed = allowedOrigins.some(allowed => {
+            if (allowed === origin) return true;
+            try {
+                // Handle cases where allowed origin might not have a protocol but request does, or trailing slashes
+                const allowedUrl = new URL(allowed);
+                const originUrl = new URL(origin);
+                return allowedUrl.origin === originUrl.origin;
+            } catch (e) {
+                return false;
+            }
+        });
+
+        if (isAllowed) {
             return callback(null, true);
         } else {
+            console.warn(`⚠️ CORS blocked request from origin: ${origin}`);
             return callback(new Error('CORS policy: This origin is not allowed - ' + origin));
         }
     },
-    credentials: true
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin']
 }));
 
 // Rate limiting
