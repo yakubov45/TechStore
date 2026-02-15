@@ -311,15 +311,24 @@ export const sendOTP = async (req, res) => {
         user.otpExpire = Date.now() + 10 * 60 * 1000;
         await user.save();
 
-        await sendEmailOTP(user.email, user.name, otp);
-        if (user.phone) {
-            await sendSMSOTP(user.phone, otp);
-        }
+        try {
+            await sendEmailOTP(user.email, user.name, otp);
+            if (user.phone) {
+                await sendSMSOTP(user.phone, otp);
+            }
 
-        res.json({
-            success: true,
-            message: 'Tasdiqlash kodi qaytadan yuborildi'
-        });
+            return res.json({
+                success: true,
+                message: 'Tasdiqlash kodi qaytadan yuborildi'
+            });
+        } catch (emailError) {
+            console.error('Failed to send OTP:', emailError);
+            // Do not expose internal error details to client
+            return res.status(503).json({
+                success: false,
+                message: 'Email service unavailable. Please try again later.'
+            });
+        }
     } catch (error) {
         res.status(500).json({
             success: false,

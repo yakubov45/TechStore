@@ -10,6 +10,8 @@ export default function AdminDiscounts() {
     const [discountType, setDiscountType] = useState('percentage'); // percentage, fixed
     const [value, setValue] = useState('');
     const [loading, setLoading] = useState(false);
+    const [daily, setDaily] = useState(false);
+    const [durationHours, setDurationHours] = useState(24);
 
     const [categories, setCategories] = useState([]);
     const [brands, setBrands] = useState([]);
@@ -60,7 +62,9 @@ export default function AdminDiscounts() {
                 targetType,
                 targetId: targetType === 'all' ? null : targetId,
                 discountType,
-                value: Number(value)
+                discountValue: Number(value),
+                daily: daily,
+                durationHours: Number(durationHours || 24)
             });
 
             if (response.data.success) {
@@ -269,6 +273,29 @@ export default function AdminDiscounts() {
                                     Note: Backend expects base currency values usually, ensure this matches logic.
                                 </p>
                             )}
+                            <div className="mt-3 flex items-center gap-3">
+                                <label className="flex items-center gap-2 cursor-pointer">
+                                    <input
+                                        type="checkbox"
+                                        checked={daily}
+                                        onChange={(e) => setDaily(e.target.checked)}
+                                        className="text-primary focus:ring-primary"
+                                    />
+                                    <span>Daily / temporary discount</span>
+                                </label>
+                                {daily && (
+                                    <div className="flex items-center gap-2">
+                                        <input
+                                            type="number"
+                                            value={durationHours}
+                                            onChange={(e) => setDurationHours(e.target.value)}
+                                            className="input-field w-28"
+                                            min="1"
+                                        />
+                                        <span className="text-xs text-text-secondary">hours</span>
+                                    </div>
+                                )}
+                            </div>
                         </div>
 
                         <div className="flex flex-col gap-3 pt-4">
@@ -305,3 +332,4 @@ export default function AdminDiscounts() {
         </div>
     );
 }
+

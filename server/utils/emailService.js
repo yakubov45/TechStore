@@ -2,35 +2,50 @@ import nodemailer from 'nodemailer';
 import config from '../config/config.js';
 
 // Create transporter singleton with pooling
-const transporter = nodemailer.createTransport({
-  host: config.smtp.host,
-  port: config.smtp.port,
-  secure: config.smtp.port === 465, // Use secure if port is 465
-  pool: true, // Use connection pooling
-  maxConnections: 5,
-  maxMessages: 100,
-  auth: {
-    user: config.smtp.user,
-    pass: config.smtp.pass
-  },
-  tls: {
-    rejectUnauthorized: false // Often needed for various SMTP providers
-  },
-  connectionTimeout: 10000, // 10 seconds
-  greetingTimeout: 10000,
-  socketTimeout: 15000
-});
+let transporter;
+let smtpAvailable = Boolean(config.smtp && config.smtp.host && config.smtp.port && config.smtp.user && config.smtp.pass);
 
-// Verify connection configuration
-transporter.verify((error, success) => {
-  if (error) {
-    console.error('❌ SMTP Connection Error:', error);
-  } else {
-    console.log('✅ SMTP Server is ready to take our messages');
-  }
-});
+if (smtpAvailable) {
+  transporter = nodemailer.createTransport({
+    host: config.smtp.host,
+    port: Number(config.smtp.port),
+    secure: Number(config.smtp.port) === 465,
+    pool: true,
+    maxConnections: 5,
+    maxMessages: 100,
+    auth: {
+      user: config.smtp.user,
+      pass: config.smtp.pass
+    },
+    tls: {
+      rejectUnauthorized: false
+    },
+    connectionTimeout: 10000,
+    greetingTimeout: 10000,
+    socketTimeout: 15000
+  });
 
-export { transporter };
+  transporter.verify((error, success) => {
+    if (error) {
+      console.error('❌ SMTP Connection Error:', error);
+      smtpAvailable = false;
+    } else {
+      console.log('✅ SMTP Server is ready to take our messages');
+    }
+  });
+} else {
+  console.warn('⚠️ SMTP is not fully configured. Email sending is disabled.');
+  // Provide a lightweight dummy transporter that throws descriptive error so callers can handle it
+  transporter = {
+    sendMail: async () => {
+      const err = new Error('SMTP configuration missing or incomplete');
+      err.code = 'SMTP_NOT_CONFIGURED';
+      throw err;
+    }
+  };
+}
+
+export { transporter, smtpAvailable };
 
 // Send email verification
 export const sendVerificationEmail = async (email, name, token) => {
@@ -77,6 +92,7 @@ export const sendVerificationEmail = async (email, name, token) => {
     `
   };
 
+  if (!smtpAvailable) throw new Error('SMTP_NOT_CONFIGURED');
   await transporter.sendMail(mailOptions);
 };
 
@@ -126,6 +142,7 @@ export const sendPasswordResetEmail = async (email, name, token) => {
     `
   };
 
+  if (!smtpAvailable) throw new Error('SMTP_NOT_CONFIGURED');
   await transporter.sendMail(mailOptions);
 };
 
@@ -184,6 +201,7 @@ export const sendOrderConfirmationEmail = async (email, name, order) => {
     `
   };
 
+  if (!smtpAvailable) throw new Error('SMTP_NOT_CONFIGURED');
   await transporter.sendMail(mailOptions);
 };
 
@@ -196,5 +214,6 @@ export const sendNewsletterEmail = async (email, subject, content) => {
     html: content
   };
 
+  if (!smtpAvailable) throw new Error('SMTP_NOT_CONFIGURED');
   await transporter.sendMail(mailOptions);
 };

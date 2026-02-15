@@ -70,6 +70,18 @@ export const getProducts = async (req, res) => {
             .limit(limitNum)
             .skip(skip);
 
+        // Auto-restore expired daily discounts if any
+        for (const p of products) {
+            if (p.dailyDiscountExpire && p.dailyDiscountExpire < Date.now()) {
+                if (p.comparePrice) {
+                    p.price = p.comparePrice;
+                    p.comparePrice = null;
+                }
+                p.dailyDiscountExpire = null;
+                try { await p.save(); } catch (e) { console.error('Failed to restore expired discount for', p._id, e); }
+            }
+        }
+
         const total = await Product.countDocuments(query);
 
         res.json({
@@ -129,6 +141,16 @@ export const getProduct = async (req, res) => {
                 success: false,
                 message: 'Product not found'
             });
+        }
+
+        // Restore expired daily discount for this product if necessary
+        if (product.dailyDiscountExpire && product.dailyDiscountExpire < Date.now()) {
+            if (product.comparePrice) {
+                product.price = product.comparePrice;
+                product.comparePrice = null;
+            }
+            product.dailyDiscountExpire = null;
+            try { await product.save(); } catch (e) { console.error('Failed to restore expired discount for', product._id, e); }
         }
 
         res.json({
@@ -403,7 +425,8 @@ export const uploadProductImages = async (req, res) => {
 // @access  Private/Admin
 export const applyBulkDiscount = async (req, res) => {
     try {
-        const { targetType, targetId, discountType, discountValue } = req.body;
+        // Accepts: { action: 'apply'|'remove', targetType, targetId, discountType, discountValue, daily, durationHours }
+        const { action = 'apply', targetType, targetId, discountType, discountValue, daily = false, durationHours = 24 } = req.body;
 
         let query = {};
         if (targetType === 'category') query.category = targetId;
@@ -413,25 +436,42 @@ export const applyBulkDiscount = async (req, res) => {
         const products = await Product.find(query);
 
         for (const product of products) {
-            if (discountType === 'percentage') {
-                product.comparePrice = product.price;
-                const newPrice = product.price * (1 - discountValue / 100);
-                product.price = isNaN(newPrice) ? product.price : newPrice;
-            } else if (discountType === 'fixed') {
-                product.comparePrice = product.price;
-                const newPrice = Math.max(0, product.price - discountValue);
-                product.price = isNaN(newPrice) ? product.price : newPrice;
-            } else if (discountType === 'remove') {
+            if (action === 'remove' || discountType === 'remove') {
                 if (product.comparePrice) {
                     product.price = product.comparePrice;
                     product.comparePrice = null;
                 }
+                product.dailyDiscountExpire = null;
+            } else if (action === 'apply') {
+                // Determine base price (prevent compounding discounts)
+                const basePrice = (product.comparePrice && product.comparePrice > 0) ? product.comparePrice : product.price;
+
+                if (discountType === 'percentage') {
+                    // Preserve original price if not already stored
+                    if (!product.comparePrice) product.comparePrice = product.price;
+                    const newPrice = basePrice * (1 - discountValue / 100);
+                    product.price = isNaN(newPrice) ? product.price : newPrice;
+                } else if (discountType === 'fixed') {
+                    if (!product.comparePrice) product.comparePrice = product.price;
+                    const newPrice = Math.max(0, basePrice - discountValue);
+                    product.price = isNaN(newPrice) ? product.price : newPrice;
+                }
+
+                // If daily flag provided, set expiry so backend can auto-restore later
+                if (daily) {
+                    const hrs = Number(durationHours) || 24;
+                    product.dailyDiscountExpire = new Date(Date.now() + hrs * 3600 * 1000);
+                } else {
+                    product.dailyDiscountExpire = null;
+                }
             }
+
             await product.save();
         }
 
         res.json({
             success: true,
+            count: products.length,
             message: `Applied discount to ${products.length} products`
         });
     } catch (error) {

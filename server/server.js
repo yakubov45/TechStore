@@ -40,9 +40,26 @@ connectDB();
 // Security middleware
 app.use(helmet());
 
-// CORS configuration
+// CORS configuration - allow configured client URL and localhost for local dev
+const allowedOrigins = [config.clientUrl, 'http://localhost:5173'];
+// Allow additional origins via env (comma separated)
+if (process.env.ADDITIONAL_CLIENT_ORIGINS) {
+    process.env.ADDITIONAL_CLIENT_ORIGINS.split(',').forEach(o => {
+        const origin = o.trim();
+        if (origin && !allowedOrigins.includes(origin)) allowedOrigins.push(origin);
+    });
+}
+
 app.use(cors({
-    origin: config.clientUrl,
+    origin: function (origin, callback) {
+        // allow requests with no origin (like mobile apps, curl, Postman)
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.indexOf(origin) !== -1) {
+            return callback(null, true);
+        } else {
+            return callback(new Error('CORS policy: This origin is not allowed - ' + origin));
+        }
+    },
     credentials: true
 }));
 
@@ -102,6 +119,13 @@ app.listen(PORT, () => {
     console.log(`🚀 Server running on port ${PORT}`);
     console.log(`📱 Environment: ${process.env.NODE_ENV || 'development'}`);
     console.log(`🌐 Client URL: ${config.clientUrl}`);
+    // Print allowed origins for CORS to help debugging
+    try {
+        console.log('🔒 Allowed CORS origins:', allowedOrigins);
+        if (process.env.ADDITIONAL_CLIENT_ORIGINS) console.log('🔁 ADDITIONAL_CLIENT_ORIGINS:', process.env.ADDITIONAL_CLIENT_ORIGINS);
+    } catch (e) {
+        // ignore
+    }
 });
 
 export default app;

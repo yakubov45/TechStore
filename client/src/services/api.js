@@ -16,7 +16,17 @@ const api = axios.create({
     }
 });
 
-// ... (request interceptor remains the same)
+// Attach access token to each request if available
+api.interceptors.request.use(
+    (config) => {
+        const token = localStorage.getItem('accessToken');
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+    },
+    (error) => Promise.reject(error)
+);
 
 // Response interceptor to handle token refresh
 api.interceptors.response.use(
@@ -42,7 +52,13 @@ api.interceptors.response.use(
             } catch (refreshError) {
                 localStorage.removeItem('accessToken');
                 localStorage.removeItem('refreshToken');
-                window.location.href = '/signin';
+                // Notify the SPA to handle logout client-side to avoid full-page navigation (which can cause 404 on some hosts)
+                try {
+                    window.dispatchEvent(new Event('techstore:logout'));
+                } catch (e) {
+                    // Fallback to full reload if event dispatching fails
+                    window.location.href = '/signin';
+                }
                 return Promise.reject(refreshError);
             }
         }

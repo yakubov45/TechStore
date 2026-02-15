@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import Layout from './components/layout/Layout';
 import { useCurrencyStore } from './store/currencyStore';
 import ProtectedRoute from './components/common/ProtectedRoute';
@@ -30,6 +30,17 @@ function App() {
     useEffect(() => {
         fetchExchangeRate();
     }, []);
+
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const handler = () => {
+            navigate('/signin');
+        };
+
+        window.addEventListener('techstore:logout', handler);
+        return () => window.removeEventListener('techstore:logout', handler);
+    }, [navigate]);
 
     return (
         <Layout>

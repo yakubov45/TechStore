@@ -37,49 +37,49 @@ export default function Cart() {
                 {/* Cart Items */}
                 <div className="md:col-span-2 space-y-4">
                     {items.map(item => (
-                        <div key={item.product._id} className="card p-4 flex gap-4">
-                            <Link to={`/product/${item.product.slug}`} className="shrink-0">
+                        <div key={item._id} className="card p-4 flex gap-4">
+                            <Link to={`/product/${item.slug}`} className="shrink-0">
                                 <img
-                                    src={item.product.images?.[0]}
-                                    alt={item.product.name}
+                                    src={item.images?.[0]}
+                                    alt={item.name}
                                     className="w-24 h-24 object-cover rounded-lg"
                                 />
                             </Link>
                             <div className="flex-1 flex flex-col justify-between">
                                 <div>
                                     <div className="flex justify-between items-start">
-                                        <Link to={`/product/${item.product.slug}`} className="font-bold text-lg hover:text-primary transition">
-                                            {item.product.name}
+                                        <Link to={`/product/${item.slug}`} className="font-bold text-lg hover:text-primary transition">
+                                            {item.name}
                                         </Link>
                                         <button
-                                            onClick={() => removeItem(item.product._id)}
+                                            onClick={() => removeItem(item._id)}
                                             className="text-gray-500 hover:text-red-500 transition"
                                             title="Remove item"
                                         >
                                             <Trash2 size={20} />
                                         </button>
                                     </div>
-                                    <p className="text-primary font-semibold">{formatPrice(item.product.price)}</p>
+                                    <p className="text-primary font-semibold">{formatPrice(item.price)}</p>
                                 </div>
 
                                 <div className="flex items-center gap-4 mt-4">
                                     <div className="flex items-center border border-gray-700 rounded-lg">
                                         <button
-                                            onClick={() => updateQuantity(item.product._id, item.quantity - 1)}
+                                            onClick={() => updateQuantity(item._id, item.quantity - 1)}
                                             className="p-2 hover:bg-dark-secondary rounded-l"
                                         >
                                             <Minus size={16} />
                                         </button>
                                         <span className="px-4 font-semibold">{item.quantity}</span>
                                         <button
-                                            onClick={() => updateQuantity(item.product._id, item.quantity + 1)}
+                                            onClick={() => updateQuantity(item._id, item.quantity + 1)}
                                             className="p-2 hover:bg-dark-secondary rounded-r"
                                         >
                                             <Plus size={16} />
                                         </button>
                                     </div>
                                     <div className="ml-auto font-bold text-lg">
-                                        {formatPrice(item.product.price * item.quantity)}
+                                        {formatPrice(item.price * item.quantity)}
                                     </div>
                                 </div>
                             </div>

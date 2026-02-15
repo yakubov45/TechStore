@@ -53,7 +53,7 @@ export default function Payment() {
         try {
             const orderData = {
                 items: items.map(item => ({
-                    product: item.product._id,
+                    product: item._id,
                     quantity: item.quantity
                 })),
                 shippingAddress: {
@@ -92,25 +92,25 @@ export default function Payment() {
                         ) : (
                             <div className="space-y-4">
                                 {items.map(item => (
-                                    <div key={item.product._id} className="flex gap-4 border-b border-gray-800 pb-4 last:border-0">
+                                    <div key={item._id} className="flex gap-4 border-b border-gray-800 pb-4 last:border-0">
                                         <img
-                                            src={item.product.images?.[0]}
-                                            alt={item.product.name}
+                                            src={item.images?.[0]}
+                                            alt={item.name}
                                             className="w-20 h-20 object-cover rounded"
                                         />
                                         <div className="flex-1">
-                                            <h3 className="font-semibold">{item.product.name}</h3>
-                                            <p className="text-primary">{formatPrice(item.product.price)}</p>
+                                            <h3 className="font-semibold">{item.name}</h3>
+                                            <p className="text-primary">{formatPrice(item.price)}</p>
                                             <div className="flex items-center gap-2 mt-2">
                                                 <button
-                                                    onClick={() => updateQuantity(item.product._id, item.quantity - 1)}
+                                                    onClick={() => updateQuantity(item._id, item.quantity - 1)}
                                                     className="p-1 hover:bg-dark-secondary rounded"
                                                 >
                                                     <Minus size={16} />
                                                 </button>
                                                 <span>{item.quantity}</span>
                                                 <button
-                                                    onClick={() => updateQuantity(item.product._id, item.quantity + 1)}
+                                                    onClick={() => updateQuantity(item._id, item.quantity + 1)}
                                                     className="p-1 hover:bg-dark-secondary rounded"
                                                 >
                                                     <Plus size={16} />
@@ -118,9 +118,9 @@ export default function Payment() {
                                             </div>
                                         </div>
                                         <div className="text-right">
-                                            <p className="font-bold">{formatPrice(item.product.price * item.quantity)}</p>
+                                            <p className="font-bold">{formatPrice(item.price * item.quantity)}</p>
                                             <button
-                                                onClick={() => removeItem(item.product._id)}
+                                                onClick={() => removeItem(item._id)}
                                                 className="mt-2 text-red-500 hover:text-red400"
                                             >
                                                 <Trash2 size={18} />

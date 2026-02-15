@@ -81,6 +81,14 @@ const productSchema = new mongoose.Schema({
     timestamps: true
 });
 
+// Temporary daily discount expiry (if set, discounted price should be reverted after expiry)
+productSchema.add({
+    dailyDiscountExpire: {
+        type: Date,
+        default: null
+    }
+});
+
 // Auto-generate slug from name
 productSchema.pre('save', function (next) {
     if (this.isModified('name')) {
