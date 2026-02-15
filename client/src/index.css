@@ -1,0 +1,120 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-dark-base text-text-primary font-sans;
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #00b8d9 #1a1a24;
+  }
+
+  *::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: #1a1a24;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background: #00b8d9;
+    border-radius: 4px;
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    background: #00d4f5;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:shadow-glow transition-all duration-300 hover:scale-105 active:scale-95;
+  }
+
+  .btn-secondary {
+    @apply bg-dark-secondary text-primary border-2 border-primary px-6 py-3 rounded-lg font-semibold hover:bg-primary hover:text-white transition-all duration-300 hover:shadow-glow;
+  }
+
+  .input-field {
+    @apply w-full bg-dark-secondary border border-gray-700 rounded-lg px-4 py-3 text-text-primary placeholder-text-secondary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all duration-200;
+  }
+
+  .card {
+    @apply bg-dark-card rounded-lg overflow-hidden border border-gray-800 hover:border-primary/50 transition-all duration-300;
+  }
+
+  .card-glow {
+    @apply card hover:shadow-glow;
+  }
+
+  .product-card {
+    @apply card-glow cursor-pointer;
+  }
+
+  .section-title {
+    @apply text-3xl md:text-4xl font-bold mb-8 bg-gradient-to-r from-primary to-cyan-300 bg-clip-text text-transparent;
+  }
+
+  .skeleton {
+    @apply animate-pulse bg-gray-700 rounded;
+  }
+
+  .neon-border {
+    @apply border-2 border-primary shadow-glow;
+  }
+}
+
+@layer utilities {
+  .text-glow {
+    text-shadow: 0 0 10px rgba(0, 184, 217, 0.8);
+  }
+
+  .bg-gradient-dark {
+    background: linear-gradient(135deg, #0a0a0f 0%, #1a1a24 100%);
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Custom Animations */
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slide-up {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.8s ease-out;
+  }
+
+  .animate-slide-up {
+    animation: slide-up 0.6s ease-out backwards;
+  }
+}

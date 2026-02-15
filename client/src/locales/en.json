@@ -1,0 +1,80 @@
+{
+    "nav": {
+        "home": "Home",
+        "products": "Products",
+        "about": "About",
+        "contact": "Contact",
+        "faq": "FAQ",
+        "admin": "Admin Dashboard",
+        "signIn": "Sign In",
+        "logout": "Logout",
+        "search": "Search (Ctrl+K)"
+    },
+    "home": {
+        "hero": {
+            "subtitle": "Premium tech gear for enthusiasts",
+            "shopNow": "Shop Now"
+        },
+        "features": {
+            "shipping": "Fast Shipping",
+            "shippingDesc": "Free delivery on orders over $100",
+            "warranty": "Official Warranty",
+            "warrantyDesc": "1 year warranty on all products",
+            "support": "24/7 Support",
+            "supportDesc": "Expert assistance anytime"
+        },
+        "categories": "Shop by Category",
+        "featured": "Featured Products",
+        "brands": "Top Brands",
+        "newsletter": {
+            "title": "Subscribe to our Newsletter",
+            "desc": "Get the latest updates and exclusive offers.",
+            "placeholder": "Enter your email",
+            "button": "Subscribe"
+        }
+    },
+    "products": {
+        "filter": "Filters",
+        "sort": "Sort by",
+        "price": "Price",
+        "addToCart": "Add to Cart",
+        "outOfStock": "Out of Stock",
+        "loadMore": "Load More"
+    },
+    "cart": {
+        "title": "Shopping Cart",
+        "empty": "Your cart is empty",
+        "subtotal": "Subtotal",
+        "checkout": "Proceed to Checkout"
+    },
+    "common": {
+        "loading": "Loading...",
+        "error": "Something went wrong",
+        "success": "Success",
+        "save": "Save",
+        "cancel": "Cancel",
+        "delete": "Delete",
+        "edit": "Edit"
+    },
+    "reviews": {
+        "title": "Reviews",
+        "writeReview": "Write a Review",
+        "rating": "Rating",
+        "comment": "Comment",
+        "placeholder": "Share your thoughts about this product...",
+        "submit": "Submit Review",
+        "submitting": "Submitting...",
+        "loginRequired": "Please login to write a review",
+        "noReviews": "No reviews yet. Be the first to review!"
+    },
+    "order": {
+        "successTitle": "Order Confirmed!",
+        "id": "Order ID",
+        "details": "Order Details",
+        "total": "Total",
+        "scanQr": "Scan to verify order",
+        "returnHome": "Return Home",
+        "continueShopping": "Continue Shopping",
+        "print": "Print Receipt"
+    }
+}

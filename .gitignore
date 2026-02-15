@@ -1,0 +1,27 @@
+# Dependencies
+node_modules/
+client/node_modules/
+server/node_modules/
+
+# Production build
+client/dist/
+
+# Environment variables
+.env
+.env.local
+client/.env
+client/.env.local
+server/.env
+
+# Logs
+*.log
+client/*.log
+server/*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Server specific
+server/uploads/*
+!server/uploads/.gitkeep

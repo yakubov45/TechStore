@@ -1,0 +1,59 @@
+{
+    "nav": {
+        "home": "Bosh Sahifa",
+        "products": "Mahsulotlar",
+        "about": "Biz Haqimizda",
+        "contact": "Aloqa",
+        "faq": "TSS",
+        "admin": "Admin Panel",
+        "signIn": "Kirish",
+        "logout": "Chiqish",
+        "search": "Qidiruv (Ctrl+K)"
+    },
+    "home": {
+        "hero": {
+            "subtitle": "Texnologiya ixlosmandlari uchun premium jihozlar",
+            "shopNow": "Xarid qilish"
+        },
+        "features": {
+            "shipping": "Tezkor Yetkazib Berish",
+            "shippingDesc": "$100 dan ortiq buyurtmalarga bepul yetkazib berish",
+            "warranty": "Rasmiy Kafolat",
+            "warrantyDesc": "Barcha mahsulotlarga 1 yillik kafolat",
+            "support": "24/7 Qo'llab-quvvatlash",
+            "supportDesc": "Har qanday vaqtda ekspert yordami"
+        },
+        "categories": "Kategoriyalar bo'yicha",
+        "featured": "Tanlangan Mahsulotlar",
+        "brands": "Top Brendlar",
+        "newsletter": {
+            "title": "Yangiliklarga obuna bo'ling",
+            "desc": "So'nggi yangiliklar va maxsus takliflardan xabardor bo'ling.",
+            "placeholder": "Emailingizni kiriting",
+            "button": "Obuna bo'lish"
+        }
+    },
+    "products": {
+        "filter": "Filtrlar",
+        "sort": "Saralash",
+        "price": "Narx",
+        "addToCart": "Savatga qo'shish",
+        "outOfStock": "Sotuvda yo'q",
+        "loadMore": "Ko'proq yuklash"
+    },
+    "cart": {
+        "title": "Savat",
+        "empty": "Savatingiz bo'sh",
+        "subtotal": "Jami",
+        "checkout": "Xaridni rasmiylashtirish"
+    },
+    "common": {
+        "loading": "Yuklanmoqda...",
+        "error": "Xatolik yuz berdi",
+        "success": "Muvaffaqiyatli",
+        "save": "Saqlash",
+        "cancel": "Bekor qilish",
+        "delete": "O'chirish",
+        "edit": "Tahrirlash"
+    }
+}
