@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import api from '../services/api';
 import ProductCard from '../components/products/ProductCard';
 import { Shield, Truck, RotateCcw, Headphones, Flame, Zap, Clock } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 export default function Home() {
     const { t } = useTranslation();
