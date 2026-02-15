@@ -102,9 +102,7 @@
         "wishlistFailed": "Failed to update wishlist"
     },
     "cart": {
-        "addedToCart": "Added {{count}} item(s) to cart"
-    },
-    "cart": {
+        "addedToCart": "Added {{count}} item(s) to cart",
         "title": "Shopping Cart",
         "empty": "Your cart is empty",
         "subtotal": "Subtotal",

@@ -101,9 +101,7 @@
         "wishlistFailed": "Xohlaganlar ro'yxatini yangilash muvaffaqiyatsiz"
     },
     "cart": {
-        "addedToCart": "{{count}} ta mahsulot savatga qo'shildi"
-    },
-    "cart": {
+        "addedToCart": "{{count}} ta mahsulot savatga qo'shildi",
         "title": "Savat",
         "empty": "Savatingiz bo'sh",
         "subtotal": "Jami",
