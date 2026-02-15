@@ -24,7 +24,24 @@ export default function ProductDetails() {
 
     useEffect(() => {
         fetchProduct();
-    }, [slug]);
+        if (product) {
+            saveToRecentlyViewed(product);
+        }
+    }, [slug, product?._id]);
+
+    const saveToRecentlyViewed = (prod) => {
+        const viewed = JSON.parse(localStorage.getItem('recentlyViewed') || '[]');
+        const newItem = {
+            _id: prod._id,
+            name: prod.name,
+            slug: prod.slug,
+            image: prod.images?.[0],
+            price: prod.price
+        };
+        const filtered = viewed.filter(item => item._id !== prod._id);
+        const updated = [newItem, ...filtered].slice(0, 10);
+        localStorage.setItem('recentlyViewed', JSON.stringify(updated));
+    };
 
     const fetchProduct = async () => {
         try {
@@ -151,17 +168,16 @@ export default function ProductDetails() {
                     <h1 className="text-3xl font-bold mb-4">{product.name}</h1>
 
                     {/* Rating */}
-                    <div className="flex items-center gap-2 mb-4">
-                        <div className="flex">
-                            {[...Array(5)].map((_, i) => (
-                                <Star
-                                    key={i}
-                                    size={20}
-                                    className={i < Math.floor(product.averageRating) ? 'text-yellow-400 fill-current' : 'text-gray-600'}
-                                />
-                            ))}
+                    <div className="flex items-center gap-4 mb-6">
+                        <div className="flex items-center bg-yellow-400/10 px-3 py-1 rounded-full text-yellow-400 border border-yellow-400/20">
+                            <Star size={18} className="fill-current mr-2" />
+                            <span className="font-bold">{product.averageRating?.toFixed(1) || '0.0'}</span>
                         </div>
-                        <span>({product.reviewCount} reviews)</span>
+                        <span className="text-text-secondary text-sm">
+                            {product.reviewCount || 0} customer reviews
+                        </span>
+                        <div className="h-4 w-px bg-gray-800"></div>
+                        <span className="text-xs text-green-500 font-medium">98% would recommend</span>
                     </div>
 
                     {/* Price */}

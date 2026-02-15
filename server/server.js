@@ -23,6 +23,7 @@ import searchRoutes from './routes/searchRoutes.js';
 import currencyRoutes from './routes/currencyRoutes.js';
 import analyticsRoutes from './routes/analyticsRoutes.js';
 import paymentRoutes from './routes/paymentRoutes.js';
+import newsletterRoutes from './routes/newsletterRoutes.js';
 
 // Middleware
 import { errorHandler, notFound } from './middleware/errorMiddleware.js';
@@ -80,6 +81,7 @@ app.use('/api/search', searchRoutes);
 app.use('/api/currency', currencyRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/payments', paymentRoutes);
+app.use('/api/newsletter', newsletterRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

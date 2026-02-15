@@ -7,19 +7,25 @@
         "faq": "TSS",
         "admin": "Admin Panel",
         "signIn": "Kirish",
-        "logout": "Chiqish",
-        "search": "Qidiruv (Ctrl+K)"
+        "search": "Mahsulotlarni qidirish...",
+        "logout": "Chiqish"
     },
     "home": {
         "hero": {
             "subtitle": "Texnologiya ixlosmandlari uchun premium jihozlar",
-            "shopNow": "Xarid qilish"
+            "shopNow": "Xarid qilish",
+            "viewCatalog": "Katalogni ko'rish",
+            "buildPC": "Kompyuter yig'ish",
+            "browseParts": "Qismlarni ko'rish"
         },
+        "trending": "Trenddagilar",
+        "flashDeals": "Bugungi chegirmalar",
+        "endsIn": "Tugashiga",
         "features": {
             "shipping": "Tezkor Yetkazib Berish",
-            "shippingDesc": "$100 dan ortiq buyurtmalarga bepul yetkazib berish",
+            "shippingDesc": "1 mln so'mdan ortiq buyurtmalarga bepul yetkazib berish",
             "warranty": "Rasmiy Kafolat",
-            "warrantyDesc": "Barcha mahsulotlarga 1 yillik kafolat",
+            "warrantyDesc": "Barcha mahsulotlarga kafolat beriladi",
             "support": "24/7 Qo'llab-quvvatlash",
             "supportDesc": "Har qanday vaqtda ekspert yordami"
         },

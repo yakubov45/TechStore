@@ -1,20 +1,29 @@
-import { Link } from 'react-router-dom';
-import { ShoppingCart, User, Search, Menu, Heart } from 'lucide-react';
+import { useNavigate, Link } from 'react-router-dom';
+import { ShoppingCart, User, Menu, X, Search, LogOut, Settings, Heart } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../../store/authStore';
 import { useCartStore } from '../../store/cartStore';
 import GlobalSearch from '../search/GlobalSearch';
+import StickySearch from '../search/StickySearch';
+import CartDrawer from '../cart/CartDrawer';
 import LanguageSwitcher from '../common/LanguageSwitcher';
 
 export default function Navbar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
+    const [isCartOpen, setIsCartOpen] = useState(false);
     const { t } = useTranslation();
+    const navigate = useNavigate();
     const { isAuthenticated, user, logout } = useAuthStore();
     const itemCount = useCartStore(state => state.getItemCount());
 
     // Keyboard shortcut for search (Ctrl+K or Cmd+K)
+    const handleLogout = async () => {
+        await logout();
+        navigate('/');
+    };
+
     useEffect(() => {
         const handleKeyDown = (e) => {
             if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
@@ -28,9 +37,9 @@ export default function Navbar() {
     }, []);
 
     return (
-        <nav className="bg-dark-secondary border-b border-gray-800 sticky top-0 z-50">
+        <nav className="bg-dark-secondary/80 backdrop-blur-lg border-b border-gray-800 sticky top-0 z-50">
             <div className="container mx-auto px-4">
-                <div className="flex items-center justify-between h-16">
+                <div className="flex items-center justify-between h-20">
                     {/* Logo */}
                     <Link to="/" className="flex items-center space-x-2">
                         <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
@@ -40,12 +49,15 @@ export default function Navbar() {
                     </Link>
 
                     {/* Desktop Navigation */}
-                    <div className="hidden md:flex items-center space-x-8">
-                        <Link to="/" className="hover:text-primary transition">{t('nav.home')}</Link>
-                        <Link to="/products" className="hover:text-primary transition">{t('nav.products')}</Link>
-                        <Link to="/about" className="hover:text-primary transition">{t('nav.about')}</Link>
-                        <Link to="/contact" className="hover:text-primary transition">{t('nav.contact')}</Link>
-                        <Link to="/faq" className="hover:text-primary transition">{t('nav.faq')}</Link>
+                    <div className="hidden lg:flex items-center space-x-8">
+                        <Link to="/" className="hover:text-primary transition font-medium">{t('nav.home')}</Link>
+                        <Link to="/products" className="hover:text-primary transition font-medium">{t('nav.products')}</Link>
+                        <Link to="/about" className="hover:text-primary transition font-medium">{t('nav.about')}</Link>
+                    </div>
+
+                    {/* Search Bar - Desktop */}
+                    <div className="hidden md:block flex-1 max-w-md mx-8">
+                        <StickySearch />
                     </div>
 
                     {/* Right Section */}
@@ -54,13 +66,9 @@ export default function Navbar() {
 
                         <button
                             onClick={() => setIsSearchOpen(true)}
-                            className="p-2 hover:text-primary transition relative group"
-                            title={t('nav.search')}
+                            className="md:hidden p-2 hover:text-primary transition relative group"
                         >
-                            <Search size={20} />
-                            <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs bg-dark-card px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition whitespace-nowrap">
-                                Ctrl+K
-                            </span>
+                            <Search size={22} />
                         </button>
 
                         {isAuthenticated && (
@@ -69,14 +77,17 @@ export default function Navbar() {
                             </Link>
                         )}
 
-                        <Link to="/cart" className="relative p-2 hover:text-primary transition">
-                            <ShoppingCart size={20} />
+                        <button
+                            onClick={() => setIsCartOpen(true)}
+                            className="relative p-2 hover:text-primary transition"
+                        >
+                            <ShoppingCart size={22} />
                             {itemCount > 0 && (
-                                <span className="absolute -top-1 -right-1 bg-primary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                                <span className="absolute -top-1 -right-1 bg-primary text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center animate-pulse">
                                     {itemCount}
                                 </span>
                             )}
-                        </Link>
+                        </button>
 
                         {isAuthenticated ? (
                             <div className="relative group">
@@ -89,7 +100,12 @@ export default function Navbar() {
                                     {user?.role === 'admin' && (
                                         <Link to="/admin" className="block px-4 py-2 hover:bg-dark-secondary text-primary">{t('nav.admin')}</Link>
                                     )}
-                                    <button onClick={logout} className="block w-full text-left px-4 py-2 hover:bg-dark-secondary">{t('nav.logout')}</button>
+                                    <button
+                                        onClick={handleLogout}
+                                        className="block w-full text-left px-4 py-2 hover:bg-dark-secondary"
+                                    >
+                                        {t('nav.logout')}
+                                    </button>
                                 </div>
                             </div>
                         ) : (
@@ -115,6 +131,9 @@ export default function Navbar() {
                     </div>
                 )}
             </div>
+            {/* Search and Cart Modals */}
+            <GlobalSearch isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
+            <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
         </nav>
     );
 }

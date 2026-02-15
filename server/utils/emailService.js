@@ -1,26 +1,46 @@
 import nodemailer from 'nodemailer';
 import config from '../config/config.js';
 
-// Create transporter
+// Create transporter singleton with pooling
 const transporter = nodemailer.createTransport({
-    host: config.smtp.host,
-    port: config.smtp.port,
-    secure: false,
-    auth: {
-        user: config.smtp.user,
-        pass: config.smtp.pass
-    }
+  host: config.smtp.host,
+  port: config.smtp.port,
+  secure: config.smtp.port === 465, // Use secure if port is 465
+  pool: true, // Use connection pooling
+  maxConnections: 5,
+  maxMessages: 100,
+  auth: {
+    user: config.smtp.user,
+    pass: config.smtp.pass
+  },
+  tls: {
+    rejectUnauthorized: false // Often needed for various SMTP providers
+  },
+  connectionTimeout: 10000, // 10 seconds
+  greetingTimeout: 10000,
+  socketTimeout: 15000
 });
+
+// Verify connection configuration
+transporter.verify((error, success) => {
+  if (error) {
+    console.error('❌ SMTP Connection Error:', error);
+  } else {
+    console.log('✅ SMTP Server is ready to take our messages');
+  }
+});
+
+export { transporter };
 
 // Send email verification
 export const sendVerificationEmail = async (email, name, token) => {
-    const verificationUrl = `${config.clientUrl}/verify-email/${token}`;
+  const verificationUrl = `${config.clientUrl}/verify-email/${token}`;
 
-    const mailOptions = {
-        from: config.smtp.from,
-        to: email,
-        subject: 'Verify Your TechStore Email',
-        html: `
+  const mailOptions = {
+    from: config.smtp.from,
+    to: email,
+    subject: 'Verify Your TechStore Email',
+    html: `
       <!DOCTYPE html>
       <html>
       <head>
@@ -55,20 +75,20 @@ export const sendVerificationEmail = async (email, name, token) => {
       </body>
       </html>
     `
-    };
+  };
 
-    await transporter.sendMail(mailOptions);
+  await transporter.sendMail(mailOptions);
 };
 
 // Send password reset email
 export const sendPasswordResetEmail = async (email, name, token) => {
-    const resetUrl = `${config.clientUrl}/reset-password/${token}`;
+  const resetUrl = `${config.clientUrl}/reset-password/${token}`;
 
-    const mailOptions = {
-        from: config.smtp.from,
-        to: email,
-        subject: 'Reset Your TechStore Password',
-        html: `
+  const mailOptions = {
+    from: config.smtp.from,
+    to: email,
+    subject: 'Reset Your TechStore Password',
+    html: `
       <!DOCTYPE html>
       <html>
       <head>
@@ -104,18 +124,18 @@ export const sendPasswordResetEmail = async (email, name, token) => {
       </body>
       </html>
     `
-    };
+  };
 
-    await transporter.sendMail(mailOptions);
+  await transporter.sendMail(mailOptions);
 };
 
 // Send order confirmation email
 export const sendOrderConfirmationEmail = async (email, name, order) => {
-    const mailOptions = {
-        from: config.smtp.from,
-        to: email,
-        subject: `Order Confirmation - ${order.orderNumber}`,
-        html: `
+  const mailOptions = {
+    from: config.smtp.from,
+    to: email,
+    subject: `Order Confirmation - ${order.orderNumber}`,
+    html: `
       <!DOCTYPE html>
       <html>
       <head>
@@ -162,19 +182,19 @@ export const sendOrderConfirmationEmail = async (email, name, order) => {
       </body>
       </html>
     `
-    };
+  };
 
-    await transporter.sendMail(mailOptions);
+  await transporter.sendMail(mailOptions);
 };
 
 // Send newsletter email
 export const sendNewsletterEmail = async (email, subject, content) => {
-    const mailOptions = {
-        from: config.smtp.from,
-        to: email,
-        subject: subject,
-        html: content
-    };
+  const mailOptions = {
+    from: config.smtp.from,
+    to: email,
+    subject: subject,
+    html: content
+  };
 
-    await transporter.sendMail(mailOptions);
+  await transporter.sendMail(mailOptions);
 };

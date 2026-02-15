@@ -7,14 +7,20 @@
         "faq": "FAQ",
         "admin": "Admin Dashboard",
         "signIn": "Sign In",
-        "logout": "Logout",
-        "search": "Search (Ctrl+K)"
+        "search": "Search products...",
+        "logout": "Log Out"
     },
     "home": {
         "hero": {
             "subtitle": "Premium tech gear for enthusiasts",
-            "shopNow": "Shop Now"
+            "shopNow": "Shop Now",
+            "viewCatalog": "View Catalog",
+            "buildPC": "Build PC",
+            "browseParts": "Browse Parts"
         },
+        "trending": "Trending Now",
+        "flashDeals": "Flash Deals",
+        "endsIn": "Ends in",
         "features": {
             "shipping": "Fast Shipping",
             "shippingDesc": "Free delivery on orders over $100",
@@ -30,7 +36,8 @@
             "title": "Subscribe to our Newsletter",
             "desc": "Get the latest updates and exclusive offers.",
             "placeholder": "Enter your email",
-            "button": "Subscribe"
+            "button": "Subscribe",
+            "success": "Successfully subscribed!"
         }
     },
     "products": {

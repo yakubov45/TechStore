@@ -59,17 +59,29 @@ export default function ProductCard({ product }) {
                     </div>
                 )}
 
-                {/* Discount Badge */}
-                {discount > 0 && (
-                    <div className="absolute top-2 right-2 bg-primary text-white px-3 py-1 rounded-full text-sm font-bold">
-                        -{discount}%
-                    </div>
-                )}
+                {/* Dynamic Badges */}
+                <div className="absolute top-2 left-2 flex flex-col gap-2 z-10">
+                    {product.badge && (
+                        <div className="bg-red-600 text-white px-3 py-1 rounded-br-xl text-[10px] font-bold uppercase tracking-wider shadow-lg">
+                            {product.badge}
+                        </div>
+                    )}
+                    {product.isNewProduct && (
+                        <div className="bg-blue-600 text-white px-3 py-1 rounded-br-xl text-[10px] font-bold uppercase tracking-wider shadow-lg">
+                            NEW
+                        </div>
+                    )}
+                    {product.averageRating >= 4.5 && (
+                        <div className="bg-orange-500 text-white px-3 py-1 rounded-br-xl text-[10px] font-bold uppercase tracking-wider shadow-lg">
+                            HOT
+                        </div>
+                    )}
+                </div>
 
                 {/* Stock Badge */}
                 {product.stock === 0 && (
-                    <div className="absolute inset-0 bg-black/70 flex items-center justify-center">
-                        <span className="text-red-500 font-bold text-lg">Out of Stock</span>
+                    <div className="absolute inset-0 bg-black/70 backdrop-blur-[2px] z-20 flex items-center justify-center">
+                        <span className="text-white font-bold text-sm bg-red-600 px-4 py-2 rounded-full shadow-glow">Out of Stock</span>
                     </div>
                 )}
             </div>
@@ -87,23 +99,15 @@ export default function ProductCard({ product }) {
                 </h3>
 
                 {/* Rating */}
-                <div className="flex items-center space-x-1 mb-2">
-                    <div className="flex">
-                        {[...Array(5)].map((_, i) => (
-                            <svg
-                                key={i}
-                                className={`w-4 h-4 ${i < Math.floor(product.averageRating || 0)
-                                    ? 'text-yellow-400 fill-current'
-                                    : 'text-gray-600'
-                                    }`}
-                                viewBox="0 0 20 20"
-                            >
-                                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
-                            </svg>
-                        ))}
+                <div className="flex items-center gap-2 mb-3">
+                    <div className="flex items-center bg-yellow-400/10 px-2 py-0.5 rounded text-yellow-400">
+                        <span className="text-xs font-bold mr-1">{product.averageRating || '0.0'}</span>
+                        <svg className="w-3 h-3 fill-current" viewBox="0 0 20 20">
+                            <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+                        </svg>
                     </div>
-                    <span className="text-xs text-text-secondary">
-                        ({product.reviewCount || 0})
+                    <span className="text-[10px] text-text-secondary">
+                        ({product.reviewCount || 0} reviews)
                     </span>
                 </div>
 

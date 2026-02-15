@@ -1,4 +1,4 @@
-import nodemailer from 'nodemailer';
+import { transporter } from './emailService.js';
 import config from '../config/config.js';
 
 /**
@@ -28,16 +28,6 @@ export const sendSMSOTP = async (phone, code) => {
  * @param {string} code - OTP code
  */
 export const sendEmailOTP = async (email, name, code) => {
-    const transporter = nodemailer.createTransport({
-        host: config.smtp.host,
-        port: config.smtp.port,
-        secure: false,
-        auth: {
-            user: config.smtp.user,
-            pass: config.smtp.pass
-        }
-    });
-
     const mailOptions = {
         from: config.smtp.from,
         to: email,

@@ -200,6 +200,11 @@ export const createProduct = async (req, res) => {
             productData.images = req.files.map(file => `/uploads/${file.filename}`);
         }
 
+        // NaN protection
+        if (productData.price) productData.price = Number(productData.price) || 0;
+        if (productData.comparePrice) productData.comparePrice = Number(productData.comparePrice) || null;
+        if (productData.stock) productData.stock = Number(productData.stock) || 0;
+
         const product = await Product.create(productData);
 
         if (product.category) {
@@ -274,10 +279,17 @@ export const updateProduct = async (req, res) => {
         const oldCategory = product.category ? product.category.toString() : null;
         const oldBrand = product.brand ? product.brand.toString() : null;
 
-        // Apply updates
+        // Apply updates with NaN protection
         Object.keys(updates).forEach(key => {
             if (key !== 'existingImages' && key !== '_id') {
-                product[key] = updates[key];
+                if (key === 'price' || key === 'comparePrice' || key === 'stock') {
+                    const val = Number(updates[key]);
+                    if (!isNaN(val)) {
+                        product[key] = val;
+                    }
+                } else {
+                    product[key] = updates[key];
+                }
             }
         });
 
@@ -403,10 +415,12 @@ export const applyBulkDiscount = async (req, res) => {
         for (const product of products) {
             if (discountType === 'percentage') {
                 product.comparePrice = product.price;
-                product.price = product.price * (1 - discountValue / 100);
+                const newPrice = product.price * (1 - discountValue / 100);
+                product.price = isNaN(newPrice) ? product.price : newPrice;
             } else if (discountType === 'fixed') {
                 product.comparePrice = product.price;
-                product.price = Math.max(0, product.price - discountValue);
+                const newPrice = Math.max(0, product.price - discountValue);
+                product.price = isNaN(newPrice) ? product.price : newPrice;
             } else if (discountType === 'remove') {
                 if (product.comparePrice) {
                     product.price = product.comparePrice;

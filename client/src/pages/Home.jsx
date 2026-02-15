@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import api from '../services/api';
 import ProductCard from '../components/products/ProductCard';
+import { Shield, Truck, RotateCcw, Headphones, Flame, Zap, Clock } from 'lucide-react';
 
 export default function Home() {
     const { t } = useTranslation();
@@ -12,6 +13,43 @@ export default function Home() {
     const [brands, setBrands] = useState([]);
     const [currentSlide, setCurrentSlide] = useState(0);
     const [loading, setLoading] = useState(true);
+    const [timeLeft, setTimeLeft] = useState({ hours: 2, minutes: 11, seconds: 8 });
+    const [selectedCategory, setSelectedCategory] = useState(null);
+    const [recentlyViewed, setRecentlyViewed] = useState([]);
+    const [email, setEmail] = useState('');
+    const [submitting, setSubmitting] = useState(false);
+
+    const handleNewsletterSignup = async (e) => {
+        e.preventDefault();
+        if (!email) return;
+        setSubmitting(true);
+        try {
+            await api.post('/newsletter/subscribe', { email });
+            toast.success(t('home.newsletter.success') || 'Successfully subscribed!');
+            setEmail('');
+        } catch (error) {
+            toast.error(error.response?.data?.message || 'Failed to subscribe');
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setTimeLeft(prev => {
+                if (prev.seconds > 0) return { ...prev, seconds: prev.seconds - 1 };
+                if (prev.minutes > 0) return { ...prev, minutes: prev.minutes - 1, seconds: 59 };
+                if (prev.hours > 0) return { ...prev, hours: prev.hours - 1, minutes: 59, seconds: 59 };
+                return prev;
+            });
+        }, 1000);
+        return () => clearInterval(timer);
+    }, []);
+
+    useEffect(() => {
+        const viewed = JSON.parse(localStorage.getItem('recentlyViewed') || '[]');
+        setRecentlyViewed(viewed);
+    }, []);
 
     useEffect(() => {
         fetchData();
@@ -37,34 +75,18 @@ export default function Home() {
 
     const heroSlides = [
         {
-            title: "Latest Gaming Hardware",
-            subtitle: "home.hero.subtitle",
-            cta: "home.hero.shopNow",
+            title: "Performance Gaming Laptops",
+            subtitle: "RTX 40-Series graphics for ultimate performance",
+            cta1: "Shop Now",
+            cta2: "View Catalog",
             image: "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=1200"
         },
         {
-            title: "Build Your Dream PC",
-            subtitle: "home.hero.subtitle",
-            cta: "home.hero.shopNow",
+            title: "Build Your Dream Setup",
+            subtitle: "Custom components for every enthusiast",
+            cta1: "Build PC",
+            cta2: "Browse Parts",
             image: "https://images.unsplash.com/photo-1593640408182-31c70c8268f5?w=1200"
-        },
-        {
-            title: "Professional Workstations",
-            subtitle: "home.hero.subtitle",
-            cta: "home.hero.shopNow",
-            image: "https://images.unsplash.com/photo-1600861194942-f883de0dfe96?w=1200"
-        },
-        {
-            title: "Next-Gen Consoles",
-            subtitle: "home.hero.subtitle",
-            cta: "home.hero.shopNow",
-            image: "https://images.unsplash.com/photo-1605901309584-818e25960b8f?w=1200"
-        },
-        {
-            title: "Immersive Audio",
-            subtitle: "home.hero.subtitle",
-            cta: "home.hero.shopNow",
-            image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=1200"
         }
     ];
 
@@ -116,13 +138,31 @@ export default function Home() {
                                     }`}>
                                     {t(slide.subtitle)}
                                 </p>
-                                <Link
-                                    to="/products"
-                                    className={`btn-primary inline-block transition-all duration-700 delay-200 ${index === currentSlide ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
-                                        }`}
-                                >
-                                    {t(slide.cta)}
-                                </Link>
+                                <div className={`flex flex-wrap gap-4 transition-all duration-700 delay-200 ${index === currentSlide ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
+                                    }`}>
+                                    <Link to="/products" className="btn-primary px-8 py-3">
+                                        {slide.cta1}
+                                    </Link>
+                                    <Link to="/products" className="bg-white/10 hover:bg-white/20 backdrop-blur-md text-white px-8 py-3 rounded-full font-bold transition">
+                                        {slide.cta2}
+                                    </Link>
+                                </div>
+
+                                {/* Mini USPs */}
+                                <div className={`mt-12 flex flex-wrap gap-6 transition-all duration-700 delay-300 ${index === currentSlide ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
+                                    <div className="flex items-center gap-2 text-sm text-white/80">
+                                        <div className="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center text-primary italic">✓</div>
+                                        Rasmiy kafolat
+                                    </div>
+                                    <div className="flex items-center gap-2 text-sm text-white/80">
+                                        <div className="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center text-primary italic">✓</div>
+                                        24 soatda yetkazish
+                                    </div>
+                                    <div className="flex items-center gap-2 text-sm text-white/80">
+                                        <div className="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center text-primary italic">✓</div>
+                                        Qaytarish mavjud
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -160,37 +200,90 @@ export default function Home() {
 
             <div className="container mx-auto px-4">
                 {/* Features Section */}
-                <div className="bg-dark-secondary py-12 border-y border-gray-800 my-8 rounded-xl">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 px-8">
-                        <div className="flex items-center gap-4 p-6 bg-dark-card rounded-xl border border-gray-800 hover:border-primary transition group">
-                            <div className="p-4 bg-primary/10 rounded-full text-primary group-hover:scale-110 transition">
-                                <span className="text-2xl">🚀</span>
-                            </div>
-                            <div>
-                                <h3 className="font-bold text-lg">{t('home.features.shipping')}</h3>
-                                <p className="text-sm text-text-secondary">{t('home.features.shippingDesc')}</p>
-                            </div>
+                <div className="py-12 border-y border-gray-800 my-8">
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div className="flex flex-col items-center text-center p-6 bg-dark-secondary/50 rounded-2xl border border-gray-800 hover:border-primary transition group">
+                            <Truck className="text-primary mb-4 group-hover:scale-110 transition" size={32} />
+                            <h3 className="font-bold mb-1">Free Delivery 1M+</h3>
+                            <p className="text-xs text-text-secondary">On orders over 1,000,000 UZS</p>
                         </div>
-                        <div className="flex items-center gap-4 p-6 bg-dark-card rounded-xl border border-gray-800 hover:border-primary transition group">
-                            <div className="p-4 bg-primary/10 rounded-full text-primary group-hover:scale-110 transition">
-                                <span className="text-2xl">🛡️</span>
-                            </div>
-                            <div>
-                                <h3 className="font-bold text-lg">{t('home.features.warranty')}</h3>
-                                <p className="text-sm text-text-secondary">{t('home.features.warrantyDesc')}</p>
-                            </div>
+                        <div className="flex flex-col items-center text-center p-6 bg-dark-secondary/50 rounded-2xl border border-gray-800 hover:border-primary transition group">
+                            <Shield className="text-primary mb-4 group-hover:scale-110 transition" size={32} />
+                            <h3 className="font-bold mb-1">Secure Payment</h3>
+                            <p className="text-xs text-text-secondary">100% security guarantee</p>
                         </div>
-                        <div className="flex items-center gap-4 p-6 bg-dark-card rounded-xl border border-gray-800 hover:border-primary transition group">
-                            <div className="p-4 bg-primary/10 rounded-full text-primary group-hover:scale-110 transition">
-                                <span className="text-2xl">💬</span>
-                            </div>
-                            <div>
-                                <h3 className="font-bold text-lg">{t('home.features.support')}</h3>
-                                <p className="text-sm text-text-secondary">{t('home.features.supportDesc')}</p>
-                            </div>
+                        <div className="flex flex-col items-center text-center p-6 bg-dark-secondary/50 rounded-2xl border border-gray-800 hover:border-primary transition group">
+                            <RotateCcw className="text-primary mb-4 group-hover:scale-110 transition" size={32} />
+                            <h3 className="font-bold mb-1">7 Day Return</h3>
+                            <p className="text-xs text-text-secondary">Easy money back guarantee</p>
+                        </div>
+                        <div className="flex flex-col items-center text-center p-6 bg-dark-secondary/50 rounded-2xl border border-gray-800 hover:border-primary transition group">
+                            <Headphones className="text-primary mb-4 group-hover:scale-110 transition" size={32} />
+                            <h3 className="font-bold mb-1">Official Warranty</h3>
+                            <p className="text-xs text-text-secondary">Authorized service centers</p>
                         </div>
                     </div>
                 </div>
+
+                {/* Flash Deals Section */}
+                <section className="my-16">
+                    <div className="flex items-center justify-between mb-8 bg-gradient-to-r from-red-600/20 to-transparent p-6 rounded-2xl border border-red-600/30">
+                        <div className="flex items-center gap-6">
+                            <h2 className="text-2xl font-bold flex items-center gap-2">
+                                <Zap className="text-red-500 fill-red-500" />
+                                Bugungi chegirmalar
+                            </h2>
+                            <div className="flex items-center gap-2">
+                                <Clock size={18} className="text-text-secondary" />
+                                <div className="flex gap-1 font-mono text-xl">
+                                    <span className="bg-red-600 text-white px-2 rounded">
+                                        {timeLeft.hours.toString().padStart(2, '0')}
+                                    </span>
+                                    <span>:</span>
+                                    <span className="bg-red-600 text-white px-2 rounded">
+                                        {timeLeft.minutes.toString().padStart(2, '0')}
+                                    </span>
+                                    <span>:</span>
+                                    <span className="bg-red-600 text-white px-2 rounded">
+                                        {timeLeft.seconds.toString().padStart(2, '0')}
+                                    </span>
+                                </div>
+                                <span className="text-xs text-text-secondary uppercase ml-2">qoldi</span>
+                            </div>
+                        </div>
+                        <Link to="/products?sort=discount" className="text-red-500 font-bold hover:underline flex items-center gap-1">
+                            Barchasini ko'rish <ArrowRight size={16} />
+                        </Link>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                        {featuredProducts.slice(0, 4).map((product, index) => (
+                            <ProductCard key={product._id} product={{ ...product, badge: `-${Math.floor(Math.random() * 20 + 10)}%` }} />
+                        ))}
+                    </div>
+                </section>
+
+                {/* Smart Filters Chips */}
+                <section className="my-12">
+                    <div className="flex items-center gap-4 mb-6">
+                        <Flame className="text-orange-500" />
+                        <h2 className="text-xl font-bold">Trenddagilar:</h2>
+                        <div className="flex flex-wrap gap-2">
+                            {['Gaming', 'Office', 'Audio', 'Streaming', 'Apple', 'Asus'].map(chip => (
+                                <button
+                                    key={chip}
+                                    onClick={() => setSelectedCategory(chip)}
+                                    className={`px-6 py-2 rounded-full border transition-all text-sm font-medium ${selectedCategory === chip
+                                        ? 'bg-primary border-primary text-white'
+                                        : 'bg-dark-secondary border-gray-800 hover:border-primary'
+                                        }`}
+                                >
+                                    {chip}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                </section>
 
                 {/* Categories Grid */}
                 <section className="my-16 animate-fade-in">
@@ -264,13 +357,53 @@ export default function Home() {
                     <p className="text-text-secondary mb-6">
                         {t('home.newsletter.desc')}
                     </p>
-                    <div className="max-w-md mx-auto flex gap-2">
+                    <form onSubmit={handleNewsletterSignup} className="max-w-md mx-auto flex gap-2">
                         <input
                             type="email"
                             placeholder={t('home.newsletter.placeholder')}
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                             className="input-field flex-1"
+                            required
                         />
-                        <button className="btn-primary">{t('home.newsletter.button')}</button>
+                        <button
+                            type="submit"
+                            disabled={submitting}
+                            className="btn-primary disabled:opacity-50"
+                        >
+                            {submitting ? t('common.loading') : t('home.newsletter.button')}
+                        </button>
+                    </form>
+                </section>
+
+                {/* Recently Viewed */}
+                {recentlyViewed.length > 0 && (
+                    <section className="my-16">
+                        <h2 className="section-title">Siz ko'rgan mahsulotlar</h2>
+                        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                            {recentlyViewed.slice(0, 6).map(product => (
+                                <Link key={product._id} to={`/product/${product.slug}`} className="bg-dark-secondary/30 p-4 rounded-xl border border-gray-800 hover:border-primary transition group text-center">
+                                    <img src={product.image} alt={product.name} className="w-24 h-24 object-contain mx-auto mb-3 group-hover:scale-110 transition" />
+                                    <h4 className="text-xs font-medium truncate">{product.name}</h4>
+                                </Link>
+                            ))}
+                        </div>
+                    </section>
+                )}
+
+                {/* SEO Block */}
+                <section className="my-20 border-t border-gray-800 pt-12 pb-20">
+                    <div className="max-w-4xl">
+                        <h1 className="text-2xl font-bold mb-6">TechStore — kompyuter texnikalari onlayn do'koni</h1>
+                        <div className="space-y-4 text-text-secondary text-sm leading-relaxed">
+                            <p>
+                                TechStore - O'zbekistondagi eng yirik onlayn do'konlardan biri bo'lib, biz mijozlarimizga eng so'nggi va yuqori sifatli kompyuter texnikalarini taklif etamiz. Bizning assortimentimizda noutbuklar, monitorlar, videokartalar, protsessorlar va boshqa ko'plab qurilmalarni hamyonbop narxlarda topishingiz mumkin.
+                            </p>
+                            <p>
+                                Nima uchun aynan bizni tanlashadi?
+                                TechStore jamoasi har bir mijozga individual yondashadi. Biz faqat rasmiy kafolatga ega mahsulotlarni sotamiz va Toshkent bo'ylab 24 soat ichida yetkazib berishni kafolatlaymiz. Shuningdek, bizda qulay to'lov tizimlari va muddatli to'lov imkoniyatlari mavjud.
+                            </p>
+                        </div>
                     </div>
                 </section>
             </div>
