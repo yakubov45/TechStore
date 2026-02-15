@@ -53,12 +53,8 @@
             "placeholder": "Введите ваш email",
             "button": "Подписаться",
             "success": "Вы успешно подписались!"
-        }
-    },
-    "home_extra": {
+        },
         "viewAll": "Показать все",
-        "flashDeals": "Скидки дня",
-        "endsIn": "Осталось",
         "recentlyViewed": "Вы смотрели"
     },
     "products": {
@@ -158,8 +154,7 @@
         "placeOrder": "Оформить заказ",
         "successPlaced": "Заказ успешно оформлен!",
         "failed": "Ошибка при оформлении заказа"
-    }
-    ,
+    },
     "about": {
         "hero": {
             "title": "О TechStore",

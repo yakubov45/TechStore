@@ -53,12 +53,8 @@
             "placeholder": "Enter your email",
             "button": "Subscribe",
             "success": "Successfully subscribed!"
-        }
-    },
-    "home_extra": {
+        },
         "viewAll": "View All",
-        "flashDeals": "Flash Deals",
-        "endsIn": "Ends in",
         "recentlyViewed": "Recently Viewed"
     },
     "products": {
@@ -158,8 +154,7 @@
         "placeOrder": "Place Order",
         "successPlaced": "Order placed successfully!",
         "failed": "Order failed"
-    }
-    ,
+    },
     "about": {
         "hero": {
             "title": "About TechStore",

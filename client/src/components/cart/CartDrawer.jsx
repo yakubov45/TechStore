@@ -2,6 +2,7 @@ import { X, ShoppingBag, ArrowRight } from 'lucide-react';
 import { useCartStore } from '../../store/cartStore';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { createPortal } from 'react-dom';
 
 export default function CartDrawer({ isOpen, onClose }) {
     const { items, removeItem, updateQuantity, getTotalPrice } = useCartStore();
@@ -10,7 +11,7 @@ export default function CartDrawer({ isOpen, onClose }) {
 
     if (!isOpen) return null;
 
-    return (
+    return createPortal(
         <div className="fixed inset-0 z-[100] overflow-hidden">
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose}></div>
 
@@ -122,6 +123,7 @@ export default function CartDrawer({ isOpen, onClose }) {
                     </div>
                 </div>
             </div>
-        </div>
+        </div>,
+        document.body
     );
 }

@@ -52,12 +52,8 @@
             "desc": "So'nggi yangiliklar va maxsus takliflardan xabardor bo'ling.",
             "placeholder": "Emailingizni kiriting",
             "button": "Obuna bo'lish"
-        }
-    },
-    "home_extra": {
+        },
         "viewAll": "Hammasini ko'rish",
-        "flashDeals": "Bugungi chegirmalar",
-        "endsIn": "qoldi",
         "recentlyViewed": "Siz ko'rgan mahsulotlar"
     },
     "products": {
@@ -157,8 +153,7 @@
         "placeOrder": "Buyurtmani joylashtirish",
         "successPlaced": "Buyurtma muvaffaqiyatli joylashtirildi!",
         "failed": "Buyurtma muvaffaqiyatsiz tugadi"
-    }
-    ,
+    },
     "about": {
         "hero": {
             "title": "TechStore haqida",

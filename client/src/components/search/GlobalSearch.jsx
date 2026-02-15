@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Search, X, TrendingUp } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../../services/api';
+import { createPortal } from 'react-dom';
 
 export default function GlobalSearch({ isOpen, onClose }) {
     const [query, setQuery] = useState('');
@@ -67,8 +68,8 @@ export default function GlobalSearch({ isOpen, onClose }) {
 
     if (!isOpen) return null;
 
-    return (
-        <div className="fixed inset-0 bg-black/80 z-50 flex items-start justify-center pt-20 px-4">
+    return createPortal(
+        <div className="fixed inset-0 bg-black/80 z-[100] flex items-start justify-center pt-20 px-4">
             <div className="w-full max-w-3xl bg-dark-card rounded-2xl border border-primary/30 shadow-glow animate-slide-up">
                 {/* Search Input */}
                 <div className="flex items-center gap-3 p-4 border-b border-gray-800">
@@ -203,6 +204,7 @@ export default function GlobalSearch({ isOpen, onClose }) {
                     )}
                 </div>
             </div>
-        </div>
+        </div>,
+        document.body
     );
 }
