@@ -20,6 +20,7 @@ import FAQ from './pages/FAQ';
 import Admin from './pages/Admin';
 import AddProduct from './pages/admin/AddProduct';
 import EditProduct from './pages/admin/EditProduct';
+import AdminOrderDetail from './pages/admin/OrderDetail';
 import OrderSuccess from './pages/OrderSuccess';
 import Cart from './pages/Cart';
 import OTPVerification from './pages/OTPVerification';
@@ -86,6 +87,11 @@ function App() {
                 <Route path="/admin/products/edit/:id" element={
                     <ProtectedRoute adminOnly={true}>
                         <EditProduct />
+                    </ProtectedRoute>
+                } />
+                <Route path="/admin/orders/:id" element={
+                    <ProtectedRoute adminOnly={true}>
+                        <AdminOrderDetail />
                     </ProtectedRoute>
                 } />
 

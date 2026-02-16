@@ -488,7 +488,7 @@ export default function Admin() {
                                                         Details
                                                     </button>
                                                     <button
-                                                        onClick={() => navigate(`/orders/${order._id}`)}
+                                                        onClick={() => navigate(`/admin/orders/${order._id}`)}
                                                         className="p-2 hover:bg-dark-card rounded"
                                                     >
                                                         View
@@ -519,7 +519,7 @@ export default function Admin() {
                                                 </td>
                                             </tr>
                                         )}
-                                    </>
+                                    </React.Fragment>
                                 ))}
                             </tbody>
                         </table>

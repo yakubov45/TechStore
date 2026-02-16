@@ -1,6 +1,6 @@
 import { useNavigate, Link } from 'react-router-dom';
 import { ShoppingCart, User, Menu, X, Search, LogOut, Settings, Heart } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../../store/authStore';
 import { useCartStore } from '../../store/cartStore';
@@ -14,10 +14,12 @@ export default function Navbar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [isCartOpen, setIsCartOpen] = useState(false);
+    const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
     const { t } = useTranslation();
     const navigate = useNavigate();
     const { isAuthenticated, user, logout } = useAuthStore();
     const itemCount = useCartStore(state => state.getItemCount());
+    const menuCloseTimer = useRef(null);
 
     // Keyboard shortcut for search (Ctrl+K or Cmd+K)
     const handleLogout = async () => {
@@ -92,18 +94,28 @@ export default function Navbar() {
                         </button>
 
                         {isAuthenticated ? (
-                            <div className="relative group">
-                                <button className="flex items-center space-x-2 p-2 hover:text-primary transition">
+                            <div
+                                className="relative"
+                                onMouseEnter={() => {
+                                    clearTimeout(menuCloseTimer.current);
+                                    setIsUserMenuOpen(true);
+                                }}
+                                onMouseLeave={() => {
+                                    // auto-hide after 3s with a fade
+                                    menuCloseTimer.current = setTimeout(() => setIsUserMenuOpen(false), 3000);
+                                }}
+                            >
+                                <button className="flex items-center space-x-2 p-2 hover:text-primary transition" onClick={() => setIsUserMenuOpen(v => !v)}>
                                     <User size={20} />
                                     <span className="hidden md:block">{user?.name}</span>
                                 </button>
-                                <div className="absolute right-0 mt-2 w-48 bg-dark-card border border-gray-800 rounded-lg shadow-lg hidden group-hover:block">
-                                    <Link to="/profile" className="block px-4 py-2 hover:bg-dark-secondary">Profile</Link>
+                                <div className={`absolute right-0 mt-2 w-48 bg-dark-card border border-gray-800 rounded-lg shadow-lg transition-opacity duration-500 ${isUserMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
+                                    <Link to="/profile" onClick={() => setIsUserMenuOpen(false)} className="block px-4 py-2 hover:bg-dark-secondary">Profile</Link>
                                     {user?.role === 'admin' && (
-                                        <Link to="/admin" className="block px-4 py-2 hover:bg-dark-secondary text-primary">{t('nav.admin')}</Link>
+                                        <Link to="/admin" onClick={() => setIsUserMenuOpen(false)} className="block px-4 py-2 hover:bg-dark-secondary text-primary">{t('nav.admin')}</Link>
                                     )}
                                     <button
-                                        onClick={handleLogout}
+                                        onClick={async () => { setIsUserMenuOpen(false); await handleLogout(); }}
                                         className="block w-full text-left px-4 py-2 hover:bg-dark-secondary"
                                     >
                                         {t('nav.logout')}
