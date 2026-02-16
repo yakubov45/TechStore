@@ -32,7 +32,17 @@ export const updateProfile = async (req, res) => {
 
         if (user) {
             user.name = name || user.name;
-            user.phone = phone || user.phone;
+            // If phone is provided and different, mark phone as unverified
+            if (typeof phone !== 'undefined' && phone !== user.phone) {
+                user.phone = phone || undefined;
+                user.isPhoneVerified = false;
+                // Clear any existing OTP so user requests a new one
+                user.otpCode = undefined;
+                user.otpExpire = undefined;
+            } else if (typeof phone !== 'undefined') {
+                // If phone provided but same as before, keep existing verification state
+                user.phone = phone || user.phone;
+            }
 
             // Check if email is being changed
             if (email && email !== user.email) {

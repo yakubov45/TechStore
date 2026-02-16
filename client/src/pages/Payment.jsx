@@ -49,6 +49,13 @@ export default function Payment() {
             return;
         }
 
+        // Require phone verification before placing orders
+        if (user && !user.isPhoneVerified) {
+            toast.error('Please verify your phone number before placing an order');
+            navigate('/profile', { state: { tab: 'profile' } });
+            return;
+        }
+
         if (items.length === 0) {
             toast.error(t('cart.empty'));
             return;

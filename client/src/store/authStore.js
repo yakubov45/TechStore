@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import api from '../services/api';
+import toast from 'react-hot-toast';
 
 export const useAuthStore = create(
     persist(
@@ -18,6 +19,15 @@ export const useAuthStore = create(
                 localStorage.setItem('refreshToken', refreshToken);
 
                 set({ user, accessToken, refreshToken, isAuthenticated: true });
+                // If email not verified, trigger sending OTP (email + SMS if phone exists)
+                try {
+                    if (!user.isEmailVerified) {
+                        await api.post('/auth/send-otp');
+                        toast('Verification code sent to your email/phone', { icon: '✉️' });
+                    }
+                } catch (err) {
+                    console.error('Failed to send verification OTP after login', err);
+                }
                 return response.data;
             },
 

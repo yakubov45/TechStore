@@ -51,7 +51,14 @@ export default function OrderSuccess() {
                             ))}
                             <div className="border-t border-gray-700 pt-2 mt-2 flex justify-between font-bold text-lg">
                                 <span>{t('order.total')}</span>
-                                <span className="text-primary">{formatPrice(order.totalPrice)}</span>
+                                <span className="text-primary">
+                                    {formatPrice(
+                                        // Support both `total` (server) and legacy `totalPrice` (client)
+                                        order.total ?? order.totalPrice ?? (
+                                            (order.items || []).reduce((sum, it) => sum + (Number(it.price || 0) * it.quantity), 0) + (order.deliveryFee || 0) - (order.discount || 0)
+                                        )
+                                    )}
+                                </span>
                             </div>
                         </div>
                     </div>

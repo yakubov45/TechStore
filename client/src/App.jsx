@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Routes, Route, useNavigate } from 'react-router-dom';
+import { Routes, Route, useNavigate, Navigate } from 'react-router-dom';
 import Layout from './components/layout/Layout';
 import { useCurrencyStore } from './store/currencyStore';
 import ProtectedRoute from './components/common/ProtectedRoute';
@@ -64,6 +64,9 @@ function App() {
                         <Payment />
                     </ProtectedRoute>
                 } />
+
+                {/* Backwards-compatible route: some places/linkers use /checkout */}
+                <Route path="/checkout" element={<Navigate to="/payment" replace />} />
 
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />

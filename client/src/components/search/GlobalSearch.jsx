@@ -3,6 +3,7 @@ import { Search, X, TrendingUp } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 import { createPortal } from 'react-dom';
+import { useCurrencyStore } from '../../store/currencyStore';
 
 export default function GlobalSearch({ isOpen, onClose }) {
     const [query, setQuery] = useState('');
@@ -11,6 +12,7 @@ export default function GlobalSearch({ isOpen, onClose }) {
     const [recentSearches, setRecentSearches] = useState([]);
     const inputRef = useRef(null);
     const navigate = useNavigate();
+    const { formatPrice } = useCurrencyStore();
 
     useEffect(() => {
         if (isOpen) {
@@ -143,7 +145,7 @@ export default function GlobalSearch({ isOpen, onClose }) {
                                                     <p className="font-semibold">{product.name}</p>
                                                     <p className="text-sm text-text-secondary">{product.brand?.name}</p>
                                                 </div>
-                                                <p className="text-primary font-bold">{product?.price?.toLocaleString() || '0'} UZS</p>
+                                                <p className="text-primary font-bold">{formatPrice(product.price)}</p>
                                             </button>
                                         ))}
                                     </div>

@@ -8,6 +8,7 @@ import GlobalSearch from '../search/GlobalSearch';
 import StickySearch from '../search/StickySearch';
 import CartDrawer from '../cart/CartDrawer';
 import LanguageSwitcher from '../common/LanguageSwitcher';
+import CurrencySwitcher from '../common/CurrencySwitcher';
 
 export default function Navbar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -57,12 +58,13 @@ export default function Navbar() {
 
                     {/* Search Bar - Desktop */}
                     <div className="hidden md:block flex-1 max-w-md mx-8">
-                        <StickySearch />
+                        <StickySearch globalOpen={isSearchOpen} />
                     </div>
 
                     {/* Right Section */}
                     <div className="flex items-center space-x-4">
                         <LanguageSwitcher />
+                        <CurrencySwitcher />
 
                         <button
                             onClick={() => setIsSearchOpen(true)}

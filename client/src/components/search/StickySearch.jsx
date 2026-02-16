@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
-import { Search, X, TrendingUp, ArrowRight } from 'lucide-react';
+import { Search, X, ArrowRight } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 import { useTranslation } from 'react-i18next';
+import { useCurrencyStore } from '../../store/currencyStore';
 
-export default function StickySearch() {
+export default function StickySearch({ globalOpen = false }) {
     const [query, setQuery] = useState('');
     const [results, setResults] = useState({ products: [], categories: [], brands: [] });
     const [loading, setLoading] = useState(false);
@@ -14,11 +15,10 @@ export default function StickySearch() {
     const containerRef = useRef(null);
     const navigate = useNavigate();
     const { t } = useTranslation();
+    const { formatPrice } = useCurrencyStore();
 
     useEffect(() => {
-        const handleScroll = () => {
-            setIsScrolled(window.scrollY > 150);
-        };
+        const handleScroll = () => setIsScrolled(window.scrollY > 150);
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
@@ -32,6 +32,11 @@ export default function StickySearch() {
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
+
+    // Close sticky dropdown when global search modal is open
+    useEffect(() => {
+        if (globalOpen) setIsOpen(false);
+    }, [globalOpen]);
 
     useEffect(() => {
         const delayDebounce = setTimeout(() => {
@@ -66,7 +71,7 @@ export default function StickySearch() {
     return (
         <div
             ref={containerRef}
-            className={`transition-all duration-300 ${isScrolled
+            className={`transition-all duration-300 ${isScrolled && !globalOpen
                 ? 'fixed top-2 left-1/2 -translate-x-1/2 w-full max-w-xl z-[60] px-4'
                 : 'relative w-full max-w-md hidden md:block'
                 }`}
@@ -79,7 +84,7 @@ export default function StickySearch() {
                 <input
                     ref={inputRef}
                     type="text"
-                    placeholder={t('nav.search') + "..."}
+                    placeholder={t('nav.search') + '...'}
                     value={query}
                     onChange={(e) => {
                         setQuery(e.target.value);
@@ -128,7 +133,7 @@ export default function StickySearch() {
                                                     </div>
                                                     <div className="flex-1 min-w-0">
                                                         <p className="text-sm font-medium truncate">{product.name}</p>
-                                                        <p className="text-xs text-primary font-bold">{product?.price?.toLocaleString() || '0'} UZS</p>
+                                                        <p className="text-xs text-primary font-bold">{formatPrice(product.price)}</p>
                                                     </div>
                                                     <ArrowRight size={14} className="text-text-secondary opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all" />
                                                 </button>

@@ -1,17 +1,23 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { User, Package, Heart, LogOut } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import { useCurrencyStore } from '../store/currencyStore';
 import api from '../services/api';
+import toast from 'react-hot-toast';
 
 export default function Profile() {
     const { user, isAuthenticated, logout } = useAuthStore();
+    const updateUser = useAuthStore(state => state.updateUser);
     const { formatPrice } = useCurrencyStore();
     const [orders, setOrders] = useState([]);
     const [wishlist, setWishlist] = useState([]);
-    const [activeTab, setActiveTab] = useState('profile');
+    const location = useLocation();
+    const [activeTab, setActiveTab] = useState(location.state?.tab || 'profile');
     const navigate = useNavigate();
+    const [editingPhone, setEditingPhone] = useState(false);
+    const [phoneValue, setPhoneValue] = useState(user?.phone || '');
+    const [otpCode, setOtpCode] = useState('');
 
     useEffect(() => {
         if (!isAuthenticated) {
@@ -95,12 +101,96 @@ export default function Profile() {
                                     <label className="text-text-secondary text-sm">Email</label>
                                     <p className="text-lg">{user?.email}</p>
                                     {!user?.isEmailVerified && (
-                                        <span className="text-yellow-500 text-xs">Not verified</span>
+                                        <div className="flex items-center gap-4">
+                                            <span className="text-yellow-500 text-xs">Not verified</span>
+                                            <button
+                                                onClick={async () => {
+                                                    try {
+                                                        await api.post('/auth/send-otp');
+                                                        toast.success('Verification code sent to your email/phone');
+                                                    } catch (err) {
+                                                        console.error(err);
+                                                        toast.error('Failed to send verification code');
+                                                    }
+                                                }}
+                                                className="text-sm px-3 py-1 bg-primary/10 rounded text-primary"
+                                            >
+                                                Resend Code
+                                            </button>
+                                        </div>
                                     )}
                                 </div>
                                 <div>
                                     <label className="text-text-secondary text-sm">Phone</label>
-                                    <p className="text-lg">{user?.phone || 'Not provided'}</p>
+                                    {!editingPhone ? (
+                                        <div className="flex items-center gap-4">
+                                            <p className="text-lg">{user?.phone || 'Not provided'}</p>
+                                            <button onClick={() => { setEditingPhone(true); setPhoneValue(user?.phone || '') }} className="text-sm px-3 py-1 bg-primary/10 rounded text-primary">Edit</button>
+                                        </div>
+                                    ) : (
+                                        <div className="flex items-center gap-3">
+                                            <input value={phoneValue} onChange={(e) => setPhoneValue(e.target.value)} className="input-field w-48" />
+                                            <button
+                                                onClick={async () => {
+                                                    try {
+                                                        const res = await api.put('/users/profile', { phone: phoneValue });
+                                                        updateUser(res.data.data);
+                                                        toast.success('Phone updated');
+                                                        setEditingPhone(false);
+                                                    } catch (err) {
+                                                        console.error(err);
+                                                        toast.error('Failed to update phone');
+                                                    }
+                                                }}
+                                                className="text-sm px-3 py-1 bg-primary rounded text-white"
+                                            >
+                                                Save
+                                            </button>
+                                            <button onClick={() => setEditingPhone(false)} className="text-sm px-3 py-1 bg-dark-secondary rounded">Cancel</button>
+                                        </div>
+                                    )}
+
+                                    {user?.phone && (
+                                        <div className="mt-2 flex items-center gap-2">
+                                            {!user?.isPhoneVerified ? (
+                                                <>
+                                                    <button
+                                                        onClick={async () => {
+                                                            try {
+                                                                await api.post('/auth/send-otp');
+                                                                toast.success('Verification code sent to your phone');
+                                                            } catch (err) {
+                                                                console.error(err);
+                                                                toast.error('Failed to send code');
+                                                            }
+                                                        }}
+                                                        className="text-sm px-3 py-1 bg-primary/10 rounded text-primary"
+                                                    >
+                                                        Send SMS Code
+                                                    </button>
+                                                    <input type="text" value={otpCode} onChange={(e) => setOtpCode(e.target.value)} placeholder="Enter code" className="input-field w-36" />
+                                                    <button
+                                                        onClick={async () => {
+                                                            try {
+                                                                const res = await api.post('/auth/verify-otp', { code: otpCode });
+                                                                updateUser(res.data.data);
+                                                                toast.success('Phone verified');
+                                                                setOtpCode('');
+                                                            } catch (err) {
+                                                                console.error(err);
+                                                                toast.error(err.response?.data?.message || 'Verification failed');
+                                                            }
+                                                        }}
+                                                        className="text-sm px-3 py-1 bg-primary rounded text-white"
+                                                    >
+                                                        Verify
+                                                    </button>
+                                                </>
+                                            ) : (
+                                                <span className="text-green-500 text-sm">Phone verified</span>
+                                            )}
+                                        </div>
+                                    )}
                                 </div>
                                 <div>
                                     <label className="text-text-secondary text-sm">Member Since</label>

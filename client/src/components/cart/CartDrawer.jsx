@@ -1,11 +1,13 @@
 import { X, ShoppingBag, ArrowRight } from 'lucide-react';
 import { useCartStore } from '../../store/cartStore';
+import { useCurrencyStore } from '../../store/currencyStore';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { createPortal } from 'react-dom';
 
 export default function CartDrawer({ isOpen, onClose }) {
     const { items, removeItem, updateQuantity, getTotalPrice } = useCartStore();
+    const { formatPrice } = useCurrencyStore();
     const navigate = useNavigate();
     const { t } = useTranslation();
 
@@ -58,8 +60,8 @@ export default function CartDrawer({ isOpen, onClose }) {
                                         <div className="flex-1 flex flex-col justify-between">
                                             <div>
                                                 <h4 className="font-semibold text-sm line-clamp-1">{item.name}</h4>
-                                                <p className="text-primary font-bold text-sm mt-1">
-                                                    {item?.price?.toLocaleString() || '0'} UZS
+                                                    <p className="text-primary font-bold text-sm mt-1">
+                                                    {formatPrice(item.price)}
                                                 </p>
                                             </div>
                                             <div className="flex items-center justify-between mt-2">
@@ -99,12 +101,12 @@ export default function CartDrawer({ isOpen, onClose }) {
                                 <div className="flex items-center justify-between mb-6">
                                     <span className="text-text-secondary">Subtotal</span>
                                     <span className="text-2xl font-bold text-primary">
-                                        {getTotalPrice()?.toLocaleString() || '0'} UZS
+                                        {formatPrice(getTotalPrice())}
                                     </span>
                                 </div>
                                 <div className="space-y-3">
                                     <Link
-                                        to="/checkout"
+                                        to="/payment"
                                         onClick={onClose}
                                         className="w-full btn-primary py-4 flex items-center justify-center gap-2 group"
                                     >
