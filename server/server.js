@@ -67,50 +67,56 @@ connectDB();
 securityHeaders(app);
 
 // CORS configuration - allow configured client URL and common local dev ports
-const allowedOrigins = [
-    config.clientUrl,
-    'http://localhost:5173',
-    'http://localhost:3000',
-    'http://127.0.0.1:5173',
-    'http://127.0.0.1:3000'
-];
+// If ALLOW_ALL_ORIGINS=true is set in the environment, enable permissive CORS
+if (process.env.ALLOW_ALL_ORIGINS === 'true') {
+    console.warn('⚠️ ALLOW_ALL_ORIGINS is enabled — CORS will accept any origin (temporary)');
+    app.use(cors({ origin: true, credentials: true }));
+} else {
+    const allowedOrigins = [
+        config.clientUrl,
+        'http://localhost:5173',
+        'http://localhost:3000',
+        'http://127.0.0.1:5173',
+        'http://127.0.0.1:3000'
+    ];
 
-// Allow additional origins via env (comma separated)
-if (process.env.ADDITIONAL_CLIENT_ORIGINS) {
-    process.env.ADDITIONAL_CLIENT_ORIGINS.split(',').forEach(o => {
-        const origin = o.trim();
-        if (origin && !allowedOrigins.includes(origin)) allowedOrigins.push(origin);
-    });
-}
-
-app.use(cors({
-    origin: function (origin, callback) {
-        // allow requests with no origin (like mobile apps, curl, Postman)
-        if (!origin) return callback(null, true);
-
-        const isAllowed = allowedOrigins.some(allowed => {
-            if (allowed === origin) return true;
-            try {
-                // Handle cases where allowed origin might not have a protocol but request does, or trailing slashes
-                const allowedUrl = new URL(allowed);
-                const originUrl = new URL(origin);
-                return allowedUrl.origin === originUrl.origin;
-            } catch (e) {
-                return false;
-            }
+    // Allow additional origins via env (comma separated)
+    if (process.env.ADDITIONAL_CLIENT_ORIGINS) {
+        process.env.ADDITIONAL_CLIENT_ORIGINS.split(',').forEach(o => {
+            const origin = o.trim();
+            if (origin && !allowedOrigins.includes(origin)) allowedOrigins.push(origin);
         });
+    }
 
-        if (isAllowed) {
-            return callback(null, true);
-        } else {
-            console.warn(`⚠️ CORS blocked request from origin: ${origin}`);
-            return callback(new Error('CORS policy: This origin is not allowed - ' + origin));
-        }
-    },
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin']
-}));
+    app.use(cors({
+        origin: function (origin, callback) {
+            // allow requests with no origin (like mobile apps, curl, Postman)
+            if (!origin) return callback(null, true);
+
+            const isAllowed = allowedOrigins.some(allowed => {
+                if (allowed === origin) return true;
+                try {
+                    // Handle cases where allowed origin might not have a protocol but request does, or trailing slashes
+                    const allowedUrl = new URL(allowed);
+                    const originUrl = new URL(origin);
+                    return allowedUrl.origin === originUrl.origin;
+                } catch (e) {
+                    return false;
+                }
+            });
+
+            if (isAllowed) {
+                return callback(null, true);
+            } else {
+                console.warn(`⚠️ CORS blocked request from origin: ${origin}`);
+                return callback(new Error('CORS policy: This origin is not allowed - ' + origin));
+            }
+        },
+        credentials: true,
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+        allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin']
+    }));
+}
 
 // Rate limiting
 const limiter = rateLimit({
