@@ -7,6 +7,14 @@ import { sendOrderConfirmationEmail } from '../utils/emailService.js';
 // @access  Private
 export const createOrder = async (req, res) => {
     try {
+        // Prevent admin accounts from placing orders
+        if (req.user && req.user.role === 'admin') {
+            return res.status(403).json({
+                success: false,
+                message: 'Admin accounts are not allowed to place orders'
+            });
+        }
+
         const {
             items,
             shippingAddress,
@@ -244,9 +252,12 @@ export const cancelOrder = async (req, res) => {
 // @access  Private/Admin
 export const getAllOrders = async (req, res) => {
     try {
-        const { status, page = 1, limit = 20 } = req.query;
+        const { status, paymentMethod, deliveryOption, page = 1, limit = 20 } = req.query;
 
-        const query = status ? { orderStatus: status } : {};
+        const query = {};
+        if (status) query.orderStatus = status;
+        if (paymentMethod) query.paymentMethod = paymentMethod;
+        if (deliveryOption) query.deliveryOption = deliveryOption;
 
         const pageNum = parseInt(page);
         const limitNum = parseInt(limit);

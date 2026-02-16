@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, Edit, Trash2, Package, Grid, Tag, DollarSign, Users, ShoppingBag, Layers, Activity, TrendingUp, Clock } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
@@ -17,6 +17,12 @@ export default function Admin() {
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
     const [brands, setBrands] = useState([]);
+    const [orders, setOrders] = useState([]);
+    const [ordersLoading, setOrdersLoading] = useState(false);
+    const [paymentFilter, setPaymentFilter] = useState('all');
+    const [deliveryFilter, setDeliveryFilter] = useState('all');
+    const [statusFilter, setStatusFilter] = useState('all');
+    const [expandedOrderId, setExpandedOrderId] = useState(null);
     const [stats, setStats] = useState(null);
     const [loading, setLoading] = useState(true);
     const { formatPrice } = useCurrencyStore();
@@ -36,6 +42,30 @@ export default function Admin() {
 
         fetchData();
     }, [isAuthenticated, user]);
+
+    const fetchOrders = async () => {
+        setOrdersLoading(true);
+        try {
+            const params = {};
+            if (paymentFilter && paymentFilter !== 'all') params.paymentMethod = paymentFilter;
+            if (deliveryFilter && deliveryFilter !== 'all') params.deliveryOption = deliveryFilter;
+            if (statusFilter && statusFilter !== 'all') params.status = statusFilter;
+
+            const res = await api.get('/orders/all/list', { params });
+            setOrders(res.data.data || []);
+        } catch (error) {
+            console.error('Failed to fetch orders', error);
+            toast.error('Failed to load orders');
+        } finally {
+            setOrdersLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        if (activeTab === 'orders') {
+            fetchOrders();
+        }
+    }, [activeTab, paymentFilter, deliveryFilter, statusFilter]);
 
     const fetchData = async () => {
         setLoading(true);
@@ -97,6 +127,7 @@ export default function Admin() {
 
     const tabs = [
         { id: 'dashboard', label: 'Dashboard', icon: Activity },
+        { id: 'orders', label: 'Orders', icon: ShoppingBag, count: stats ? stats.stats.totalOrders : 0 },
         { id: 'products', label: 'Products', icon: Package, count: products.length },
         { id: 'categories', label: 'Categories', icon: Grid, count: categories.length },
         { id: 'brands', label: 'Brands', icon: Tag, count: brands.length },
@@ -355,6 +386,140 @@ export default function Admin() {
                                             </div>
                                         </td>
                                     </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            )}
+
+            {/* Orders Tab */}
+            {activeTab === 'orders' && (
+                <div className="space-y-6">
+                    <div className="flex items-center justify-between">
+                        <h2 className="text-2xl font-bold">Orders</h2>
+                        <div className="flex items-center gap-2">
+                            <select
+                                value={paymentFilter}
+                                onChange={(e) => setPaymentFilter(e.target.value)}
+                                className="bg-dark-card text-sm px-3 py-2 rounded"
+                            >
+                                <option value="all">All Payments</option>
+                                <option value="online">Online</option>
+                                <option value="cash">Cash</option>
+                            </select>
+
+                            <select
+                                value={deliveryFilter}
+                                onChange={(e) => setDeliveryFilter(e.target.value)}
+                                className="bg-dark-card text-sm px-3 py-2 rounded"
+                            >
+                                <option value="all">All Delivery</option>
+                                <option value="pickup">Pickup</option>
+                                <option value="standard">Delivery</option>
+                            </select>
+
+                            <select
+                                value={statusFilter}
+                                onChange={(e) => setStatusFilter(e.target.value)}
+                                className="bg-dark-card text-sm px-3 py-2 rounded"
+                            >
+                                <option value="all">All Statuses</option>
+                                <option value="pending">Pending</option>
+                                <option value="processing">Processing</option>
+                                <option value="delivered">Delivered</option>
+                                <option value="cancelled">Cancelled</option>
+                            </select>
+
+                            <button
+                                onClick={async () => {
+                                    // refetch orders with filters
+                                    await fetchOrders();
+                                }}
+                                className="btn-primary px-4 py-2"
+                            >
+                                Refresh
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="card overflow-x-auto">
+                        <table className="w-full text-sm">
+                            <thead>
+                                <tr className="text-left text-text-secondary border-b border-gray-800">
+                                    <th className="p-4">Customer</th>
+                                    <th className="p-4">Date</th>
+                                    <th className="p-4">Payment</th>
+                                    <th className="p-4">Delivery</th>
+                                    <th className="p-4">Status</th>
+                                    <th className="p-4 text-right">Total</th>
+                                    <th className="p-4">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-gray-800">
+                                {orders.map(order => (
+                                    <React.Fragment key={order._id}>
+                                        <tr key={order._id} className="group">
+                                            <td className="p-4">
+                                                <div>
+                                                    <p className="font-semibold">{order.customerInfo?.name || order.user?.name}</p>
+                                                    <p className="text-xs text-text-secondary">{order.customerInfo?.email || order.user?.email}</p>
+                                                </div>
+                                            </td>
+                                            <td className="p-4 text-text-secondary">{new Date(order.createdAt).toLocaleString()}</td>
+                                            <td className="p-4">{order.paymentMethod}</td>
+                                            <td className="p-4">{order.deliveryOption}</td>
+                                            <td className="p-4">
+                                                <span className={`px-2 py-1 rounded-full text-xs font-semibold ${order.orderStatus === 'delivered' ? 'bg-green-500/10 text-green-500' :
+                                                    order.orderStatus === 'pending' ? 'bg-yellow-500/10 text-yellow-500' :
+                                                        order.orderStatus === 'processing' ? 'bg-blue-500/10 text-blue-500' :
+                                                            'bg-red-500/10 text-red-500'
+                                                    }`}>
+                                                    {order.orderStatus}
+                                                </span>
+                                            </td>
+                                            <td className="p-4 text-right font-bold text-primary">{formatPrice(order.total)}</td>
+                                            <td className="p-4">
+                                                <div className="flex gap-2">
+                                                    <button
+                                                        onClick={() => setExpandedOrderId(expandedOrderId === order._id ? null : order._id)}
+                                                        className="p-2 hover:bg-primary/20 rounded"
+                                                    >
+                                                        Details
+                                                    </button>
+                                                    <button
+                                                        onClick={() => navigate(`/orders/${order._id}`)}
+                                                        className="p-2 hover:bg-dark-card rounded"
+                                                    >
+                                                        View
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+
+                                        {expandedOrderId === order._id && (
+                                            <tr key={`${order._id}-items`} className="bg-dark-secondary">
+                                                <td colSpan={7} className="p-4">
+                                                    <div className="space-y-3">
+                                                        {order.items.map((it) => (
+                                                            <div key={it._id || it.product} className="flex items-center justify-between">
+                                                                <div className="flex items-center gap-3">
+                                                                    {it.productSnapshot?.image && (
+                                                                        <img src={it.productSnapshot.image} alt={it.productSnapshot.name} className="w-12 h-12 object-cover rounded" />
+                                                                    )}
+                                                                    <div>
+                                                                        <p className="font-medium">{it.productSnapshot?.name}</p>
+                                                                        <p className="text-xs text-text-secondary">Qty: {it.quantity} • {formatPrice(it.price)}</p>
+                                                                    </div>
+                                                                </div>
+                                                                <div className="text-sm font-semibold">{formatPrice(it.price * it.quantity)}</div>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        )}
+                                    </>
                                 ))}
                             </tbody>
                         </table>

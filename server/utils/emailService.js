@@ -147,4 +147,5 @@ export const sendNewsletterEmail = async (email, subject, content) => {
 };
 
 export { smtpAvailable };
+export { sendMailGeneric };
 

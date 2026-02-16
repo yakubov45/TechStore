@@ -1,4 +1,4 @@
-import { transporter, smtpAvailable } from './emailService.js';
+import { sendMailGeneric, smtpAvailable } from './emailService.js';
 import config from '../config/config.js';
 
 /**
@@ -47,11 +47,6 @@ export const sendEmailOTP = async (email, name, code) => {
         `
     };
 
-    if (!smtpAvailable) {
-        const err = new Error('SMTP_NOT_CONFIGURED');
-        err.code = 'SMTP_NOT_CONFIGURED';
-        throw err;
-    }
-
-    await transporter.sendMail(mailOptions);
+    // Use generic sender (SendGrid preferred, SMTP fallback)
+    await sendMailGeneric({ from: mailOptions.from, to: mailOptions.to, subject: mailOptions.subject, html: mailOptions.html });
 };

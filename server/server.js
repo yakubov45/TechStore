@@ -40,9 +40,18 @@ app.set('trust proxy', 1);
 
 // Enforce HTTPS in production (when behind a proxy like Cloudflare/Render)
 app.use((req, res, next) => {
+    // Only enforce in production, but allow local development and OPTIONS preflight
     if (process.env.NODE_ENV === 'production') {
-        const proto = req.headers['x-forwarded-proto'] || req.protocol;
-        if (proto && proto.toLowerCase() !== 'https') {
+        // Do not redirect preflight requests
+        if (req.method === 'OPTIONS') return next();
+
+        const proto = (req.headers['x-forwarded-proto'] || req.protocol || '').toString();
+        const host = (req.headers.host || '').toString();
+
+        // Skip redirect for local hosts to avoid breaking local dev CORS when NODE_ENV=production
+        const isLocalHost = host.includes('localhost') || host.startsWith('127.') || host.startsWith('::1');
+
+        if (proto && proto.toLowerCase() !== 'https' && !isLocalHost) {
             // Redirect to HTTPS preserving host and url
             return res.redirect(301, `https://${req.headers.host}${req.url}`);
         }
