@@ -7,15 +7,15 @@ export const securityHeaders = (app) => {
         crossOriginResourcePolicy: false,
     }));
 
-    // Content Security Policy - conservative default, adjust as needed for external services
+    // Content Security Policy - allow connections to self and common backends
     app.use(helmet.contentSecurityPolicy({
         useDefaults: true,
         directives: {
             defaultSrc: ["'self'"],
             scriptSrc: ["'self'", "'unsafe-inline'"],
             styleSrc: ["'self'", "'unsafe-inline'"],
-            imgSrc: ["'self'", 'data:'],
-            connectSrc: ["'self'"],
+            imgSrc: ["'self'", 'data:', 'https:', 'blob:'],
+            connectSrc: ["'self'", 'https://*.onrender.com', 'https://techstore-u0w8.onrender.com'],
             fontSrc: ["'self'", 'data:'],
             objectSrc: ["'none'"],
             upgradeInsecureRequests: []

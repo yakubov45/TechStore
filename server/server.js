@@ -88,9 +88,12 @@ if (process.env.ALLOW_ALL_ORIGINS === 'true') {
         });
     }
 
-    // Also allow any origin in production that matches the pattern *.onrender.com for flexibility
-    if (process.env.NODE_ENV === 'production') {
-        allowedOrigins.push(/^https:\/\/.*\.onrender\.com$/);
+    // Always allow onrender.com domains for flexibility (Render subdomains)
+    allowedOrigins.push(/^https:\/\/.*\.onrender\.com$/);
+
+    // Also allow the specific client URL if it's an onrender.com domain
+    if (config.clientUrl && config.clientUrl.includes('onrender.com')) {
+        allowedOrigins.push(config.clientUrl);
     }
 
     app.use(cors({
