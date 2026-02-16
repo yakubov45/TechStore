@@ -245,12 +245,21 @@ export const forgotPassword = async (req, res) => {
         await user.save();
 
         // Send reset email
-        await sendPasswordResetEmail(email, user.name, resetToken);
+        try {
+            await sendPasswordResetEmail(email, user.name, resetToken);
 
-        res.json({
-            success: true,
-            message: 'Password reset email sent'
-        });
+            res.json({
+                success: true,
+                message: 'Password reset email sent'
+            });
+        } catch (emailError) {
+            console.error('❌ Failed to send password reset email:', emailError && (emailError.message || emailError));
+            // Don't expose internal error details to the client
+            return res.status(503).json({
+                success: false,
+                message: 'Email service unavailable. Please try again later.'
+            });
+        }
     } catch (error) {
         res.status(500).json({
             success: false,
