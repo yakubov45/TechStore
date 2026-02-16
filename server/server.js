@@ -68,11 +68,13 @@ securityHeaders(app);
 
 // CORS configuration - allow configured client URL and common local dev ports
 // If ALLOW_ALL_ORIGINS=true is set in the environment, enable permissive CORS
+let allowedOrigins = [];
 if (process.env.ALLOW_ALL_ORIGINS === 'true') {
     console.warn('⚠️ ALLOW_ALL_ORIGINS is enabled — CORS will accept any origin (temporary)');
     app.use(cors({ origin: true, credentials: true }));
 } else {
-    const allowedOrigins = [
+    // Start with base allowed origins from config
+    allowedOrigins = [
         config.clientUrl,
         'http://localhost:5173',
         'http://localhost:3000',
@@ -88,24 +90,52 @@ if (process.env.ALLOW_ALL_ORIGINS === 'true') {
         });
     }
 
-    // Always allow onrender.com domains for flexibility (Render subdomains)
-    allowedOrigins.push(/^https:\/\/.*\.onrender\.com$/);
+    // Also allow specific known Render domains for TechStore
+    // Frontend: techstore-kphy.onrender.com
+    // Backend: techstore-u0w8.onrender.com
+    const renderDomains = [
+        'https://techstore-kphy.onrender.com',
+        'https://techstore-u0w8.onrender.com',
+        'https://techstore-o6y7.onrender.com'
+    ];
+    renderDomains.forEach(domain => {
+        if (domain && !allowedOrigins.includes(domain)) {
+            allowedOrigins.push(domain);
+        }
+    });
 
-    // Also allow the specific client URL if it's an onrender.com domain
-    if (config.clientUrl && config.clientUrl.includes('onrender.com')) {
-        allowedOrigins.push(config.clientUrl);
-    }
+    // Always allow onrender.com domains for flexibility (Render subdomains) - use a more permissive regex
+    const onrenderRegex = /^https:\/\/[a-zA-Z0-9-]+\.onrender\.com$/;
+    
+    // Filter out invalid entries and create final list
+    allowedOrigins = allowedOrigins.filter(o => o && typeof o === 'string');
+
+    console.log('🔧 CORS - Allowed origins:', allowedOrigins);
 
     app.use(cors({
         origin: function (origin, callback) {
+            // Log the origin for debugging
+            console.log('🔍 CORS check - Request origin:', origin);
+            
             // allow requests with no origin (like mobile apps, curl, Postman)
-            if (!origin) return callback(null, true);
+            if (!origin) {
+                console.log('🔍 CORS - No origin, allowing (mobile/curl/Postman)');
+                return callback(null, true);
+            }
 
+            // Check against allowed origins
             const isAllowed = allowedOrigins.some(allowed => {
                 if (allowed === origin) return true;
                 // Handle regex patterns for dynamic domains like *.onrender.com
                 if (allowed instanceof RegExp) {
-                    return allowed.test(origin);
+                    const result = allowed.test(origin);
+                    console.log(`🔍 CORS - Regex ${allowed} test ${origin}: ${result}`);
+                    return result;
+                }
+                // Check onrender regex
+                if (typeof allowed === 'string' && onrenderRegex.test(origin)) {
+                    console.log(`🔍 CORS - onrenderRegex matched for ${origin}`);
+                    return true;
                 }
                 try {
                     // Handle cases where allowed origin might not have a protocol but request does, or trailing slashes
@@ -118,9 +148,11 @@ if (process.env.ALLOW_ALL_ORIGINS === 'true') {
             });
 
             if (isAllowed) {
+                console.log('✅ CORS - Origin allowed:', origin);
                 return callback(null, true);
             } else {
                 console.warn(`⚠️ CORS blocked request from origin: ${origin}`);
+                console.warn('⚠️ Allowed origins were:', allowedOrigins);
                 return callback(new Error('CORS policy: This origin is not allowed - ' + origin));
             }
         },
