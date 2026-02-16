@@ -6,6 +6,7 @@ import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import securityHeaders from './middleware/securityMiddleware.js';
 
 // Config and DB
 import config from './config/config.js';
@@ -34,13 +35,27 @@ const __dirname = path.dirname(__filename);
 // Initialize app
 const app = express();
 
+// If behind a proxy (Render, Heroku, Cloudflare), trust proxy headers
+app.set('trust proxy', 1);
+
+// Enforce HTTPS in production (when behind a proxy like Cloudflare/Render)
+app.use((req, res, next) => {
+    if (process.env.NODE_ENV === 'production') {
+        const proto = req.headers['x-forwarded-proto'] || req.protocol;
+        if (proto && proto.toLowerCase() !== 'https') {
+            // Redirect to HTTPS preserving host and url
+            return res.redirect(301, `https://${req.headers.host}${req.url}`);
+        }
+    }
+    next();
+});
+
 // Connect to database
 connectDB();
 
 // Security middleware
-app.use(helmet({
-    crossOriginResourcePolicy: false,
-}));
+// apply centralized security headers (uses helmet internally)
+securityHeaders(app);
 
 // CORS configuration - allow configured client URL and common local dev ports
 const allowedOrigins = [
@@ -95,6 +110,17 @@ const limiter = rateLimit({
     message: 'Too many requests from this IP, please try again later.'
 });
 app.use('/api', limiter);
+
+// Admin UI protection: if ADMIN_PATH env var set, only allow access to that secret path
+if (process.env.ADMIN_PATH) {
+    app.use((req, res, next) => {
+        if (req.path.startsWith('/admin') && req.path !== process.env.ADMIN_PATH) {
+            // Hide default /admin routes from bots
+            return res.status(404).send('Not found');
+        }
+        return next();
+    });
+}
 
 // Body parser
 app.use(express.json());

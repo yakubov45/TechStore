@@ -44,3 +44,48 @@ Saytni `https` protokoli orqali ishlatish shart (Stripe uchun). Vercel va Render
 
 ---
 **TechStore Support** - support@techstore.uz
+
+## Security Hardening Checklist (Production)
+Follow these steps before deploying to production to maximize security.
+
+1) HTTPS / SSL
+- Ensure your host (Render/Vercel/Cloudflare) provides TLS and certificates.
+- Test with SSL Labs: https://www.ssllabs.com/ssltest/ (aim for A or A+)
+- Enforce HTTPS and HSTS on the server (already enabled in `server/server.js`).
+
+2) Security Headers
+- We apply `helmet` and additional headers in `server/middleware/securityMiddleware.js`.
+- Test with Mozilla Observatory: https://observatory.mozilla.org/
+
+3) Cloudflare
+- If using Cloudflare, enable WAF, Bot Protection, Rate Limiting, Always HTTPS, and set Security Level to High.
+
+4) Environment Variables & Render
+- Do NOT commit `.env` to git. Use `server/.env.example` as a template.
+- Add secrets in Render/host environment settings only.
+
+5) MongoDB Atlas
+- Use IP access lists, strong passwords, least privilege DB user.
+
+6) API protection
+- Rate limiting is enabled for `/api` (see `server/server.js`).
+- Use CORS allowlist via `config.clientUrl` and `ADDITIONAL_CLIENT_ORIGINS`.
+- Validate inputs on endpoints (use `express-validator` where appropriate).
+
+7) Dependency audit
+- Run `npm audit` and `npm audit fix` before deploy.
+
+8) Admin panel hiding
+- Optionally set `ADMIN_PATH=/a9x2k-panel` in your environment to hide the default `/admin` path.
+
+9) Automated scans
+- Schedule regular scans: Sucuri, Mozilla Observatory, SSL Labs, OWASP ZAP.
+
+Commands for quick checks:
+```powershell
+# Audit dependencies
+cd server; npm audit; npm audit fix
+
+# Run Mozilla Observatory / SSL Labs manually via their web UIs
+```
+
