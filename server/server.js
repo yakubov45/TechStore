@@ -88,6 +88,11 @@ if (process.env.ALLOW_ALL_ORIGINS === 'true') {
         });
     }
 
+    // Also allow any origin in production that matches the pattern *.onrender.com for flexibility
+    if (process.env.NODE_ENV === 'production') {
+        allowedOrigins.push(/^https:\/\/.*\.onrender\.com$/);
+    }
+
     app.use(cors({
         origin: function (origin, callback) {
             // allow requests with no origin (like mobile apps, curl, Postman)
@@ -95,6 +100,10 @@ if (process.env.ALLOW_ALL_ORIGINS === 'true') {
 
             const isAllowed = allowedOrigins.some(allowed => {
                 if (allowed === origin) return true;
+                // Handle regex patterns for dynamic domains like *.onrender.com
+                if (allowed instanceof RegExp) {
+                    return allowed.test(origin);
+                }
                 try {
                     // Handle cases where allowed origin might not have a protocol but request does, or trailing slashes
                     const allowedUrl = new URL(allowed);

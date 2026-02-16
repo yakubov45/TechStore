@@ -16,5 +16,19 @@ export default defineConfig({
                 changeOrigin: true
             }
         }
+    },
+    build: {
+        rollupOptions: {
+            output: {
+                manualChunks: {
+                    // Vendor chunks for better code splitting
+                    'vendor-react': ['react', 'react-dom'],
+                    'vendor-router': ['react-router-dom'],
+                    'vendor-i18n': ['i18next', 'react-i18next'],
+                    'vendor-utils': ['axios', 'zustand']
+                }
+            }
+        },
+        chunkSizeWarningLimit: 600
     }
 })

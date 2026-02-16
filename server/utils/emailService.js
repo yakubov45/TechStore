@@ -15,9 +15,9 @@ let transporter = null;
 let smtpAvailable = false;
 
 const defaultTimeouts = {
-  connectionTimeout: Number(process.env.SMTP_CONNECTION_TIMEOUT) || 10000,
-  greetingTimeout: Number(process.env.SMTP_GREETING_TIMEOUT) || 10000,
-  socketTimeout: Number(process.env.SMTP_SOCKET_TIMEOUT) || 15000
+  connectionTimeout: Number(process.env.SMTP_CONNECTION_TIMEOUT) || 30000,
+  greetingTimeout: Number(process.env.SMTP_GREETING_TIMEOUT) || 30000,
+  socketTimeout: Number(process.env.SMTP_SOCKET_TIMEOUT) || 45000
 };
 
 const createTransport = (opts) => {
@@ -76,6 +76,7 @@ const initSmtpTransport = async () => {
   } catch (err) {
     smtpAvailable = false;
     console.error('❌ SMTP fallback failed:', err && err.message ? err.message : err);
+    console.log('💡 Suggestion: Set SENDGRID_API_KEY environment variable for reliable email delivery');
     transporter = null;
   }
 };
