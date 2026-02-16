@@ -1,13 +1,30 @@
 import nodemailer from 'nodemailer';
 import config from '../config/config.js';
 import sgMailPkg from '@sendgrid/mail';
+import SibApiV3Sdk from 'sib-api-v3-sdk';
 
 const sgMail = sgMailPkg;
 
-// Initialize SendGrid if API key present
+// Providers availability
 const hasSendGrid = Boolean(process.env.SENDGRID_API_KEY);
+const hasBrevo = Boolean(process.env.BREVO_API_KEY);
+
 if (hasSendGrid) {
   sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+}
+
+// Initialize Brevo (Sendinblue) client if API key present
+let brevoClient = null;
+if (hasBrevo) {
+  try {
+    const defaultClient = SibApiV3Sdk.ApiClient.instance;
+    const apiKey = defaultClient.authentications['api-key'];
+    apiKey.apiKey = process.env.BREVO_API_KEY;
+    brevoClient = new SibApiV3Sdk.TransactionalEmailsApi();
+  } catch (err) {
+    console.error('Brevo init error:', err && err.message ? err.message : err);
+    brevoClient = null;
+  }
 }
 
 // SMTP fallback configuration
@@ -88,27 +105,60 @@ initSmtpTransport().catch(e => {
   transporter = null;
 });
 
-// Generic mail sender: prefers SendGrid, falls back to SMTP
+// Helper to normalize recipient(s)
+const normalizeTo = (to) => {
+  if (!to) return [];
+  if (Array.isArray(to)) return to.map(t => (typeof t === 'string' ? { email: t } : t));
+  if (typeof to === 'string') return [{ email: to }];
+  if (typeof to === 'object' && to.email) return [to];
+  return [];
+};
+
+// Generic mail sender: prefers Brevo (HTTP) -> SendGrid -> SMTP
 const sendMailGeneric = async ({ to, subject, html, text, from }) => {
   const fromAddr = from || config.smtp.from || 'TechStore <support@techstore.uz>';
 
+  // Try Brevo (Sendinblue) HTTP API first
+  if (hasBrevo && brevoClient) {
+    try {
+      const sender = {};
+      const m = fromAddr.match(/^(.*) <(.+)>$/);
+      if (m) {
+        sender.name = m[1];
+        sender.email = m[2];
+      } else {
+        sender.name = 'TechStore';
+        sender.email = fromAddr;
+      }
+
+      const sendSmtpEmail = {
+        sender,
+        to: normalizeTo(to),
+        subject,
+        htmlContent: html || text || '',
+        textContent: text || html || ''
+      };
+      const resp = await brevoClient.sendTransacEmail(sendSmtpEmail);
+      return resp;
+    } catch (err) {
+      console.error('Brevo send error:', err && (err.response?.body || err.message) ? (err.response?.body || err.message) : err);
+      // fall through to next provider
+    }
+  }
+
+  // SendGrid next
   if (hasSendGrid) {
     try {
-      const msg = {
-        to,
-        from: fromAddr,
-        subject,
-        html,
-        text
-      };
+      const msg = { to, from: fromAddr, subject, html, text };
       const res = await sgMail.send(msg);
       return res;
     } catch (err) {
       console.error('SendGrid send error:', err && err.message ? err.message : err);
-      // fallthrough to SMTP if available
+      // fallthrough to SMTP
     }
   }
 
+  // SMTP fallback
   if (smtpAvailable && transporter) {
     try {
       return await transporter.sendMail({ from: fromAddr, to, subject, html, text });
