@@ -264,4 +264,42 @@
             "privacyLink": "Privacy Policy"
         }
     }
+    ,
+    "footer": {
+        "company": "TechStore",
+        "description": "Your premier destination for computer hardware and IT accessories in Tashkent, Uzbekistan.",
+        "quickLinks": "Quick Links",
+        "products": "Products",
+        "about": "About Us",
+        "contact": "Contact",
+        "faq": "FAQ",
+        "contactUs": "Contact Us",
+        "workingHours": "Working Hours",
+        "mondaySaturday": "Monday - Saturday",
+        "sunday": "Sunday",
+        "allRights": "© {{year}} TechStore. All rights reserved."
+    },
+    "searchUI": {
+        "placeholder": "Search products, categories, brands...",
+        "searching": "Searching...",
+        "recent": "Recent Searches",
+        "startTyping": "Start typing to search...",
+        "products": "Products",
+        "categories": "Categories",
+        "brands": "Brands",
+        "noResults": "No results found for \"{{query}}\""
+    },
+    "categories": {
+        "names": {
+            "gaming": "Gaming",
+            "office": "Office",
+            "audio": "Audio",
+            "streaming": "Streaming",
+            "apple": "Apple",
+            "asus": "Asus"
+        }
+    },
+    "common": {
+        "items": "items"
+    }
 }

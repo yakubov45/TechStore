@@ -264,27 +264,8 @@ export default function Home() {
                     </div>
                 </section>
 
-                {/* Smart Filters Chips */}
-                <section className="my-12">
-                    <div className="flex items-center gap-4 mb-6">
-                        <Flame className="text-orange-500" />
-                        <h2 className="text-xl font-bold">Trenddagilar:</h2>
-                        <div className="flex flex-wrap gap-2">
-                            {['Gaming', 'Office', 'Audio', 'Streaming', 'Apple', 'Asus'].map(chip => (
-                                <button
-                                    key={chip}
-                                    onClick={() => setSelectedCategory(chip)}
-                                    className={`px-6 py-2 rounded-full border transition-all text-sm font-medium ${selectedCategory === chip
-                                        ? 'bg-primary border-primary text-white'
-                                        : 'bg-dark-secondary border-gray-800 hover:border-primary'
-                                        }`}
-                                >
-                                    {chip}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-                </section>
+                {/* Smart Filters Chips (removed 'Trending' label per localization request) */}
+                {/* If you need chips, they should be generated dynamically from categories or a translated list. */}
 
                 {/* Categories Grid */}
                 <section className="my-16 animate-fade-in">

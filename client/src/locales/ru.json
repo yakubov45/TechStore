@@ -240,4 +240,42 @@
             "privacyLink": "Политика конфиденциальности"
         }
     }
+    ,
+    "footer": {
+        "company": "TechStore",
+        "description": "Ваш надежный магазин компьютерного оборудования и IT-аксессуаров в Ташкенте, Узбекистан.",
+        "quickLinks": "Быстрые ссылки",
+        "products": "Товары",
+        "about": "О нас",
+        "contact": "Контакты",
+        "faq": "FAQ",
+        "contactUs": "Свяжитесь с нами",
+        "workingHours": "Часы работы",
+        "mondaySaturday": "Пн - Сб",
+        "sunday": "Вс",
+        "allRights": "© {{year}} TechStore. Все права защищены."
+    },
+    "searchUI": {
+        "placeholder": "Поиск товаров, категорий, брендов...",
+        "searching": "Поиск...",
+        "recent": "Последние запросы",
+        "startTyping": "Начните вводить запрос...",
+        "products": "Товары",
+        "categories": "Категории",
+        "brands": "Бренды",
+        "noResults": "По запросу \"{{query}}\" ничего не найдено"
+    },
+    "categories": {
+        "names": {
+            "gaming": "Игры",
+            "office": "Офис",
+            "audio": "Аудио",
+            "streaming": "Стриминг",
+            "apple": "Apple",
+            "asus": "Asus"
+        }
+    },
+    "common": {
+        "items": "шт"
+    }
 }

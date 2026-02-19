@@ -245,4 +245,42 @@
             "privacyLink": "Maxfiylik Siyosati"
         }
     }
+    ,
+    "footer": {
+        "company": "TechStore",
+        "description": "TechStore — Toshkentda kompyuter uskunalari va IT aksessuarlarining yetakchi onlayn manzili.",
+        "quickLinks": "Tezkor Havolalar",
+        "products": "Mahsulotlar",
+        "about": "Biz Haqimizda",
+        "contact": "Aloqa",
+        "faq": "TSS",
+        "contactUs": "Biz bilan bog'laning",
+        "workingHours": "Ish vaqti",
+        "mondaySaturday": "Dushanba - Shanba",
+        "sunday": "Yakshanba",
+        "allRights": "© {{year}} TechStore. Barcha huquqlar himoyalangan."
+    },
+    "searchUI": {
+        "placeholder": "Mahsulotlarni, kategoriyalarni yoki brendlarni qidirish...",
+        "searching": "Qidirilmoqda...",
+        "recent": "So'nggi Qidiruvlar",
+        "startTyping": "Qidirishni boshlash uchun yozing...",
+        "products": "Mahsulotlar",
+        "categories": "Kategoriyalar",
+        "brands": "Brendlar",
+        "noResults": "\"{{query}}\" uchun natija topilmadi"
+    },
+    "categories": {
+        "names": {
+            "gaming": "Gaming",
+            "office": "Office",
+            "audio": "Audio",
+            "streaming": "Streaming",
+            "apple": "Apple",
+            "asus": "Asus"
+        }
+    },
+    "common": {
+        "items": "ta"
+    }
 }

@@ -1,7 +1,10 @@
 import { Link } from 'react-router-dom';
 import { Mail, Phone, MapPin, Facebook, Instagram, Youtube } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export default function Footer() {
+    const { t } = useTranslation();
+    const year = new Date().getFullYear();
     return (
         <footer className="bg-dark-secondary border-t border-gray-800 mt-20">
             <div className="container mx-auto px-4 py-12">
@@ -12,10 +15,10 @@ export default function Footer() {
                             <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
                                 <span className="text-2xl font-bold">T</span>
                             </div>
-                            <span className="text-xl font-bold">TechStore</span>
+                            <span className="text-xl font-bold">{t('footer.company')}</span>
                         </div>
                         <p className="text-text-secondary text-sm mb-4">
-                            Your premier destination for computer hardware and IT accessories in Tashkent, Uzbekistan.
+                            {t('footer.description')}
                         </p>
                         <div className="flex space-x-3">
                             <a href="https://t.me/techstore" className="p-2 bg-dark-card rounded-lg hover:bg-primary transition">
@@ -37,18 +40,18 @@ export default function Footer() {
 
                     {/* Quick Links */}
                     <div>
-                        <h3 className="font-semibold mb-4">Quick Links</h3>
+                        <h3 className="font-semibold mb-4">{t('footer.quickLinks')}</h3>
                         <ul className="space-y-2 text-sm text-text-secondary">
-                            <li><Link to="/products" className="hover:text-primary transition">Products</Link></li>
-                            <li><Link to="/about" className="hover:text-primary transition">About Us</Link></li>
-                            <li><Link to="/contact" className="hover:text-primary transition">Contact</Link></li>
-                            <li><Link to="/faq" className="hover:text-primary transition">FAQ</Link></li>
+                            <li><Link to="/products" className="hover:text-primary transition">{t('footer.products')}</Link></li>
+                            <li><Link to="/about" className="hover:text-primary transition">{t('footer.about')}</Link></li>
+                            <li><Link to="/contact" className="hover:text-primary transition">{t('footer.contact')}</Link></li>
+                            <li><Link to="/faq" className="hover:text-primary transition">{t('footer.faq')}</Link></li>
                         </ul>
                     </div>
 
                     {/* Contact Info */}
                     <div>
-                        <h3 className="font-semibold mb-4">Contact Us</h3>
+                        <h3 className="font-semibold mb-4">{t('footer.contactUs')}</h3>
                         <ul className="space-y-3 text-sm text-text-secondary">
                             <li className="flex items-start space-x-2">
                                 <Mail size={16} className="mt-1 text-primary" />
@@ -67,8 +70,7 @@ export default function Footer() {
                             <li className="flex items-start space-x-2">
                                 <MapPin size={16} className="mt-1 text-primary" />
                                 <div>
-                                    Tech Park District<br />
-                                    Tashkent, Uzbekistan
+                                    {t('about.location.address')}
                                 </div>
                             </li>
                         </ul>
@@ -76,18 +78,18 @@ export default function Footer() {
 
                     {/* Working Hours */}
                     <div>
-                        <h3 className="font-semibold mb-4">Working Hours</h3>
+                        <h3 className="font-semibold mb-4">{t('footer.workingHours')}</h3>
                         <ul className="space-y-2 text-sm text-text-secondary">
-                            <li>Monday - Saturday</li>
+                            <li>{t('footer.mondaySaturday')}</li>
                             <li className="text-primary">09:00 - 20:00</li>
-                            <li className="mt-3">Sunday</li>
+                            <li className="mt-3">{t('footer.sunday')}</li>
                             <li className="text-primary">10:00 - 18:00</li>
                         </ul>
                     </div>
                 </div>
 
                 <div className="border-t border-gray-800 mt-8 pt-8 text-center text-sm text-text-secondary">
-                    <p>&copy; 2024 TechStore. All rights reserved.</p>
+                    <p>{t('footer.allRights', { year })}</p>
                 </div>
             </div>
         </footer>

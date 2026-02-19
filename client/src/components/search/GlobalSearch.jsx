@@ -1,11 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
 import { Search, X, TrendingUp } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 import { createPortal } from 'react-dom';
 import { useCurrencyStore } from '../../store/currencyStore';
 
 export default function GlobalSearch({ isOpen, onClose }) {
+    const { t } = useTranslation();
     const [query, setQuery] = useState('');
     const [results, setResults] = useState({ products: [], categories: [], brands: [] });
     const [loading, setLoading] = useState(false);
@@ -79,7 +81,7 @@ export default function GlobalSearch({ isOpen, onClose }) {
                     <input
                         ref={inputRef}
                         type="text"
-                        placeholder="Search products, categories, brands..."
+                        placeholder={t('searchUI.placeholder')}
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
                         className="flex-1 bg-transparent text-lg outline-none"
@@ -94,7 +96,7 @@ export default function GlobalSearch({ isOpen, onClose }) {
                     {loading ? (
                         <div className="text-center py-8">
                             <div className="inline-block w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-                            <p className="mt-2 text-text-secondary">Searching...</p>
+                            <p className="mt-2 text-text-secondary">{t('searchUI.searching')}</p>
                         </div>
                     ) : query.length < 2 ? (
                         <div>
@@ -102,7 +104,7 @@ export default function GlobalSearch({ isOpen, onClose }) {
                                 <div className="mb-6">
                                     <h3 className="text-sm font-semibold text-text-secondary mb-3 flex items-center gap-2">
                                         <TrendingUp size={16} />
-                                        Recent Searches
+                                        {t('searchUI.recent')}
                                     </h3>
                                     <div className="flex flex-wrap gap-2">
                                         {recentSearches.map((search, index) => (
@@ -118,7 +120,7 @@ export default function GlobalSearch({ isOpen, onClose }) {
                                 </div>
                             )}
                             <p className="text-text-secondary text-center py-8">
-                                Start typing to search...
+                                {t('searchUI.startTyping')}
                             </p>
                         </div>
                     ) : (
@@ -126,7 +128,7 @@ export default function GlobalSearch({ isOpen, onClose }) {
                             {/* Products */}
                             {results.products.length > 0 && (
                                 <div className="mb-6">
-                                    <h3 className="text-sm font-semibold text-text-secondary mb-3">Products</h3>
+                                    <h3 className="text-sm font-semibold text-text-secondary mb-3">{t('searchUI.products')}</h3>
                                     <div className="space-y-2">
                                         {results.products.map(product => (
                                             <button
@@ -155,7 +157,7 @@ export default function GlobalSearch({ isOpen, onClose }) {
                             {/* Categories */}
                             {results.categories.length > 0 && (
                                 <div className="mb-6">
-                                    <h3 className="text-sm font-semibold text-text-secondary mb-3">Categories</h3>
+                                    <h3 className="text-sm font-semibold text-text-secondary mb-3">{t('searchUI.categories')}</h3>
                                     <div className="grid grid-cols-2 gap-2">
                                         {results.categories.map(category => (
                                             <button
@@ -166,7 +168,7 @@ export default function GlobalSearch({ isOpen, onClose }) {
                                                 <span className="text-2xl">{category.icon || '📦'}</span>
                                                 <div>
                                                     <p className="font-semibold">{category.name}</p>
-                                                    <p className="text-xs text-text-secondary">{category.productCount} products</p>
+                                                    <p className="text-xs text-text-secondary">{category.productCount} {t('common.items')}</p>
                                                 </div>
                                             </button>
                                         ))}
@@ -177,7 +179,7 @@ export default function GlobalSearch({ isOpen, onClose }) {
                             {/* Brands */}
                             {results.brands.length > 0 && (
                                 <div>
-                                    <h3 className="text-sm font-semibold text-text-secondary mb-3">Brands</h3>
+                                    <h3 className="text-sm font-semibold text-text-secondary mb-3">{t('searchUI.brands')}</h3>
                                     <div className="flex flex-wrap gap-2">
                                         {results.brands.map(brand => (
                                             <Link
@@ -199,7 +201,7 @@ export default function GlobalSearch({ isOpen, onClose }) {
                             {/* No Results */}
                             {results.products.length === 0 && results.categories.length === 0 && results.brands.length === 0 && (
                                 <p className="text-text-secondary text-center py-8">
-                                    No results found for "{query}"
+                                    {t('searchUI.noResults', { query })}
                                 </p>
                             )}
                         </>
