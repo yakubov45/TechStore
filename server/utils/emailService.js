@@ -18,6 +18,10 @@ if (hasSendGrid) {
   console.log('  ✓ SendGrid API key configured');
 }
 
+if (!process.env.EMAIL_FROM) {
+  console.log('  ⚠️ No EMAIL_FROM configured - default sender will be used. If using SendGrid, ensure the sender email/domain is verified.');
+}
+
 // Initialize Brevo (Sendinblue) client if API key present
 let brevoClient = null;
 if (hasBrevo) {
@@ -143,6 +147,15 @@ const normalizeTo = (to) => {
 const sendMailGeneric = async ({ to, subject, html, text, from }) => {
   const fromAddr = from || config.smtp.from || 'TechStore <support@techstore.uz>';
 
+  // Log basic envelope for easier debugging of template mismatches
+  try {
+    const toLog = Array.isArray(to) ? to.map(t => (typeof t === 'string' ? t : t.email)).join(',') : (typeof to === 'string' ? to : (to?.email || 'unknown'));
+    console.log(`📤 Preparing to send email - Subject: "${subject}" To: ${toLog} From: ${fromAddr}`);
+    if (html) console.log(`📄 HTML preview: ${String(html).slice(0,120).replace(/\s+/g,' ')}${String(html).length>120?"...":""}`);
+  } catch (e) {
+    // ignore logging errors
+  }
+
   // Try Brevo (Sendinblue) HTTP API first
   if (hasBrevo && brevoClient) {
     try {
@@ -174,11 +187,18 @@ const sendMailGeneric = async ({ to, subject, html, text, from }) => {
   // SendGrid next
   if (hasSendGrid) {
     try {
+      // Normalize SendGrid message shape (supports string or object for `to`)
       const msg = { to, from: fromAddr, subject, html, text };
       const res = await sgMail.send(msg);
       return res;
     } catch (err) {
-      console.error('SendGrid send error:', err && err.message ? err.message : err);
+      // Better debug output: SendGrid errors often include a response.body with details
+      const details = err?.response?.body || err?.message || err;
+      console.error('SendGrid send error:', details);
+      if (err?.response?.statusCode === 403 || (err?.code && Number(err.code) === 403)) {
+        console.error('  → SendGrid returned 403 Forbidden. Common causes: invalid/revoked API key, API key missing "Mail Send" permission, or unverified sender email/domain.');
+        console.error('    Suggestion: verify SENDGRID_API_KEY, and set `EMAIL_FROM` to a verified sender or add a verified sending domain in SendGrid.');
+      }
       // fallthrough to SMTP
     }
   }
@@ -215,7 +235,8 @@ export const sendPasswordResetEmail = async (email, name, token) => {
 export const sendOrderConfirmationEmail = async (email, name, order) => {
   const itemsHtml = order.items.map(item => `<div><strong>${item.productSnapshot?.name || item.name}</strong> x${item.quantity} - ${item.price}</div>`).join('');
   const body = `<!doctype html><html><body><h2>Order ${order.orderNumber}</h2>${itemsHtml}<p>Total: ${order.total}</p></body></html>`;
-  return sendMailGeneric({ to: email, subject: `Order Confirmation - ${order.orderNumber}`, html: body });
+  const text = `Order ${order.orderNumber}\n${order.items.map(i=>`${i.productSnapshot?.name||i.name} x${i.quantity} - ${i.price}`).join('\n')}\nTotal: ${order.total}`;
+  return sendMailGeneric({ to: email, subject: `Order Confirmation - ${order.orderNumber}`, html: body, text });
 };
 
 export const sendNewsletterEmail = async (email, subject, content) => {

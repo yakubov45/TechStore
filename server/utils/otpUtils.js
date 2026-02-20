@@ -1,5 +1,6 @@
 import { sendMailGeneric, smtpAvailable } from './emailService.js';
 import config from '../config/config.js';
+import Twilio from 'twilio';
 
 /**
  * Generate a random 6-digit OTP code
@@ -15,10 +16,29 @@ export const generateOTP = () => {
  * @param {string} code - OTP code
  */
 export const sendSMSOTP = async (phone, code) => {
-    console.log(`[SMS MOCK] Sending OTP ${code} to ${phone}`);
-    // In a real production app, you would use a service like Twilio or Eskiz (for Uzbekistan)
-    // Example: await eskiz.send(phone, `TechStore tasdiqlash kodi: ${code}`);
-    return true;
+    // If Twilio is configured, use it to send SMS. Otherwise fall back to mock logging.
+    const sid = process.env.TWILIO_ACCOUNT_SID;
+    const token = process.env.TWILIO_AUTH_TOKEN;
+    const from = process.env.TWILIO_FROM;
+
+    if (sid && token && from) {
+        try {
+            const client = Twilio(sid, token);
+            const message = await client.messages.create({
+                body: `TechStore tasdiqlash kodi: ${code}`,
+                from,
+                to: phone
+            });
+            console.log(`[SMS] Sent OTP ${code} to ${phone} via Twilio (sid: ${message.sid})`);
+            return true;
+        } catch (err) {
+            console.error('[SMS] Twilio send error:', err && err.message ? err.message : err);
+            return false;
+        }
+    }
+
+    console.log(`[SMS MOCK] Twilio not configured. OTP ${code} not sent to ${phone}`);
+    return false;
 };
 
 /**
@@ -47,6 +67,9 @@ export const sendEmailOTP = async (email, name, code) => {
         `
     };
 
+    // Provide a plain-text fallback to avoid clients showing wrong template
+    const textBody = `TechStore\nHello ${name},\nYour verification code: ${code}\nThis code is valid for 10 minutes.`;
+
     // Use generic sender (SendGrid preferred, SMTP fallback)
-    await sendMailGeneric({ from: mailOptions.from, to: mailOptions.to, subject: mailOptions.subject, html: mailOptions.html });
+    await sendMailGeneric({ from: mailOptions.from, to: mailOptions.to, subject: mailOptions.subject, html: mailOptions.html, text: textBody });
 };
