@@ -119,14 +119,7 @@ initSmtpTransport().catch(e => {
 
 // Log email transport priority
 setTimeout(() => {
-  console.log('📧 Email transport priority (first available will be used):');
-  if (hasBrevo && brevoClient) console.log('  1️⃣ Brevo HTTP API (preferred)');
-  else console.log('  1️⃣ Brevo HTTP API (not available)');
-  if (hasSendGrid) console.log('  2️⃣ SendGrid');
-  else console.log('  2️⃣ SendGrid (not available)');
-  if (smtpAvailable) console.log('  3️⃣ SMTP fallback');
-  else console.log('  3️⃣ SMTP fallback (not available)');
-  
+
   const hasAnyTransport = (hasBrevo && brevoClient) || hasSendGrid || smtpAvailable;
   if (!hasAnyTransport) {
     console.error('❌ WARNING: No email transport configured! Users cannot receive OTP/reset emails.');

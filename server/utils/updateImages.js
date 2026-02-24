@@ -8,11 +8,11 @@ import { getProductImages } from './productImages.js';
 
 dotenv.config();
 
-const updateProductImages = async () => {
+const updateProductImages = async () => { 
     try {
         await connectDB();
 
-        console.log('📸 Updating product images...');
+        console.log('Updating product images...');
 
         // Get all products with their category and brand populated
         const products = await Product.find({}).populate('category').populate('brand');
@@ -32,14 +32,14 @@ const updateProductImages = async () => {
                 product.images = images;
                 await product.save();
                 updatedCount++;
-                console.log(`✅ Updated: ${product.name}`);
+                console.log(`Updated: ${product.name}`);
             }
         }
 
-        console.log(`\n🎉 Successfully updated ${updatedCount} products with images!`);
+        console.log(`\nSuccessfully updated ${updatedCount} products with images!`);
         process.exit(0);
     } catch (error) {
-        console.error('❌ Error updating images:', error);
+        console.error('Error updating images:', error);
         process.exit(1);
     }
 };
