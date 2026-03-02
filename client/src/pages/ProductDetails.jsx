@@ -8,6 +8,7 @@ import { useCurrencyStore } from '../store/currencyStore';
 import ProductCard from '../components/products/ProductCard';
 import toast from 'react-hot-toast';
 import { useAuthStore } from '../store/authStore';
+import SEO from '../components/common/SEO';
 
 import Reviews from '../components/products/Reviews';
 
@@ -112,6 +113,12 @@ export default function ProductDetails() {
 
     return (
         <div className="container mx-auto px-4 py-8">
+            <SEO
+                title={product.name}
+                description={product.description?.substring(0, 160)}
+                image={images[0]}
+                type="product"
+            />
             <div className="grid md:grid-cols-2 gap-8 mb-16">
                 {/* Image Gallery */}
                 <div>
@@ -281,7 +288,7 @@ export default function ProductDetails() {
             />
 
             {/* Related Products */}
-                    {relatedProducts.length > 0 && (
+            {relatedProducts.length > 0 && (
                 <section>
                     <h2 className="section-title">{t('products.related')}</h2>
                     <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">

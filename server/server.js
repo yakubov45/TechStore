@@ -27,6 +27,7 @@ import currencyRoutes from './routes/currencyRoutes.js';
 import analyticsRoutes from './routes/analyticsRoutes.js';
 import paymentRoutes from './routes/paymentRoutes.js';
 import newsletterRoutes from './routes/newsletterRoutes.js';
+import sitemapRoutes from './routes/sitemapRoutes.js';
 import { smtpAvailable } from './utils/emailService.js';
 
 // Middleware
@@ -109,7 +110,7 @@ if (process.env.ALLOW_ALL_ORIGINS === 'true') {
 
     // Always allow onrender.com domains for flexibility (Render subdomains) - use a more permissive regex
     const onrenderRegex = /^https:\/\/[a-zA-Z0-9-]+\.onrender\.com$/;
-    
+
     // Filter out invalid entries and create final list
     allowedOrigins = allowedOrigins.filter(o => o && typeof o === 'string');
 
@@ -119,7 +120,7 @@ if (process.env.ALLOW_ALL_ORIGINS === 'true') {
         origin: function (origin, callback) {
             // Log the origin for debugging
             console.log('🔍 CORS check - Request origin:', origin);
-            
+
             // allow requests with no origin (like mobile apps, curl, Postman)
             if (!origin) {
                 console.log('🔍 CORS - No origin, allowing (mobile/curl/Postman)');
@@ -222,11 +223,14 @@ app.use('/api/analytics', analyticsRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/newsletter', newsletterRoutes);
 
+// Root Sitemap route
+app.use('/sitemap.xml', sitemapRoutes);
+
 // Health check
 app.get('/api/health', (req, res) => {
     const hasSendGrid = Boolean(process.env.SENDGRID_API_KEY);
     const hasBrevo = Boolean(process.env.BREVO_API_KEY);
-    
+
     res.json({
         success: true,
         message: 'TechStore API is running',

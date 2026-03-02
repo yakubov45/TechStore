@@ -7,6 +7,7 @@ import ProductCard from '../components/products/ProductCard';
 import BrandGrid from '../components/brands/BrandGrid';
 import { Shield, Truck, RotateCcw, Headphones, Flame, Zap, Clock } from 'lucide-react';
 import toast from 'react-hot-toast';
+import SEO from '../components/common/SEO';
 
 export default function Home() {
     const { t } = useTranslation();
@@ -138,6 +139,10 @@ export default function Home() {
 
     return (
         <div>
+            <SEO
+                title={t('nav.home') || 'Home'}
+                description="Welcome to TechStore, the best place for top-tier electronics, laptops, phones, and more."
+            />
             {/* Hero Carousel */}
             <section className="relative h-[650px] lg:h-[500px] overflow-hidden">
                 {heroSlides.map((slide, index) => (

@@ -4,6 +4,7 @@ import Layout from './components/layout/Layout';
 import { useCurrencyStore } from './store/currencyStore';
 import ProtectedRoute from './components/common/ProtectedRoute';
 import CookieConsent from './components/common/CookieConsent';
+import { usePageTracking } from './utils/analytics';
 
 // Lazy load all pages for better mobile performance - reduces initial bundle size
 const Home = lazy(() => import('./pages/Home'));
@@ -46,6 +47,9 @@ function App() {
     }, []);
 
     const navigate = useNavigate();
+
+    // Initialize GA tracking for page views
+    usePageTracking();
 
     useEffect(() => {
         const handler = () => {

@@ -4,6 +4,7 @@ import { Filter, X, ChevronDown } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import api from '../services/api';
 import ProductCard from '../components/products/ProductCard';
+import SEO from '../components/common/SEO';
 
 export default function Products() {
     const { t } = useTranslation();
@@ -100,6 +101,10 @@ export default function Products() {
 
     return (
         <div className="container mx-auto px-4 py-8">
+            <SEO
+                title={t('nav.products') || 'Products'}
+                description="Browse our vast collection of latest electronics and gadgets at TechStore."
+            />
             <h1 className="text-4xl font-bold mb-8">{t('nav.products')}</h1>
 
             <div className="flex flex-col md:flex-row gap-6">
