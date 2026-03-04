@@ -6,14 +6,14 @@ import { useCurrencyStore } from '../../store/currencyStore';
 import { useTranslation } from 'react-i18next';
 
 export default function DeliveryPanel() {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const { formatPrice } = useCurrencyStore();
 
     useEffect(() => {
         fetchDeliveryOrders();
-    }, []);
+    }, [i18n.language]);
 
     const fetchDeliveryOrders = async () => {
         setLoading(true);
@@ -94,7 +94,7 @@ export default function DeliveryPanel() {
                                                 order.orderStatus === 'pending' ? 'bg-yellow-500/10 text-yellow-500' :
                                                     'bg-blue-500/10 text-blue-500'
                                             }`}>
-                                            {order.orderStatus}
+                                            {t(`admin.status.${order.orderStatus}`, order.orderStatus)}
                                         </span>
                                     </div>
 

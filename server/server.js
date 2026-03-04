@@ -9,6 +9,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import securityHeaders from './middleware/securityMiddleware.js';
 import { cookieMiddleware, extractTokensFromCookies } from './middleware/cookieMiddleware.js';
+import { localizeResponse } from './middleware/localize.js';
 
 // Config and DB
 import config from './config/config.js';
@@ -82,8 +83,9 @@ if (process.env.ALLOW_ALL_ORIGINS === 'true') {
         config.clientUrl,
         'http://localhost:5173',
         'http://localhost:3000',
-        'http://127.0.0.1:5173',
-        'http://127.0.0.1:3000'
+        'http://127.0.0.1:3000',
+        'http://localhost:5174',
+        'http://127.0.0.1:5173'
     ];
 
     // Allow additional origins via env (comma separated)
@@ -208,6 +210,9 @@ if (config.port !== 'production') {
 
 // Static files - serve uploads
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Localization middleware (intercepts res.json to translate data automatically)
+app.use(localizeResponse);
 
 // API Routes
 app.use('/api/auth', authRoutes);

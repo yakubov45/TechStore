@@ -3,8 +3,10 @@ import { Save, RefreshCw, DollarSign } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import api from '../../services/api';
 import { useCurrencyStore } from '../../store/currencyStore';
+import { useTranslation } from 'react-i18next';
 
 export default function AdminCurrency() {
+    const { t } = useTranslation();
     const [rate, setRate] = useState('');
     const [loading, setLoading] = useState(false);
     const [lastUpdated, setLastUpdated] = useState(null);
@@ -49,23 +51,23 @@ export default function AdminCurrency() {
         <div className="bg-dark-card p-6 rounded-xl border border-gray-800">
             <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
                 <DollarSign className="text-primary" />
-                Currency Exchange Rate
+                {t('admin.currencyExchange', 'Currency Exchange Rate')}
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div>
                     <p className="text-text-secondary mb-4">
-                        Set the exchange rate for USD to UZS conversion. This rate will be used to calculate prices across the store.
+                        {t('admin.exchangeDesc', 'Set the exchange rate for USD to UZS conversion. This rate will be used to calculate prices across the store.')}
                     </p>
 
                     <div className="bg-dark-secondary p-4 rounded-lg mb-4 flex items-center justify-between">
                         <div>
-                            <span className="text-sm text-text-secondary block">Current Rate</span>
+                            <span className="text-sm text-text-secondary block">{t('admin.currentRate', 'Current Rate')}</span>
                             <span className="text-2xl font-bold font-mono">1 USD = {uzsRate?.toLocaleString()} UZS</span>
                         </div>
                         {lastUpdated && (
                             <div className="text-right">
-                                <span className="text-xs text-text-secondary block">Last Updated</span>
+                                <span className="text-xs text-text-secondary block">{t('admin.lastUpdated', 'Last Updated')}</span>
                                 <span className="text-sm text-primary">
                                     {new Date(lastUpdated).toLocaleDateString()} {new Date(lastUpdated).toLocaleTimeString()}
                                 </span>
@@ -77,7 +79,7 @@ export default function AdminCurrency() {
                 <form onSubmit={handleUpdate} className="space-y-4">
                     <div>
                         <label className="block text-sm font-medium text-text-secondary mb-1">
-                            New Exchange Rate (UZS)
+                            {t('admin.newExchangeRate', 'New Exchange Rate (UZS)')}
                         </label>
                         <div className="relative">
                             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary">UZS</span>
@@ -99,7 +101,7 @@ export default function AdminCurrency() {
                         className="btn-primary w-full flex items-center justify-center gap-2"
                     >
                         {loading ? <RefreshCw className="animate-spin" size={20} /> : <Save size={20} />}
-                        Update Rate
+                        {t('admin.updateRate', 'Update Rate')}
                     </button>
                 </form>
             </div>

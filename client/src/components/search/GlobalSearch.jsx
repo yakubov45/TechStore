@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
-import { Search, X, TrendingUp } from 'lucide-react';
+import { Search, X, TrendingUp, Loader2, Link as LinkIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 import { createPortal } from 'react-dom';
 import { useCurrencyStore } from '../../store/currencyStore';
+import { getImageUrl } from '../../utils/image';
 
 export default function GlobalSearch({ isOpen, onClose }) {
     const { t } = useTranslation();
@@ -136,13 +137,20 @@ export default function GlobalSearch({ isOpen, onClose }) {
                                                 onClick={() => handleProductClick(product)}
                                                 className="w-full flex items-center gap-4 p-3 hover:bg-dark-secondary rounded-lg transition text-left"
                                             >
-                                                {product.images?.[0] && (
-                                                    <img
-                                                        src={product.images[0]}
-                                                        alt={product.name}
-                                                        className="w-12 h-12 object-cover rounded"
-                                                    />
-                                                )}
+                                                <div className="w-16 h-16 rounded-lg bg-dark-secondary overflow-hidden flex-shrink-0">
+                                                    {product.images && product.images[0] ? (
+                                                        <img
+                                                            src={getImageUrl(product.images[0])}
+                                                            alt={product.name}
+                                                            className="w-full h-full object-cover"
+                                                            onError={(e) => { e.target.src = '/placeholder.png'; e.target.onerror = null; }}
+                                                        />
+                                                    ) : (
+                                                        <div className="w-full h-full flex items-center justify-center text-text-secondary">
+                                                            <LinkIcon size={24} />
+                                                        </div>
+                                                    )}
+                                                </div>
                                                 <div className="flex-1">
                                                     <p className="font-semibold">{product.name}</p>
                                                     <p className="text-sm text-text-secondary">{product.brand?.name}</p>

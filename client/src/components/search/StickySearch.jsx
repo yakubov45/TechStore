@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
-import { Search, X, ArrowRight } from 'lucide-react';
+import { Search, X, ArrowRight, Loader2 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../../services/api';
+import { getImageUrl } from '../../utils/image';
 import { useTranslation } from 'react-i18next';
 import { useCurrencyStore } from '../../store/currencyStore';
 
@@ -53,7 +54,7 @@ export default function StickySearch({ globalOpen = false }) {
     const performSearch = async () => {
         setLoading(true);
         try {
-            const response = await api.get(`/search?q=${encodeURIComponent(query)}`);
+            const response = await api.get(`/ search ? q = ${encodeURIComponent(query)} `);
             setResults(response.data.data);
         } catch (error) {
             console.error('Search error:', error);
@@ -63,7 +64,7 @@ export default function StickySearch({ globalOpen = false }) {
     };
 
     const handleProductClick = (product) => {
-        navigate(`/product/${product.slug}`);
+        navigate(`/ product / ${product.slug} `);
         setIsOpen(false);
         setQuery('');
     };
@@ -71,13 +72,13 @@ export default function StickySearch({ globalOpen = false }) {
     return (
         <div
             ref={containerRef}
-            className={`transition-all duration-300 ${isScrolled && !globalOpen
-                ? 'fixed top-2 left-1/2 -translate-x-1/2 w-full max-w-xl z-[60] px-4'
-                : 'relative w-full max-w-md hidden md:block'
-                }`}
+            className={`transition - all duration - 300 ${isScrolled && !globalOpen
+                    ? 'fixed top-2 left-1/2 -translate-x-1/2 w-full max-w-xl z-[60] px-4'
+                    : 'relative w-full max-w-md hidden md:block'
+                } `}
         >
-            <div className={`relative flex items-center bg-dark-card border rounded-full transition-all ${isOpen ? 'border-primary ring-2 ring-primary/20 shadow-glow' : 'border-gray-800'
-                }`}>
+            <div className={`relative flex items - center bg - dark - card border rounded - full transition - all ${isOpen ? 'border-primary ring-2 ring-primary/20 shadow-glow' : 'border-gray-800'
+                } `}>
                 <div className="pl-4 text-text-secondary">
                     <Search size={18} />
                 </div>
@@ -126,9 +127,10 @@ export default function StickySearch({ globalOpen = false }) {
                                                 >
                                                     <div className="w-10 h-10 bg-white rounded-lg overflow-hidden flex-shrink-0">
                                                         <img
-src={product.images?.[0] || 'https://placehold.co/100'}
+                                                            src={product.images?.[0] ? getImageUrl(product.images[0]) : 'https://placehold.co/100'}
                                                             alt={product.name}
                                                             className="w-full h-full object-cover group-hover:scale-110 transition-transform"
+                                                            onError={(e) => { e.target.src = 'https://placehold.co/100'; e.target.onerror = null; }}
                                                         />
                                                     </div>
                                                     <div className="flex-1 min-w-0">

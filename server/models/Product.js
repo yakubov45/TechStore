@@ -83,7 +83,17 @@ const productSchema = new mongoose.Schema({
     }],
     tags: [String],
     seoTitle: String,
-    seoDescription: String
+    seoDescription: String,
+    translations: {
+        uz: {
+            name: String,
+            description: String
+        },
+        ru: {
+            name: String,
+            description: String
+        }
+    }
 }, {
     timestamps: true
 });
@@ -97,8 +107,8 @@ productSchema.add({
 });
 
 // Auto-generate slug from name
-productSchema.pre('save', function (next) {
-    if (this.isModified('name')) {
+productSchema.pre('validate', function (next) {
+    if (this.isModified('name') && this.name) {
         this.slug = this.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') + '-' + Date.now();
     }
     next();

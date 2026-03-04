@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { ShoppingCart, Heart, Star, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import api from '../services/api';
+import { getImageUrl } from '../utils/image';
 import { useCartStore } from '../store/cartStore';
 import { useCurrencyStore } from '../store/currencyStore';
 import ProductCard from '../components/products/ProductCard';
@@ -23,14 +24,14 @@ export default function ProductDetails() {
     const addItem = useCartStore(state => state.addItem);
     const { user, addToWishlist, removeFromWishlist } = useAuthStore();
     const { formatPrice } = useCurrencyStore();
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
 
     useEffect(() => {
         fetchProduct();
         if (product) {
             saveToRecentlyViewed(product);
         }
-    }, [slug, product?._id]);
+    }, [slug, product?._id, i18n.language]);
 
     const saveToRecentlyViewed = (prod) => {
         const viewed = JSON.parse(localStorage.getItem('recentlyViewed') || '[]');
@@ -38,7 +39,7 @@ export default function ProductDetails() {
             _id: prod._id,
             name: prod.name,
             slug: prod.slug,
-            image: prod.images?.[0],
+            image: prod.images?.[0] ? getImageUrl(prod.images[0]) : null,
             price: prod.price
         };
         const filtered = viewed.filter(item => item._id !== prod._id);
@@ -116,7 +117,7 @@ export default function ProductDetails() {
             <SEO
                 title={product.name}
                 description={product.description?.substring(0, 160)}
-                image={images[0]}
+                image={images.length > 0 ? getImageUrl(images[0]) : null}
                 type="product"
             />
             <div className="grid md:grid-cols-2 gap-8 mb-16">
@@ -127,9 +128,10 @@ export default function ProductDetails() {
                             {images.length > 0 ? (
                                 <>
                                     <img
-                                        src={images[currentImage]}
+                                        src={getImageUrl(images[currentImage])}
                                         alt={product.name}
                                         className="w-full h-full object-contain"
+                                        onError={(e) => { e.target.src = '/placeholder.png'; e.target.onerror = null; }}
                                     />
                                     {images.length > 1 && (
                                         <>
@@ -164,7 +166,7 @@ export default function ProductDetails() {
                                     className={`flex-shrink-0 w-20 h-20 border-2 rounded-lg overflow-hidden ${idx === currentImage ? 'border-primary' : 'border-gray-700'
                                         }`}
                                 >
-                                    <img src={img} alt="" className="w-full h-full object-cover" />
+                                    <img src={getImageUrl(img)} alt="" className="w-full h-full object-cover" onError={(e) => { e.target.src = '/placeholder.png'; e.target.onerror = null; }} />
                                 </button>
                             ))}
                         </div>
@@ -186,7 +188,7 @@ export default function ProductDetails() {
                             {product.reviewCount || 0} {t('products.customerReviews')}
                         </span>
                         <div className="h-4 w-px bg-gray-800"></div>
-                        <span className="text-xs text-green-500 font-medium">98% would recommend</span>
+                        <span className="text-xs text-green-500 font-medium">{t('products.wouldRecommend', '98% would recommend')}</span>
                     </div>
 
                     {/* Price */}

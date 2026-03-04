@@ -6,6 +6,7 @@ import Brand from '../models/Brand.js';
 import Product from '../models/Product.js';
 import connectDB from '../config/db.js';
 import { getProductImages } from './productImages.js';
+import { generateTranslations } from './translate.js';
 
 dotenv.config();
 
@@ -73,19 +74,29 @@ const seedDatabase = async () => {
         });
 
         console.log('📦 Creating categories...');
-        // Ensure `slug` exists for each category (insertMany doesn't trigger pre-save hooks reliably)
-        const categoriesWithSlugs = categoriesData.map(cat => ({
-            ...cat,
-            slug: cat.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
-        }));
+        // Ensure `slug` and translations exist for each category
+        const categoriesWithSlugs = [];
+        for (const cat of categoriesData) {
+            const translations = await generateTranslations(cat.name, cat.description);
+            categoriesWithSlugs.push({
+                ...cat,
+                slug: cat.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+                translations
+            });
+        }
         const categories = await Category.insertMany(categoriesWithSlugs);
 
         console.log('🏷️  Creating brands...');
-        // Ensure `slug` exists for each brand
-        const brandsWithSlugs = brandsData.map(b => ({
-            ...b,
-            slug: b.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
-        }));
+        // Ensure `slug` and translations exist for each brand
+        const brandsWithSlugs = [];
+        for (const b of brandsData) {
+            const translations = await generateTranslations(b.name, b.description);
+            brandsWithSlugs.push({
+                ...b,
+                slug: b.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+                translations
+            });
+        }
         const brands = await Brand.insertMany(brandsWithSlugs);
 
         console.log('💻 Creating sample products...');
@@ -448,18 +459,23 @@ const seedDatabase = async () => {
             }
         }
 
-        // Ensure `slug` exists for each product (unique suffix added)
-        const productsWithSlugs = productsData.map((p, idx) => {
+        console.log('Generating translations for products (this might take a bit)...');
+        // Ensure `slug` and translations exist for each product (unique suffix added)
+        const productsWithSlugs = [];
+        for (let idx = 0; idx < productsData.length; idx++) {
+            const p = productsData[idx];
             // Get category and brand names for getProductImages
             const category = categories.find(c => c._id.toString() === p.category.toString());
             const brand = brands.find(b => b._id.toString() === p.brand.toString());
+            const translations = await generateTranslations(p.name, p.description);
 
-            return {
+            productsWithSlugs.push({
                 ...p,
                 slug: p.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') + '-' + (Date.now() + idx),
-                images: getProductImages(category?.name, brand?.name, p.sku)
-            };
-        });
+                images: getProductImages(category?.name, brand?.name, p.sku),
+                translations
+            });
+        }
 
         const products = await Product.insertMany(productsWithSlugs);
 

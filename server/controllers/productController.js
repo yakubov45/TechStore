@@ -2,6 +2,7 @@ import Product from '../models/Product.js';
 import Category from '../models/Category.js';
 import Brand from '../models/Brand.js';
 import Review from '../models/Review.js';
+import { generateTranslations } from '../utils/translate.js';
 
 // @desc    Get all products with filters
 // @route   GET /api/products
@@ -232,6 +233,10 @@ export const createProduct = async (req, res) => {
             productData.monthlyDiscountPercent = isNaN(m) ? 0 : Math.max(0, Math.min(100, m));
         }
 
+        // Generate translations
+        const translations = await generateTranslations(productData.name, productData.description);
+        productData.translations = translations;
+
         const product = await Product.create(productData);
 
         if (product.category) {
@@ -323,6 +328,14 @@ export const updateProduct = async (req, res) => {
                 }
             }
         });
+
+        // Generate translations if name or description changed
+        if (updates.name || updates.description) {
+            const newName = updates.name || product.name;
+            const newDesc = updates.description || product.description;
+            const translations = await generateTranslations(newName, newDesc);
+            product.translations = translations;
+        }
 
         await product.save();
 

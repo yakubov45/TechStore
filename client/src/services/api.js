@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const getBaseURL = () => {
+export const getBaseURL = () => {
     const url = import.meta.env.VITE_API_URL;
     if (url) {
         // Ensure /api is appended to the full URL
@@ -8,6 +8,7 @@ const getBaseURL = () => {
     }
     return '/api';
 };
+
 
 const api = axios.create({
     baseURL: getBaseURL(),
@@ -18,13 +19,17 @@ const api = axios.create({
     withCredentials: true
 });
 
-// Attach access token to each request if available
+// Attach access token and language to each request if available
 api.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem('accessToken');
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
+
+        const lang = localStorage.getItem('i18nextLng') || 'en';
+        config.headers['Accept-Language'] = lang;
+
         return config;
     },
     (error) => Promise.reject(error)

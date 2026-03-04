@@ -4,8 +4,10 @@ import { useAuthStore } from '../../store/authStore';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
 import { Upload, X, Plus, Save, ArrowLeft } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export default function AddProduct() {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const { user, isAuthenticated } = useAuthStore();
     const [loading, setLoading] = useState(false);
@@ -144,16 +146,16 @@ export default function AddProduct() {
                 className="flex items-center gap-2 text-text-secondary hover:text-primary mb-6 transition"
             >
                 <ArrowLeft size={20} />
-                Back to Dashboard
+                {t('admin.backToDashboard', 'Back to Dashboard')}
             </button>
 
             <div className="max-w-4xl mx-auto">
-                <h1 className="text-3xl font-bold mb-8 text-glow">Add New Product</h1>
+                <h1 className="text-3xl font-bold mb-8 text-glow">{t('admin.addNewProduct', 'Add New Product')}</h1>
 
                 <form onSubmit={handleSubmit} className="space-y-8">
                     {/* Basic Info */}
                     <div className="card p-6 space-y-6">
-                        <h2 className="text-xl font-semibold border-b border-gray-800 pb-2">Basic Information</h2>
+                        <h2 className="text-xl font-semibold border-b border-gray-800 pb-2">{t('admin.basicInfo', 'Basic Information')}</h2>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-2">
@@ -199,7 +201,7 @@ export default function AddProduct() {
 
                     {/* Pricing & Inventory */}
                     <div className="card p-6 space-y-6">
-                        <h2 className="text-xl font-semibold border-b border-gray-800 pb-2">Pricing & Inventory</h2>
+                        <h2 className="text-xl font-semibold border-b border-gray-800 pb-2">{t('admin.pricingInventory', 'Pricing & Inventory')}</h2>
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div className="space-y-2">
@@ -259,7 +261,7 @@ export default function AddProduct() {
 
                     {/* Categorization */}
                     <div className="card p-6 space-y-6">
-                        <h2 className="text-xl font-semibold border-b border-gray-800 pb-2">Categorization</h2>
+                        <h2 className="text-xl font-semibold border-b border-gray-800 pb-2">{t('admin.categorization', 'Categorization')}</h2>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-2">
@@ -311,7 +313,7 @@ export default function AddProduct() {
                     {/* Specifications */}
                     <div className="card p-6 space-y-6">
                         <div className="flex justify-between items-center border-b border-gray-800 pb-2">
-                            <h2 className="text-xl font-semibold">Specifications</h2>
+                            <h2 className="text-xl font-semibold">{t('admin.specifications', 'Specifications')}</h2>
                             <button
                                 type="button"
                                 onClick={addSpecification}
@@ -354,7 +356,7 @@ export default function AddProduct() {
 
                     {/* Images */}
                     <div className="card p-6 space-y-6">
-                        <h2 className="text-xl font-semibold border-b border-gray-800 pb-2">Product Images</h2>
+                        <h2 className="text-xl font-semibold border-b border-gray-800 pb-2">{t('admin.productImages', 'Product Images')}</h2>
 
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                             {/* Upload Button */}
@@ -393,7 +395,7 @@ export default function AddProduct() {
                             onClick={() => navigate('/admin')}
                             className="btn-secondary"
                         >
-                            Cancel
+                            {t('admin.cancel', 'Cancel')}
                         </button>
                         <button
                             type="submit"
@@ -405,7 +407,7 @@ export default function AddProduct() {
                             ) : (
                                 <Save size={20} />
                             )}
-                            Save Product
+                            {t('admin.saveProduct', 'Save Product')}
                         </button>
                     </div>
                 </form>

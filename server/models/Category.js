@@ -31,14 +31,24 @@ const categorySchema = new mongoose.Schema({
     },
     seoTitle: String,
     seoDescription: String,
-    seoKeywords: [String]
+    seoKeywords: [String],
+    translations: {
+        uz: {
+            name: String,
+            description: String
+        },
+        ru: {
+            name: String,
+            description: String
+        }
+    }
 }, {
     timestamps: true
 });
 
 // Auto-generate slug from name
-categorySchema.pre('save', function (next) {
-    if (this.isModified('name')) {
+categorySchema.pre('validate', function (next) {
+    if (this.isModified('name') && this.name) {
         this.slug = this.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
     }
     next();

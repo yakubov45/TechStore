@@ -3,8 +3,10 @@ import { Tag, Save, RotateCcw, AlertTriangle } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import api from '../../services/api';
 import { useCurrencyStore } from '../../store/currencyStore';
+import { useTranslation } from 'react-i18next';
 
 export default function AdminDiscounts() {
+    const { t } = useTranslation();
     const [targetType, setTargetType] = useState('all'); // all, category, brand, product
     const [targetId, setTargetId] = useState('');
     const [discountType, setDiscountType] = useState('percentage'); // percentage, fixed
@@ -107,14 +109,14 @@ export default function AdminDiscounts() {
         <div className="bg-dark-card p-6 rounded-xl border border-gray-800">
             <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
                 <Tag className="text-primary" />
-                Discount Management
+                {t('admin.discountManagement', 'Discount Management')}
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="space-y-6">
                     <div>
                         <label className="block text-sm font-medium text-text-secondary mb-3">
-                            Target Products
+                            {t('admin.targetProducts', 'Target Products')}
                         </label>
                         <div className="space-y-2">
                             <label className="flex items-center gap-2 cursor-pointer">
@@ -126,7 +128,7 @@ export default function AdminDiscounts() {
                                     onChange={(e) => setTargetType(e.target.value)}
                                     className="text-primary focus:ring-primary"
                                 />
-                                <span>All Products</span>
+                                <span>{t('admin.allProducts', 'All Products')}</span>
                             </label>
                             <label className="flex items-center gap-2 cursor-pointer">
                                 <input
@@ -137,7 +139,7 @@ export default function AdminDiscounts() {
                                     onChange={(e) => setTargetType(e.target.value)}
                                     className="text-primary focus:ring-primary"
                                 />
-                                <span>By Category</span>
+                                <span>{t('admin.byCategory', 'By Category')}</span>
                             </label>
                             <label className="flex items-center gap-2 cursor-pointer">
                                 <input
@@ -148,7 +150,7 @@ export default function AdminDiscounts() {
                                     onChange={(e) => setTargetType(e.target.value)}
                                     className="text-primary focus:ring-primary"
                                 />
-                                <span>By Brand</span>
+                                <span>{t('admin.byBrand', 'By Brand')}</span>
                             </label>
                             <label className="flex items-center gap-2 cursor-pointer">
                                 <input
@@ -159,7 +161,7 @@ export default function AdminDiscounts() {
                                     onChange={(e) => setTargetType(e.target.value)}
                                     className="text-primary focus:ring-primary"
                                 />
-                                <span>Specific Product</span>
+                                <span>{t('admin.specificProduct', 'Specific Product')}</span>
                             </label>
                         </div>
                     </div>
@@ -226,7 +228,7 @@ export default function AdminDiscounts() {
                     <form onSubmit={handleApply} className="space-y-4">
                         <div>
                             <label className="block text-sm font-medium text-text-secondary mb-3">
-                                Discount Type
+                                {t('admin.discountType', 'Discount Type')}
                             </label>
                             <div className="flex gap-4">
                                 <label className="flex items-center gap-2 cursor-pointer">
@@ -238,7 +240,7 @@ export default function AdminDiscounts() {
                                         onChange={(e) => setDiscountType(e.target.value)}
                                         className="text-primary focus:ring-primary"
                                     />
-                                    <span>Percentage (%)</span>
+                                    <span>{t('admin.percentage', 'Percentage (%)')}</span>
                                 </label>
                                 <label className="flex items-center gap-2 cursor-pointer">
                                     <input
@@ -249,14 +251,14 @@ export default function AdminDiscounts() {
                                         onChange={(e) => setDiscountType(e.target.value)}
                                         className="text-primary focus:ring-primary"
                                     />
-                                    <span>Fixed Amount</span>
+                                    <span>{t('admin.fixedAmount', 'Fixed Amount')}</span>
                                 </label>
                             </div>
                         </div>
 
                         <div>
                             <label className="block text-sm font-medium text-text-secondary mb-1">
-                                Discount Value
+                                {t('admin.discountValue', 'Discount Value')}
                             </label>
                             <input
                                 type="number"
@@ -281,7 +283,7 @@ export default function AdminDiscounts() {
                                         onChange={(e) => setDaily(e.target.checked)}
                                         className="text-primary focus:ring-primary"
                                     />
-                                    <span>Daily / temporary discount</span>
+                                    <span>{t('admin.dailyDiscount', 'Daily / temporary discount')}</span>
                                 </label>
                                 {daily && (
                                     <div className="flex items-center gap-2">
@@ -313,7 +315,7 @@ export default function AdminDiscounts() {
                                 className="btn-primary w-full flex items-center justify-center gap-2"
                             >
                                 {loading ? <RotateCcw className="animate-spin" size={20} /> : <Save size={20} />}
-                                Apply Discount
+                                {t('admin.applyDiscount', 'Apply Discount')}
                             </button>
 
                             <button
@@ -323,7 +325,7 @@ export default function AdminDiscounts() {
                                 className="p-3 border border-red-500 text-red-500 rounded-lg hover:bg-red-500/10 transition flex items-center justify-center gap-2"
                             >
                                 <RotateCcw size={20} />
-                                Remove Discount (Restore Prices)
+                                {t('admin.removeDiscount', 'Remove Discount (Restore Prices)')}
                             </button>
                         </div>
                     </form>

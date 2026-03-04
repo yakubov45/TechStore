@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Plus, Edit, Trash2, Package, Grid, Tag, DollarSign, Users, ShoppingBag, Layers, Activity, TrendingUp, Clock } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import api from '../services/api';
+import { getImageUrl } from '../utils/image';
 import toast from 'react-hot-toast';
 import CategoryModal from '../components/admin/CategoryModal';
 import BrandModal from '../components/admin/BrandModal';
@@ -14,7 +15,7 @@ import { useTranslation } from 'react-i18next';
 
 export default function Admin() {
     const { user, isAuthenticated } = useAuthStore();
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState('dashboard');
     const [products, setProducts] = useState([]);
@@ -44,7 +45,7 @@ export default function Admin() {
         }
 
         fetchData();
-    }, [isAuthenticated, user]);
+    }, [isAuthenticated, user, i18n.language]);
 
     const fetchOrders = async () => {
         setOrdersLoading(true);
@@ -68,7 +69,7 @@ export default function Admin() {
         if (activeTab === 'orders') {
             fetchOrders();
         }
-    }, [activeTab, paymentFilter, deliveryFilter, statusFilter]);
+    }, [activeTab, paymentFilter, deliveryFilter, statusFilter, i18n.language]);
 
     const fetchData = async () => {
         setLoading(true);
@@ -263,18 +264,18 @@ export default function Admin() {
                             <h3 className="text-xl font-bold mb-6 flex items-center justify-between">
                                 <span className="flex items-center gap-2">
                                     <Clock size={20} className="text-primary" />
-                                    Recent Orders
+                                    {t('admin.recentOrders', 'Recent Orders')}
                                 </span>
-                                <button className="text-sm text-primary hover:underline">View All</button>
+                                <button className="text-sm text-primary hover:underline" onClick={() => setActiveTab('orders')}>{t('admin.viewAll', 'View All')}</button>
                             </h3>
                             <div className="overflow-x-auto">
                                 <table className="w-full text-sm">
                                     <thead>
                                         <tr className="text-left text-text-secondary border-b border-gray-800">
-                                            <th className="pb-4 font-medium">Customer</th>
-                                            <th className="pb-4 font-medium">Date</th>
-                                            <th className="pb-4 font-medium">Status</th>
-                                            <th className="pb-4 font-medium text-right">Total</th>
+                                            <th className="pb-4 font-medium">{t('admin.table.customer', 'Customer')}</th>
+                                            <th className="pb-4 font-medium">{t('admin.table.date', 'Date')}</th>
+                                            <th className="pb-4 font-medium">{t('admin.table.status', 'Status')}</th>
+                                            <th className="pb-4 font-medium text-right">{t('admin.table.total', 'Total')}</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-gray-800">
@@ -295,7 +296,7 @@ export default function Admin() {
                                                             order.orderStatus === 'processing' ? 'bg-blue-500/10 text-blue-500' :
                                                                 'bg-red-500/10 text-red-500'
                                                         }`}>
-                                                        {order.orderStatus}
+                                                        {t(`admin.status.${order.orderStatus}`, order.orderStatus)}
                                                     </span>
                                                 </td>
                                                 <td className="py-4 text-right font-bold text-primary">
@@ -315,13 +316,13 @@ export default function Admin() {
             {activeTab === 'products' && (
                 <div>
                     <div className="flex justify-between items-center mb-6">
-                        <h2 className="text-2xl font-bold">Products</h2>
+                        <h2 className="text-2xl font-bold">{t('admin.products', 'Products')}</h2>
                         <button
                             onClick={() => navigate('/admin/products/new')}
                             className="btn-primary px-4 py-2 flex items-center gap-2"
                         >
                             <Plus size={18} />
-                            Add Product
+                            {t('admin.addProduct', 'Add Product')}
                         </button>
                     </div>
 
@@ -329,13 +330,13 @@ export default function Admin() {
                         <table className="w-full">
                             <thead className="border-b border-gray-800">
                                 <tr className="text-left">
-                                    <th className="p-4">Product</th>
-                                    <th className="p-4">Category</th>
-                                    <th className="p-4">Brand</th>
-                                    <th className="p-4">Price</th>
-                                    <th className="p-4">Stock</th>
-                                    <th className="p-4">Status</th>
-                                    <th className="p-4">Actions</th>
+                                    <th className="p-4">{t('admin.table.product', 'Product')}</th>
+                                    <th className="p-4">{t('admin.table.category', 'Category')}</th>
+                                    <th className="p-4">{t('admin.table.brand', 'Brand')}</th>
+                                    <th className="p-4">{t('admin.table.price', 'Price')}</th>
+                                    <th className="p-4">{t('admin.table.stock', 'Stock')}</th>
+                                    <th className="p-4">{t('admin.table.status', 'Status')}</th>
+                                    <th className="p-4">{t('admin.table.actions', 'Actions')}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -343,12 +344,15 @@ export default function Admin() {
                                     <tr key={product._id} className="border-b border-gray-800 hover:bg-dark-secondary">
                                         <td className="p-4">
                                             <div className="flex items-center gap-3">
-                                                {product.images?.[0] && (
+                                                {product.images?.[0] ? (
                                                     <img
-                                                        src={product.images[0]}
+                                                        src={getImageUrl(product.images[0])}
                                                         alt={product.name}
-                                                        className="w-12 h-12 object-cover rounded"
+                                                        className="w-12 h-12 rounded object-cover"
+                                                        onError={(e) => { e.target.src = '/placeholder.png'; e.target.onerror = null; }}
                                                     />
+                                                ) : (
+                                                    <div className="w-12 h-12 bg-dark-secondary rounded flex items-center justify-center text-xs text-center leading-tight p-1">{t('common.noImage', 'No img')}</div>
                                                 )}
                                                 <div>
                                                     <p className="font-semibold">{product.name}</p>
@@ -374,7 +378,7 @@ export default function Admin() {
                                         <td className="p-4">
                                             {product.featured && (
                                                 <span className="px-2 py-1 bg-primary/20 text-primary rounded text-xs">
-                                                    Featured
+                                                    {t('admin.featured', 'Featured')}
                                                 </span>
                                             )}
                                         </td>
@@ -406,16 +410,16 @@ export default function Admin() {
             {activeTab === 'orders' && (
                 <div className="space-y-6">
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                        <h2 className="text-2xl font-bold">Orders</h2>
+                        <h2 className="text-2xl font-bold">{t('admin.orders', 'Orders')}</h2>
                         <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
                             <select
                                 value={paymentFilter}
                                 onChange={(e) => setPaymentFilter(e.target.value)}
                                 className="bg-dark-card text-sm px-3 py-2 rounded"
                             >
-                                <option value="all">All Payments</option>
-                                <option value="online">Online</option>
-                                <option value="cash">Cash</option>
+                                <option value="all">{t('admin.filters.allPayments', 'All Payments')}</option>
+                                <option value="online">{t('admin.filters.online', 'Online')}</option>
+                                <option value="cash">{t('admin.filters.cash', 'Cash')}</option>
                             </select>
 
                             <select
@@ -423,9 +427,9 @@ export default function Admin() {
                                 onChange={(e) => setDeliveryFilter(e.target.value)}
                                 className="bg-dark-card text-sm px-3 py-2 rounded"
                             >
-                                <option value="all">All Delivery</option>
-                                <option value="pickup">Pickup</option>
-                                <option value="standard">Delivery</option>
+                                <option value="all">{t('admin.filters.allDelivery', 'All Delivery')}</option>
+                                <option value="pickup">{t('admin.filters.pickup', 'Pickup')}</option>
+                                <option value="standard">{t('admin.filters.standard', 'Delivery')}</option>
                             </select>
 
                             <select
@@ -433,11 +437,11 @@ export default function Admin() {
                                 onChange={(e) => setStatusFilter(e.target.value)}
                                 className="bg-dark-card text-sm px-3 py-2 rounded"
                             >
-                                <option value="all">All Statuses</option>
-                                <option value="pending">Pending</option>
-                                <option value="processing">Processing</option>
-                                <option value="delivered">Delivered</option>
-                                <option value="cancelled">Cancelled</option>
+                                <option value="all">{t('admin.filters.allStatuses', 'All Statuses')}</option>
+                                <option value="pending">{t('admin.status.pending', 'Pending')}</option>
+                                <option value="processing">{t('admin.status.processing', 'Processing')}</option>
+                                <option value="delivered">{t('admin.status.delivered', 'Delivered')}</option>
+                                <option value="cancelled">{t('admin.status.cancelled', 'Cancelled')}</option>
                             </select>
 
                             <button
@@ -447,7 +451,7 @@ export default function Admin() {
                                 }}
                                 className="btn-primary px-4 py-2"
                             >
-                                Refresh
+                                {t('admin.refresh', 'Refresh')}
                             </button>
                         </div>
                     </div>
@@ -456,13 +460,13 @@ export default function Admin() {
                         <table className="w-full text-sm">
                             <thead>
                                 <tr className="text-left text-text-secondary border-b border-gray-800">
-                                    <th className="p-4">Customer</th>
-                                    <th className="p-4">Date</th>
-                                    <th className="p-4">Payment</th>
-                                    <th className="p-4">Delivery</th>
-                                    <th className="p-4">Status</th>
-                                    <th className="p-4 text-right">Total</th>
-                                    <th className="p-4">Actions</th>
+                                    <th className="p-4">{t('admin.table.customer', 'Customer')}</th>
+                                    <th className="p-4">{t('admin.table.date', 'Date')}</th>
+                                    <th className="p-4">{t('admin.table.payment', 'Payment')}</th>
+                                    <th className="p-4">{t('admin.table.delivery', 'Delivery')}</th>
+                                    <th className="p-4">{t('admin.table.status', 'Status')}</th>
+                                    <th className="p-4 text-right">{t('admin.table.total', 'Total')}</th>
+                                    <th className="p-4">{t('admin.table.actions', 'Actions')}</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-800">
@@ -476,15 +480,15 @@ export default function Admin() {
                                                 </div>
                                             </td>
                                             <td className="p-4 text-text-secondary">{new Date(order.createdAt).toLocaleString()}</td>
-                                            <td className="p-4">{order.paymentMethod}</td>
-                                            <td className="p-4">{order.deliveryOption}</td>
+                                            <td className="p-4">{t(`admin.filters.${order.paymentMethod}`, order.paymentMethod)}</td>
+                                            <td className="p-4">{t(`admin.filters.${order.deliveryOption}`, order.deliveryOption)}</td>
                                             <td className="p-4">
                                                 <span className={`px-2 py-1 rounded-full text-xs font-semibold ${order.orderStatus === 'delivered' ? 'bg-green-500/10 text-green-500' :
                                                     order.orderStatus === 'pending' ? 'bg-yellow-500/10 text-yellow-500' :
                                                         order.orderStatus === 'processing' ? 'bg-blue-500/10 text-blue-500' :
                                                             'bg-red-500/10 text-red-500'
                                                     }`}>
-                                                    {order.orderStatus}
+                                                    {t(`admin.status.${order.orderStatus}`, order.orderStatus)}
                                                 </span>
                                             </td>
                                             <td className="p-4 text-right font-bold text-primary">{formatPrice(order.total)}</td>
@@ -494,13 +498,13 @@ export default function Admin() {
                                                         onClick={() => setExpandedOrderId(expandedOrderId === order._id ? null : order._id)}
                                                         className="p-2 hover:bg-primary/20 rounded"
                                                     >
-                                                        Details
+                                                        {t('admin.details', 'Details')}
                                                     </button>
                                                     <button
                                                         onClick={() => navigate(`/admin/orders/${order._id}`)}
                                                         className="p-2 hover:bg-dark-card rounded"
                                                     >
-                                                        View
+                                                        {t('admin.view', 'View')}
                                                     </button>
                                                 </div>
                                             </td>
@@ -518,7 +522,7 @@ export default function Admin() {
                                                                     )}
                                                                     <div>
                                                                         <p className="font-medium">{it.productSnapshot?.name}</p>
-                                                                        <p className="text-xs text-text-secondary">Qty: {it.quantity} • {formatPrice(it.price)}</p>
+                                                                        <p className="text-xs text-text-secondary">{t('admin.qty', 'Qty')}: {it.quantity} • {formatPrice(it.price)}</p>
                                                                     </div>
                                                                 </div>
                                                                 <div className="text-sm font-semibold">{formatPrice(it.price * it.quantity)}</div>
@@ -540,7 +544,7 @@ export default function Admin() {
             {activeTab === 'categories' && (
                 <div>
                     <div className="flex justify-between items-center mb-6">
-                        <h2 className="text-2xl font-bold">Categories</h2>
+                        <h2 className="text-2xl font-bold">{t('admin.categories', 'Categories')}</h2>
                         <button
                             onClick={() => {
                                 setEditingCategory(null);
@@ -549,7 +553,7 @@ export default function Admin() {
                             className="btn-primary px-4 py-2 flex items-center gap-2"
                         >
                             <Plus size={18} />
-                            Add Category
+                            {t('admin.addCategory', 'Add Category')}
                         </button>
                     </div>
 
@@ -563,7 +567,7 @@ export default function Admin() {
                                             <h3 className="font-bold text-lg">{category.name}</h3>
                                             <p className="text-sm text-text-secondary">{category.description}</p>
                                             <p className="text-xs text-primary mt-1">
-                                                {category.productCount} products
+                                                {category.productCount} {t('admin.products', 'products')}
                                             </p>
                                         </div>
                                     </div>
@@ -595,7 +599,7 @@ export default function Admin() {
             {activeTab === 'brands' && (
                 <div>
                     <div className="flex justify-between items-center mb-6">
-                        <h2 className="text-2xl font-bold">Brands</h2>
+                        <h2 className="text-2xl font-bold">{t('admin.brands', 'Brands')}</h2>
                         <button
                             onClick={() => {
                                 setEditingBrand(null);
@@ -604,7 +608,7 @@ export default function Admin() {
                             className="btn-primary px-4 py-2 flex items-center gap-2"
                         >
                             <Plus size={18} />
-                            Add Brand
+                            {t('admin.addBrand', 'Add Brand')}
                         </button>
                     </div>
 
@@ -633,11 +637,11 @@ export default function Admin() {
                                 </div>
                                 <p className="text-sm text-text-secondary mb-2">{brand.description}</p>
                                 <p className="text-xs text-primary">
-                                    {brand.productCount} products
+                                    {brand.productCount} {t('admin.products', 'products')}
                                 </p>
                                 {brand.featured && (
                                     <span className="mt-2 inline-block px-2 py-1 bg-primary/20 text-primary rounded text-xs">
-                                        Featured
+                                        {t('admin.featured', 'Featured')}
                                     </span>
                                 )}
                             </div>

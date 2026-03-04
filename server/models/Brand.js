@@ -32,14 +32,24 @@ const brandSchema = new mongoose.Schema({
     productCount: {
         type: Number,
         default: 0
+    },
+    translations: {
+        uz: {
+            name: String,
+            description: String
+        },
+        ru: {
+            name: String,
+            description: String
+        }
     }
 }, {
     timestamps: true
 });
 
 // Auto-generate slug from name
-brandSchema.pre('save', function (next) {
-    if (this.isModified('name')) {
+brandSchema.pre('validate', function (next) {
+    if (this.isModified('name') && this.name) {
         this.slug = this.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
     }
     next();

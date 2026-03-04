@@ -1,5 +1,6 @@
 import Brand from '../models/Brand.js';
 import Product from '../models/Product.js';
+import { generateTranslations } from '../utils/translate.js';
 
 // @desc    Get all brands
 // @route   GET /api/brands
@@ -86,6 +87,11 @@ export const createBrand = async (req, res) => {
             brandData.logo = `/uploads/${req.file.filename}`;
         }
 
+        // Generate translations
+        if (brandData.name || brandData.description) {
+            brandData.translations = await generateTranslations(brandData.name, brandData.description);
+        }
+
         const brand = await Brand.create(brandData);
 
         res.status(201).json({
@@ -115,18 +121,25 @@ export const updateBrand = async (req, res) => {
             brandData.logo = `/uploads/${req.file.filename}`;
         }
 
-        const brand = await Brand.findByIdAndUpdate(
-            req.params.id,
-            brandData,
-            { new: true, runValidators: true }
-        );
-
-        if (!brand) {
+        const existingBrand = await Brand.findById(req.params.id);
+        if (!existingBrand) {
             return res.status(404).json({
                 success: false,
                 message: 'Brand not found'
             });
         }
+
+        if (brandData.name || brandData.description) {
+            const newName = brandData.name || existingBrand.name;
+            const newDesc = brandData.description || existingBrand.description;
+            brandData.translations = await generateTranslations(newName, newDesc);
+        }
+
+        const brand = await Brand.findByIdAndUpdate(
+            req.params.id,
+            brandData,
+            { new: true, runValidators: true }
+        );
 
         res.json({
             success: true,

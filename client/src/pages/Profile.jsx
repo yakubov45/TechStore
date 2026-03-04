@@ -5,6 +5,7 @@ import { useAuthStore } from '../store/authStore';
 import { useCurrencyStore } from '../store/currencyStore';
 import api from '../services/api';
 import toast from 'react-hot-toast';
+import { getImageUrl } from '../utils/image';
 
 export default function Profile() {
     const { user, isAuthenticated, logout } = useAuthStore();
@@ -249,11 +250,18 @@ export default function Profile() {
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     {wishlist.map(product => (
                                         <div key={product._id} className="card p-4 flex gap-4">
-                                            <img
-                                                src={product.images?.[0]}
-                                                alt={product.name}
-                                                className="w-24 h-24 object-cover rounded"
-                                            />
+                                            <div className="w-16 h-16 rounded-lg bg-dark-secondary overflow-hidden flex items-center justify-center flex-shrink-0">
+                                                {product.images?.length > 0 ? (
+                                                    <img
+                                                        src={getImageUrl(product.images[0])}
+                                                        alt={product.name}
+                                                        className="w-full h-full object-cover"
+                                                        onError={(e) => { e.target.src = '/placeholder.png'; e.target.onerror = null; }}
+                                                    />
+                                                ) : (
+                                                    <Package className="text-gray-500" />
+                                                )}
+                                            </div>
                                             <div className="flex-1">
                                                 <h3 className="font-semibold">{product.name}</h3>
                                                 <p className="text-primary">{formatPrice(product.price)}</p>

@@ -3,12 +3,15 @@ import { ShoppingCart, Heart } from 'lucide-react';
 import { useCartStore } from '../../store/cartStore';
 import { useCurrencyStore } from '../../store/currencyStore';
 import { useAuthStore } from '../../store/authStore';
+import { getImageUrl } from '../../utils/image';
+import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
 
 export default function ProductCard({ product }) {
     const addItem = useCartStore(state => state.addItem);
     const { user, addToWishlist, removeFromWishlist } = useAuthStore();
     const { formatPrice } = useCurrencyStore();
+    const { t } = useTranslation();
 
     const handleAddToCart = (e) => {
         e.preventDefault();
@@ -88,13 +91,14 @@ export default function ProductCard({ product }) {
             <div className="relative overflow-hidden bg-dark-secondary aspect-square">
                 {product.images && product.images.length > 0 ? (
                     <img
-                        src={product.images[0]}
+                        src={getImageUrl(product.images[0])}
                         alt={product.name}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                        onError={(e) => { e.target.src = '/placeholder.png'; e.target.onerror = null; }}
                     />
                 ) : (
-                    <div className="w-full h-full flex items-center justify-center text-gray-600">
-                        No Image
+                    <div className="w-full h-full flex items-center justify-center text-gray-600 text-xs">
+                        {t('products.noImage')}
                     </div>
                 )}
 
@@ -120,7 +124,7 @@ export default function ProductCard({ product }) {
                 {/* Stock Badge */}
                 {product.stock === 0 && (
                     <div className="absolute inset-0 bg-black/70 backdrop-blur-[2px] z-20 flex items-center justify-center">
-                        <span className="text-white font-bold text-sm bg-red-600 px-4 py-2 rounded-full shadow-glow">Out of Stock</span>
+                        <span className="text-white font-bold text-sm bg-red-600 px-4 py-2 rounded-full shadow-glow">{t('products.outOfStock')}</span>
                     </div>
                 )}
             </div>
@@ -146,7 +150,7 @@ export default function ProductCard({ product }) {
                         </svg>
                     </div>
                     <span className="text-[10px] text-text-secondary">
-                        ({product.reviewCount || 0} reviews)
+                        ({product.reviewCount || 0} {t('products.customerReviews', 'reviews')})
                     </span>
                 </div>
 
@@ -172,7 +176,7 @@ export default function ProductCard({ product }) {
                         className="btn-primary py-1.5 md:py-2 text-[10px] sm:text-[11px] md:text-sm px-2 sm:px-3 flex items-center justify-center space-x-1 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         <ShoppingCart size={14} className="md:w-4 md:h-4 flex-shrink-0" />
-                        <span className="truncate whitespace-nowrap">Add to Cart</span>
+                        <span className="truncate whitespace-nowrap">{t('products.addToCart')}</span>
                     </button>
                     <button
                         onClick={handleWishlist}

@@ -1,5 +1,6 @@
 import Category from '../models/Category.js';
 import Product from '../models/Product.js';
+import { generateTranslations } from '../utils/translate.js';
 
 // @desc    Get all categories
 // @route   GET /api/categories
@@ -74,7 +75,13 @@ export const getCategoryBySlug = async (req, res) => {
 // @access  Private/Admin
 export const createCategory = async (req, res) => {
     try {
-        const category = await Category.create(req.body);
+        const categoryData = { ...req.body };
+
+        // Generate translations
+        const translations = await generateTranslations(categoryData.name, categoryData.description);
+        categoryData.translations = translations;
+
+        const category = await Category.create(categoryData);
 
         res.status(201).json({
             success: true,
@@ -94,18 +101,28 @@ export const createCategory = async (req, res) => {
 // @access  Private/Admin
 export const updateCategory = async (req, res) => {
     try {
-        const category = await Category.findByIdAndUpdate(
-            req.params.id,
-            req.body,
-            { new: true, runValidators: true }
-        );
+        const categoryData = { ...req.body };
 
-        if (!category) {
+        // Find existing to check if we need to regenerate translations based on old fields
+        const existingCategory = await Category.findById(req.params.id);
+        if (!existingCategory) {
             return res.status(404).json({
                 success: false,
                 message: 'Category not found'
             });
         }
+
+        if (categoryData.name || categoryData.description) {
+            const newName = categoryData.name || existingCategory.name;
+            const newDesc = categoryData.description || existingCategory.description;
+            categoryData.translations = await generateTranslations(newName, newDesc);
+        }
+
+        const category = await Category.findByIdAndUpdate(
+            req.params.id,
+            categoryData,
+            { new: true, runValidators: true }
+        );
 
         res.json({
             success: true,

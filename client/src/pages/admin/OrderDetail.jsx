@@ -4,7 +4,10 @@ import api from '../../services/api';
 import toast from 'react-hot-toast';
 import { useCurrencyStore } from '../../store/currencyStore';
 
+import { useTranslation } from 'react-i18next';
+
 export default function OrderDetail() {
+    const { t, i18n } = useTranslation();
     const { id } = useParams();
     const navigate = useNavigate();
     const [order, setOrder] = useState(null);
@@ -26,42 +29,42 @@ export default function OrderDetail() {
         };
 
         fetchOrder();
-    }, [id]);
+    }, [id, i18n.language]);
 
-    if (loading) return <div className="container mx-auto p-6">Loading...</div>;
-    if (!order) return <div className="container mx-auto p-6">Order not found</div>;
+    if (loading) return <div className="container mx-auto p-6">{t('common.loading', 'Loading...')}</div>;
+    if (!order) return <div className="container mx-auto p-6">{t('admin.orderNotFound', 'Order not found')}</div>;
 
     return (
         <div className="container mx-auto p-6">
             <div className="flex items-center justify-between mb-6">
-                <h1 className="text-2xl font-bold">Order #{order._id}</h1>
-                <button onClick={() => navigate(-1)} className="btn-secondary">Back</button>
+                <h1 className="text-2xl font-bold">{t('admin.orderNumber', 'Order #')}{order._id}</h1>
+                <button onClick={() => navigate(-1)} className="btn-secondary">{t('admin.back', 'Back')}</button>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="card p-4">
-                    <h3 className="font-semibold mb-2">Customer</h3>
+                    <h3 className="font-semibold mb-2">{t('admin.customer', 'Customer')}</h3>
                     <p>{order.customerInfo?.name}</p>
                     <p className="text-sm text-text-secondary">{order.customerInfo?.email}</p>
                     <p className="text-sm text-text-secondary">{order.customerInfo?.phone}</p>
 
-                    <h3 className="font-semibold mt-4 mb-2">Shipping</h3>
+                    <h3 className="font-semibold mt-4 mb-2">{t('admin.shipping', 'Shipping')}</h3>
                     <p>{order.shippingAddress?.addressLine || '—'}</p>
-                    <p className="text-sm text-text-secondary">{order.deliveryOption} • Fee: {formatPrice(order.deliveryFee)}</p>
+                    <p className="text-sm text-text-secondary">{t(`admin.filters.${order.deliveryOption}`, order.deliveryOption)} • {t('admin.fee', 'Fee')}: {formatPrice(order.deliveryFee)}</p>
                 </div>
 
                 <div className="card p-4">
-                    <h3 className="font-semibold mb-2">Summary</h3>
-                    <p>Subtotal: {formatPrice(order.subtotal)}</p>
-                    <p>Discount: {formatPrice(order.discount || 0)}</p>
-                    <p>Delivery: {formatPrice(order.deliveryFee)}</p>
-                    <p className="font-bold mt-2">Total: {formatPrice(order.total)}</p>
-                    <p className="text-sm text-text-secondary mt-2">Status: {order.orderStatus}</p>
+                    <h3 className="font-semibold mb-2">{t('admin.summary', 'Summary')}</h3>
+                    <p>{t('checkout.subtotal', 'Subtotal')}: {formatPrice(order.subtotal)}</p>
+                    <p>{t('checkout.discount', 'Discount')}: {formatPrice(order.discount || 0)}</p>
+                    <p>{t('checkout.delivery', 'Delivery')}: {formatPrice(order.deliveryFee)}</p>
+                    <p className="font-bold mt-2">{t('checkout.total', 'Total')}: {formatPrice(order.total)}</p>
+                    <p className="text-sm text-text-secondary mt-2">{t('admin.table.status', 'Status')}: {t(`admin.status.${order.orderStatus}`, order.orderStatus)}</p>
                 </div>
             </div>
 
             <div className="card p-4 mt-6">
-                <h3 className="font-semibold mb-4">Items</h3>
+                <h3 className="font-semibold mb-4">{t('admin.items', 'Items')}</h3>
                 <div className="space-y-3">
                     {order.items.map(it => (
                         <div key={it._id || it.product} className="flex items-center justify-between">
@@ -71,7 +74,7 @@ export default function OrderDetail() {
                                 )}
                                 <div>
                                     <p className="font-medium">{it.productSnapshot?.name}</p>
-                                    <p className="text-xs text-text-secondary">Qty: {it.quantity} • {formatPrice(it.price)}</p>
+                                    <p className="text-xs text-text-secondary">{t('admin.qty', 'Qty')}: {it.quantity} • {formatPrice(it.price)}</p>
                                 </div>
                             </div>
                             <div className="text-sm font-semibold">{formatPrice(it.price * it.quantity)}</div>

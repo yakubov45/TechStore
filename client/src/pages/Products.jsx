@@ -7,7 +7,7 @@ import ProductCard from '../components/products/ProductCard';
 import SEO from '../components/common/SEO';
 
 export default function Products() {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const [searchParams, setSearchParams] = useSearchParams();
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
@@ -28,11 +28,11 @@ export default function Products() {
     useEffect(() => {
         fetchCategories();
         fetchBrands();
-    }, []);
+    }, [i18n.language]);
 
     useEffect(() => {
         fetchProducts();
-    }, [filters]);
+    }, [filters, i18n.language]);
 
     const fetchCategories = async () => {
         try {

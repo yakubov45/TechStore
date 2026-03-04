@@ -10,7 +10,7 @@ import toast from 'react-hot-toast';
 import SEO from '../components/common/SEO';
 
 export default function Home() {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const [featuredProducts, setFeaturedProducts] = useState([]);
     const [categories, setCategories] = useState([]);
     const [brands, setBrands] = useState([]);
@@ -56,7 +56,7 @@ export default function Home() {
 
     useEffect(() => {
         fetchData();
-    }, []);
+    }, [i18n.language]);
 
     const fetchData = async () => {
         try {
