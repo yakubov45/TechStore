@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { User, Package, Heart, LogOut } from 'lucide-react';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { User, Package, Heart, LogOut, QrCode } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import { useCurrencyStore } from '../store/currencyStore';
 import api from '../services/api';
@@ -227,12 +227,23 @@ export default function Profile() {
                                                 {order.orderStatus}
                                             </span>
                                         </div>
-                                        <p className="text-lg font-bold text-primary">
-                                            {formatPrice(order.total)}
-                                        </p>
-                                        <p className="text-sm text-text-secondary mt-2">
-                                            {order.items.length} item(s)
-                                        </p>
+                                        <div className="flex justify-between items-end mt-4">
+                                            <div>
+                                                <p className="text-lg font-bold text-primary">
+                                                    {formatPrice(order.total)}
+                                                </p>
+                                                <p className="text-sm text-text-secondary mt-1">
+                                                    {order.items.length} item(s)
+                                                </p>
+                                            </div>
+                                            <Link
+                                                to={`/verify-order/${order._id}`}
+                                                className="flex items-center gap-2 text-sm bg-dark-secondary hover:bg-primary/20 hover:text-primary transition-colors px-4 py-2 rounded-lg"
+                                            >
+                                                <QrCode size={16} />
+                                                View Receipt
+                                            </Link>
+                                        </div>
                                     </div>
                                 ))
                             )}

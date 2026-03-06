@@ -29,6 +29,7 @@ const DeliveryPanel = lazy(() => import('./pages/admin/DeliveryPanel'));
 const OrderSuccess = lazy(() => import('./pages/OrderSuccess'));
 const Cart = lazy(() => import('./pages/Cart'));
 const OTPVerification = lazy(() => import('./pages/OTPVerification'));
+const VerifyOrder = lazy(() => import('./pages/VerifyOrder'));
 
 // Lightweight loading component for Suspense
 function PageLoader() {
@@ -126,6 +127,7 @@ function App() {
                         } />
 
                         <Route path="/order-success" element={<OrderSuccess />} />
+                        <Route path="/verify-order/:id" element={<VerifyOrder />} />
                         <Route path="/cart" element={<Cart />} />
                         <Route path="/verify-otp" element={<OTPVerification />} />
                     </Routes>

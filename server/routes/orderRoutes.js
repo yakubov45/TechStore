@@ -5,12 +5,16 @@ import {
     getOrderById,
     cancelOrder,
     getAllOrders,
-    updateOrderStatus
+    updateOrderStatus,
+    getOrderForVerification
 } from '../controllers/orderController.js';
 import { protect } from '../middleware/authMiddleware.js';
 import { adminOrAssistant, adminAssistantOrDelivery } from '../middleware/adminMiddleware.js';
 
 const router = express.Router();
+
+// Public routes (for QR verification)
+router.get('/verify/:id', getOrderForVerification);
 
 // User routes
 router.post('/', protect, createOrder);
