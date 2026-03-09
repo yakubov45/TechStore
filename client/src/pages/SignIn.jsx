@@ -7,6 +7,7 @@ import { Eye, EyeOff } from 'lucide-react';
 
 export default function SignIn() {
     const [formData, setFormData] = useState({ email: '', password: '' });
+    const [errors, setErrors] = useState({ email: '', password: '', general: '' });
     const [loading, setLoading] = useState(false);
     const [animationComplete, setAnimationComplete] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
@@ -21,6 +22,14 @@ export default function SignIn() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setErrors({ email: '', password: '', general: '' });
+
+        // Basic frontend validation
+        if (!formData.email.includes('@')) {
+            setErrors(prev => ({ ...prev, email: t('auth.invalidEmail', 'Invalid email address') }));
+            return;
+        }
+
         setLoading(true);
 
         try {
@@ -28,7 +37,18 @@ export default function SignIn() {
             toast.success(t('auth.welcomeBack'));
             navigate('/');
         } catch (error) {
-            toast.error(error.response?.data?.message || t('auth.loginFailed'));
+            const msg = error.response?.data?.message || t('auth.loginFailed');
+
+            // Try to map error to specific fields based on common messages
+            if (msg.toLowerCase().includes('email') || msg.toLowerCase().includes('user')) {
+                setErrors(prev => ({ ...prev, email: msg }));
+            } else if (msg.toLowerCase().includes('password')) {
+                setErrors(prev => ({ ...prev, password: msg }));
+            } else {
+                setErrors(prev => ({ ...prev, general: msg }));
+            }
+
+            toast.error(t('auth.loginFailed', 'Please check your credentials'));
         } finally {
             setLoading(false);
         }
@@ -56,10 +76,14 @@ export default function SignIn() {
                             <input
                                 type="email"
                                 value={formData.email}
-                                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                className="input-field"
+                                onChange={(e) => {
+                                    setFormData({ ...formData, email: e.target.value });
+                                    if (errors.email) setErrors({ ...errors, email: '' });
+                                }}
+                                className={`input-field ${errors.email ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20' : ''}`}
                                 required
                             />
+                            {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
                         </div>
 
                         <div>
@@ -68,8 +92,12 @@ export default function SignIn() {
                                 <input
                                     type={showPassword ? "text" : "password"}
                                     value={formData.password}
-                                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                                    className="input-field pr-12"
+                                    onChange={(e) => {
+                                        setFormData({ ...formData, password: e.target.value });
+                                        if (errors.password) setErrors({ ...errors, password: '' });
+                                        if (errors.general) setErrors({ ...errors, general: '' });
+                                    }}
+                                    className={`input-field pr-12 ${errors.password ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20' : ''}`}
                                     required
                                 />
                                 <button
@@ -80,7 +108,14 @@ export default function SignIn() {
                                     {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                                 </button>
                             </div>
+                            {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
                         </div>
+
+                        {errors.general && (
+                            <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
+                                <p className="text-red-500 text-sm text-center">{errors.general}</p>
+                            </div>
+                        )}
 
                         <div className="flex justify-between items-center">
                             <Link to="/forgot-password" className="text-sm text-text-secondary hover:text-primary">{t('auth.forgotPassword')}</Link>

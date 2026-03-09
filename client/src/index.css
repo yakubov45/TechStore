@@ -109,6 +109,39 @@
   .neon-border {
     @apply border-2 border-primary shadow-glow;
   }
+
+  /* Custom Dual Range Slider */
+  .custom-range-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: rgb(var(--color-primary-rgb));
+    border-radius: 50%;
+    cursor: pointer;
+    pointer-events: auto;
+    border: 2px solid rgb(var(--color-primary-rgb));
+    transition: transform 0.1s;
+  }
+
+  .custom-range-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+  }
+
+  .custom-range-slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: rgb(var(--color-primary-rgb));
+    border-radius: 50%;
+    cursor: pointer;
+    pointer-events: auto;
+    border: 2px solid rgb(var(--color-primary-rgb));
+    transition: transform 0.1s;
+  }
+
+  .custom-range-slider::-moz-range-thumb:hover {
+    transform: scale(1.1);
+  }
 }
 
 @layer utilities {

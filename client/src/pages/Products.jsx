@@ -15,24 +15,38 @@ export default function Products() {
     const [loading, setLoading] = useState(true);
     const [pagination, setPagination] = useState({});
     const [showFilters, setShowFilters] = useState(false);
+    const [priceBounds, setPriceBounds] = useState({ min: 0, max: 1000000 });
 
     const [filters, setFilters] = useState({
         category: searchParams.get('category') || '',
         brand: searchParams.get('brand') || '',
         minPrice: searchParams.get('minPrice') || '',
         maxPrice: searchParams.get('maxPrice') || '',
+        discountOnly: searchParams.get('discountOnly') || '',
         sort: searchParams.get('sort') || 'newest',
         page: searchParams.get('page') || 1
     });
+
+    // Debounce state to prevent rapid API calls while sliding price
+    const [debouncedFilters, setDebouncedFilters] = useState(filters);
 
     useEffect(() => {
         fetchCategories();
         fetchBrands();
     }, [i18n.language]);
 
+    // Handle filter debouncing
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setDebouncedFilters(filters);
+        }, 1500); // 1.5 seconds delay
+
+        return () => clearTimeout(timer);
+    }, [filters]);
+
     useEffect(() => {
         fetchProducts();
-    }, [filters, i18n.language]);
+    }, [debouncedFilters, i18n.language]);
 
     const fetchCategories = async () => {
         try {
@@ -56,8 +70,8 @@ export default function Products() {
         setLoading(true);
         try {
             const params = new URLSearchParams();
-            Object.entries(filters).forEach(([key, value]) => {
-                if (value) params.append(key, value);
+            Object.entries(debouncedFilters).forEach(([key, value]) => {
+                if (value !== '' && value !== null && value !== undefined) params.append(key, value);
             });
 
             const res = await api.get(`/products?${params.toString()}`);
@@ -66,6 +80,10 @@ export default function Products() {
                 total: res.data.total,
                 page: res.data.page,
                 pages: res.data.pages
+            });
+            setPriceBounds({
+                min: res.data.minPriceBoundary !== undefined ? res.data.minPriceBoundary : 0,
+                max: res.data.maxPriceBoundary !== undefined ? res.data.maxPriceBoundary : 1000000
             });
         } catch (error) {
             console.error('Error fetching products:', error);
@@ -82,7 +100,7 @@ export default function Products() {
 
         const params = new URLSearchParams();
         Object.entries(newFilters).forEach(([k, v]) => {
-            if (v) params.set(k, v);
+            if (v !== '' && v !== null && v !== undefined) params.set(k, v);
         });
         setSearchParams(params);
     };
@@ -93,6 +111,7 @@ export default function Products() {
             brand: '',
             minPrice: '',
             maxPrice: '',
+            discountOnly: '',
             sort: 'newest',
             page: 1
         });
@@ -150,24 +169,71 @@ export default function Products() {
                             </select>
                         </div>
 
-                        {/* Price Range */}
+                        {/* Discount Toggle */}
+                        <div className="mb-6 flex items-center justify-between">
+                            <h3 className="font-semibold">{t('products.discountOnly', 'Скидка')}</h3>
+                            <button
+                                aria-label="Toggle discount filter"
+                                onClick={() => updateFilter('discountOnly', filters.discountOnly === 'true' ? '' : 'true')}
+                                className={`w-12 h-6 rounded-full flex items-center transition-colors px-1 ${filters.discountOnly === 'true' ? 'bg-primary' : 'bg-gray-600'}`}
+                            >
+                                <div className={`w-4 h-4 rounded-full bg-white transition-transform ${filters.discountOnly === 'true' ? 'translate-x-6' : 'translate-x-0'}`} />
+                            </button>
+                        </div>
+
+                        {/* Price Range Slider */}
                         <div className="mb-6">
-                            <h3 className="font-semibold mb-3">{t('products.priceRange', 'Price Range (UZS)')}</h3>
-                            <div className="space-y-2">
+                            <h3 className="font-semibold mb-6">{t('products.price', 'Цена')}</h3>
+
+                            {/* Value Display */}
+                            <div className="flex items-center justify-between mb-4 gap-4">
+                                <div className="bg-primary text-white px-3 py-1.5 rounded-md font-medium text-sm w-full text-center">
+                                    {Math.round(filters.minPrice || priceBounds.min)}
+                                </div>
+                                <div className="bg-primary text-white px-3 py-1.5 rounded-md font-medium text-sm w-full text-center">
+                                    {Math.round(filters.maxPrice || priceBounds.max)}
+                                </div>
+                            </div>
+
+                            {/* Dual Range Slider */}
+                            <div className="relative h-2 bg-gray-700 mx-2 rounded-full mt-6">
+                                {/* Active track line */}
+                                <div
+                                    className="absolute h-full bg-primary rounded-full"
+                                    style={{
+                                        left: `${priceBounds.max > priceBounds.min ? (((filters.minPrice || priceBounds.min) - priceBounds.min) / (priceBounds.max - priceBounds.min)) * 100 : 0}%`,
+                                        right: `${priceBounds.max > priceBounds.min ? 100 - (((filters.maxPrice || priceBounds.max) - priceBounds.min) / (priceBounds.max - priceBounds.min)) * 100 : 0}%`
+                                    }}
+                                ></div>
+
                                 <input
-                                    type="number"
-                                    placeholder={t('products.minPrice', 'Min')}
-                                    value={filters.minPrice}
-                                    onChange={(e) => updateFilter('minPrice', e.target.value)}
-                                    className="input-field text-sm"
+                                    type="range"
+                                    min={priceBounds.min}
+                                    max={priceBounds.max}
+                                    value={filters.minPrice || priceBounds.min}
+                                    onChange={(e) => {
+                                        const value = Math.min(Number(e.target.value), (filters.maxPrice || priceBounds.max) - 10);
+                                        updateFilter('minPrice', value);
+                                    }}
+                                    className="absolute w-full -top-2 h-0 appearance-none pointer-events-none custom-range-slider"
                                 />
                                 <input
-                                    type="number"
-                                    placeholder={t('products.maxPrice', 'Max')}
-                                    value={filters.maxPrice}
-                                    onChange={(e) => updateFilter('maxPrice', e.target.value)}
-                                    className="input-field text-sm"
+                                    type="range"
+                                    min={priceBounds.min}
+                                    max={priceBounds.max}
+                                    value={filters.maxPrice || priceBounds.max}
+                                    onChange={(e) => {
+                                        const value = Math.max(Number(e.target.value), (filters.minPrice || priceBounds.min) + 10);
+                                        updateFilter('maxPrice', value);
+                                    }}
+                                    className="absolute w-full -top-2 h-0 appearance-none pointer-events-none custom-range-slider"
                                 />
+                            </div>
+
+                            {/* Min/Max Labels */}
+                            <div className="flex justify-between text-xs text-text-secondary mt-5 px-2">
+                                <span>{Math.round(priceBounds.min)}</span>
+                                <span>{Math.round(priceBounds.max)}</span>
                             </div>
                         </div>
                     </div>

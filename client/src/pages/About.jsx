@@ -122,8 +122,8 @@ export default function About() {
                                             <MapPin />
                                         </div>
                                         <div>
-                                            <p className="text-xs text-text-secondary uppercase font-bold tracking-wider">{t('about.location.addressLabel')}</p>
-                                            <p className="text-white">{t('about.location.address')}</p>
+                                            <p className="text-xs text-primary uppercase font-bold tracking-wider">{t('about.location.addressLabel')}</p>
+                                            <p className="text-white font-medium">{t('about.location.address')}</p>
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-4">
@@ -131,18 +131,23 @@ export default function About() {
                                             <Clock />
                                         </div>
                                         <div>
-                                            <p className="text-xs text-text-secondary uppercase font-bold tracking-wider">{t('about.location.hoursLabel')}</p>
-                                            <p className="text-white">{t('about.location.hours')}</p>
+                                            <p className="text-xs text-primary uppercase font-bold tracking-wider">{t('about.location.hoursLabel')}</p>
+                                            <p className="text-white font-medium">{t('about.location.hours')}</p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div className="aspect-video bg-dark-secondary rounded-2xl overflow-hidden border border-gray-800">
-                                <img
-                                    src="https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2069&auto=format&fit=crop"
-                                    alt="Office"
-                                    className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700"
-                                />
+                            <div className="aspect-video bg-dark-secondary rounded-2xl overflow-hidden border border-gray-800 relative">
+                                <iframe
+                                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2994.887858632688!2d69.34005697551066!3d41.339893400612!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x38aef48a8ed4d0e9%3A0x3772abeffc72e7b8!2sIT%20Park!5e0!3m2!1sen!2s!4v1709405452243!5m2!1sen!2s"
+                                    width="100%"
+                                    height="100%"
+                                    style={{ border: 0, minHeight: '300px' }}
+                                    allowFullScreen=""
+                                    loading="lazy"
+                                    referrerPolicy="no-referrer-when-downgrade"
+                                    title="Store Location Map"
+                                ></iframe>
                             </div>
                         </div>
                     </motion.section>

@@ -14,6 +14,17 @@ export const register = async (req, res) => {
     try {
         const { name, email, password, phone } = req.body;
 
+        // Strict validation
+        if (!name || name.trim().length < 3 || /^\d+$/.test(name.trim())) {
+            return res.status(400).json({ success: false, message: 'Invalid name representation' });
+        }
+        if (!phone || !/^\+998\d{9}$/.test(phone)) {
+            return res.status(400).json({ success: false, message: 'Phone number must be a valid Uzbekistan number (+998XXXXXXXXX)' });
+        }
+        if (!password || password.length < 6) {
+            return res.status(400).json({ success: false, message: 'Password must be at least 6 characters' });
+        }
+
         // Check if user exists
         const userExists = await User.findOne({ email });
         if (userExists) {

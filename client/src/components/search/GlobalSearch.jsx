@@ -78,7 +78,7 @@ export default function GlobalSearch({ isOpen, onClose }) {
             <div className="w-full max-w-3xl bg-dark-card rounded-2xl border border-primary/30 shadow-glow animate-slide-up">
                 {/* Search Input */}
                 <div className="flex items-center gap-3 p-4 border-b border-gray-800">
-                    <Search className="text-primary" size={24} />
+                    <Search className="text-primary flex-shrink-0" size={24} />
                     <input
                         ref={inputRef}
                         type="text"

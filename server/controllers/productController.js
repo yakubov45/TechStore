@@ -16,28 +16,35 @@ export const getProducts = async (req, res) => {
             minPrice,
             maxPrice,
             minRating,
+            discountOnly,
             sort,
             page = 1,
             limit = 12
         } = req.query;
 
-        // Build query
-        let query = {};
+        // Build base query (excludes minPrice/maxPrice to find absolute bounds)
+        let baseQuery = {};
 
-        if (category) query.category = category;
-        if (brand) query.brand = brand;
-        if (minPrice || maxPrice) {
-            query.price = {};
-            if (minPrice) query.price.$gte = Number(minPrice);
-            if (maxPrice) query.price.$lte = Number(maxPrice);
+        if (category) baseQuery.category = category;
+        if (brand) baseQuery.brand = brand;
+        if (minRating) baseQuery.averageRating = { $gte: Number(minRating) };
+        if (discountOnly === 'true') {
+            baseQuery.comparePrice = { $exists: true, $gt: 0 };
         }
-        if (minRating) query.averageRating = { $gte: Number(minRating) };
         if (search) {
-            query.$or = [
+            baseQuery.$or = [
                 { name: { $regex: search, $options: 'i' } },
                 { description: { $regex: search, $options: 'i' } },
                 { tags: { $in: [new RegExp(search, 'i')] } }
             ];
+        }
+
+        // Build the final query
+        let query = { ...baseQuery };
+        if (minPrice || maxPrice) {
+            query.price = {};
+            if (minPrice) query.price.$gte = Number(minPrice);
+            if (maxPrice) query.price.$lte = Number(maxPrice);
         }
 
         // Build sort
@@ -85,12 +92,23 @@ export const getProducts = async (req, res) => {
 
         const total = await Product.countDocuments(query);
 
+        // Find min / max bounds for the current filter
+        const [minProduct, maxProduct] = await Promise.all([
+            Product.findOne(baseQuery).sort({ price: 1 }).select('price'),
+            Product.findOne(baseQuery).sort({ price: -1 }).select('price')
+        ]);
+
+        const absoluteMinPrice = minProduct ? minProduct.price : 0;
+        const absoluteMaxPrice = maxProduct ? maxProduct.price : 1000;
+
         res.json({
             success: true,
             count: products.length,
             total,
             page: pageNum,
             pages: Math.ceil(total / limitNum),
+            minPriceBoundary: absoluteMinPrice,
+            maxPriceBoundary: absoluteMaxPrice,
             data: products
         });
     } catch (error) {
