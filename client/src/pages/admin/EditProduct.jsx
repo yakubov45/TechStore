@@ -201,6 +201,18 @@ export default function EditProduct() {
             <div className="max-w-4xl mx-auto">
                 <h1 className="text-3xl font-bold mb-8 text-glow">{t('admin.editProduct', 'Edit Product')}</h1>
 
+                {/* English Warning Alert */}
+                <div className="bg-blue-500/10 border border-blue-500/30 text-blue-400 p-4 rounded-xl mb-6 flex items-start gap-4">
+                    <span className="text-2xl">⚠️</span>
+                    <div>
+                        <h4 className="font-bold mb-1">Muhim Eshlatma (Translation Notice)</h4>
+                        <p className="text-sm">Iltimos, mahsulot <strong>Nomi (Name)</strong> va <strong>Ta'rifi (Description)</strong> maydonlarini faqat <strong>Ingliz tilida</strong> kiriting!</p>
+                        <p className="text-sm mt-1 opacity-80">
+                            <strong>Sabab:</strong> Saytimizdagi aqlli tarjimon (Auto-Translate) mexanizmi siz yozgan inglizcha matnni xatosiz va to'g'ri ravishda O'zbek va Rus tillariga o'girib, bazaga saqlaydi. Agar boshqa tilda yozsangiz, tarjimon xato ishlashi mumkin.
+                        </p>
+                    </div>
+                </div>
+
                 <form onSubmit={handleSubmit} className="space-y-8">
                     {/* Basic Info */}
                     <div className="card p-6 space-y-6">
