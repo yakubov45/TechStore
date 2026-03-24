@@ -1,9 +1,49 @@
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { Target, Users, BookOpen, MapPin, Clock, CheckCircle2 } from 'lucide-react';
+import { Target, BookOpen, MapPin, Clock, CheckCircle2 } from 'lucide-react';
+import api from '../services/api';
 
 export default function About() {
     const { t } = useTranslation();
+    const [locations, setLocations] = useState([]);
+
+    const getMapUrl = (loc) => {
+        const inputUrl = loc?.mapUrl;
+        const defaultUrl = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2994.887858632688!2d69.34005697551066!3d41.339893400612!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x38aef48a8ed4d0e9%3A0x3772abeffc72e7b8!2sIT%20Park!5e0!3m2!1sen!2s!4v1709405452243!5m2!1sen!2s";
+        if (!inputUrl) return defaultUrl;
+        
+        if (inputUrl.includes('<iframe')) {
+            const match = inputUrl.match(/src="([^"]+)"/);
+            return match ? match[1] : inputUrl;
+        }
+        
+        if (!inputUrl.includes('embed')) {
+            // Check for coordinates in the URL first (e.g., /@41.3177944,69.1682292)
+            const coordMatch = inputUrl.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+            if (coordMatch) {
+                return `https://maps.google.com/maps?q=${coordMatch[1]},${coordMatch[2]}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
+            }
+            
+            // If no coordinates, fall back to location name + address
+            const query = encodeURIComponent(`${loc?.name || ''} ${loc?.address || ''}`.trim());
+            return `https://maps.google.com/maps?q=${query || 'Tashkent'}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
+        }
+        
+        return inputUrl;
+    };
+
+    useEffect(() => {
+        const fetchLocations = async () => {
+            try {
+                const res = await api.get('/locations');
+                setLocations(res.data.data || []);
+            } catch (error) {
+                console.error('Failed to load locations', error);
+            }
+        };
+        fetchLocations();
+    }, []);
     const fadeIn = {
         hidden: { opacity: 0, y: 20 },
         visible: { opacity: 1, y: 0 }
@@ -110,47 +150,107 @@ export default function About() {
                         </div>
                     </motion.section>
 
-                    {/* Location */}
-                    <motion.section variants={fadeIn} className="relative rounded-3xl overflow-hidden bg-dark-card border border-gray-800 p-12">
-                        <div className="grid md:grid-cols-2 gap-12 items-center">
-                            <div>
-                                <h2 className="text-3xl font-bold mb-6">{t('about.location.title')}</h2>
-                                <p className="text-text-secondary mb-8 leading-relaxed">{t('about.location.text')}</p>
-                                <div className="space-y-6">
-                                    <div className="flex items-center gap-4">
-                                        <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
-                                            <MapPin />
-                                        </div>
+                    {/* Locations */}
+                    <div className="space-y-12">
+                        {locations.length > 0 ? (
+                            locations.map((loc) => (
+                                <motion.section 
+                                    key={loc._id} 
+                                    variants={fadeIn} 
+                                    initial="hidden"
+                                    whileInView="visible"
+                                    viewport={{ once: true }}
+                                    className="relative rounded-3xl overflow-hidden bg-dark-card border border-gray-800 p-12"
+                                >
+                                    <div className="grid md:grid-cols-2 gap-12 items-center">
                                         <div>
-                                            <p className="text-xs text-primary uppercase font-bold tracking-wider">{t('about.location.addressLabel')}</p>
-                                            <p className="text-white font-medium">{t('about.location.address')}</p>
+                                            <h2 className="text-3xl font-bold mb-6">{loc.name || t('about.location.title')}</h2>
+                                            <p className="text-text-secondary mb-8 leading-relaxed">{t('about.location.text')}</p>
+                                            <div className="space-y-6">
+                                                <div className="flex items-center gap-4">
+                                                    <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+                                                        <MapPin />
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-xs text-primary uppercase font-bold tracking-wider">{t('about.location.addressLabel')}</p>
+                                                        <p className="text-white font-medium">{loc.address || t('about.location.address')}</p>
+                                                    </div>
+                                                </div>
+                                                <div className="flex items-center gap-4">
+                                                    <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+                                                        <Clock />
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-xs text-primary uppercase font-bold tracking-wider">{t('about.location.hoursLabel')}</p>
+                                                        <p className="text-white font-medium">{loc.workingHours || t('about.location.hours')}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="aspect-video bg-dark-secondary rounded-2xl overflow-hidden border border-gray-800 relative">
+                                            <iframe
+                                                src={getMapUrl(loc)}
+                                                width="100%"
+                                                height="100%"
+                                                style={{ border: 0, minHeight: '300px' }}
+                                                allowFullScreen=""
+                                                loading="lazy"
+                                                referrerPolicy="no-referrer-when-downgrade"
+                                                title={loc.name || "Store Location Map"}
+                                            ></iframe>
                                         </div>
                                     </div>
-                                    <div className="flex items-center gap-4">
-                                        <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
-                                            <Clock />
+                                </motion.section>
+                            ))
+                        ) : (
+                            <motion.section 
+                                variants={fadeIn} 
+                                initial="hidden"
+                                whileInView="visible"
+                                viewport={{ once: true }}
+                                className="relative rounded-3xl overflow-hidden bg-dark-card border border-gray-800 p-12"
+                            >
+                                <div className="grid md:grid-cols-2 gap-12 items-center">
+                                    <div>
+                                        <h2 className="text-3xl font-bold mb-6">{t('about.location.title')}</h2>
+                                        <p className="text-text-secondary mb-8 leading-relaxed">{t('about.location.text')}</p>
+                                        <div className="space-y-6">
+                                            <div className="flex items-center gap-4">
+                                                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+                                                    <MapPin />
+                                                </div>
+                                                <div>
+                                                    <p className="text-xs text-primary uppercase font-bold tracking-wider">{t('about.location.addressLabel')}</p>
+                                                    <p className="text-white font-medium">{t('about.location.address')}</p>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-center gap-4">
+                                                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+                                                    <Clock />
+                                                </div>
+                                                <div>
+                                                    <p className="text-xs text-primary uppercase font-bold tracking-wider">{t('about.location.hoursLabel')}</p>
+                                                    <p className="text-white font-medium">{t('about.location.hours')}</p>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <p className="text-xs text-primary uppercase font-bold tracking-wider">{t('about.location.hoursLabel')}</p>
-                                            <p className="text-white font-medium">{t('about.location.hours')}</p>
-                                        </div>
+                                    </div>
+                                    <div className="aspect-video bg-dark-secondary rounded-2xl overflow-hidden border border-gray-800 relative">
+                                        <iframe
+                                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2994.887858632688!2d69.34005697551066!3d41.339893400612!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x38aef48a8ed4d0e9%3A0x3772abeffc72e7b8!2sIT%20Park!5e0!3m2!1sen!2s!4v1709405452243!5m2!1sen!2s"
+                                            width="100%"
+                                            height="100%"
+                                            style={{ border: 0, minHeight: '300px' }}
+                                            allowFullScreen=""
+                                            loading="lazy"
+                                            referrerPolicy="no-referrer-when-downgrade"
+                                            title="Store Location Map"
+                                        ></iframe>
                                     </div>
                                 </div>
-                            </div>
-                            <div className="aspect-video bg-dark-secondary rounded-2xl overflow-hidden border border-gray-800 relative">
-                                <iframe
-                                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2994.887858632688!2d69.34005697551066!3d41.339893400612!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x38aef48a8ed4d0e9%3A0x3772abeffc72e7b8!2sIT%20Park!5e0!3m2!1sen!2s!4v1709405452243!5m2!1sen!2s"
-                                    width="100%"
-                                    height="100%"
-                                    style={{ border: 0, minHeight: '300px' }}
-                                    allowFullScreen=""
-                                    loading="lazy"
-                                    referrerPolicy="no-referrer-when-downgrade"
-                                    title="Store Location Map"
-                                ></iframe>
-                            </div>
-                        </div>
-                    </motion.section>
+                            </motion.section>
+                        )}
+                    </div>
                 </motion.div>
             </div>
         </div>

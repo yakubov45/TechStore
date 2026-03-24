@@ -10,6 +10,7 @@ import { fileURLToPath } from 'url';
 import securityHeaders from './middleware/securityMiddleware.js';
 import { cookieMiddleware, extractTokensFromCookies } from './middleware/cookieMiddleware.js';
 import { localizeResponse } from './middleware/localize.js';
+import { sanitizePayload } from './middleware/sanitizationMiddleware.js';
 
 // Config and DB
 import config from './config/config.js';
@@ -29,6 +30,9 @@ import analyticsRoutes from './routes/analyticsRoutes.js';
 import paymentRoutes from './routes/paymentRoutes.js';
 import newsletterRoutes from './routes/newsletterRoutes.js';
 import sitemapRoutes from './routes/sitemapRoutes.js';
+import locationRoutes from './routes/locationRoutes.js';
+import settingRoutes from './routes/settingRoutes.js';
+import activityRoutes from './routes/activityRoutes.js';
 import { smtpAvailable } from './utils/emailService.js';
 
 // Middleware
@@ -168,6 +172,8 @@ if (process.env.ALLOW_ALL_ORIGINS === 'true') {
     }));
 }
 
+import { apiMutationLimiter } from './middleware/rateLimitMiddleware.js';
+
 // Rate limiting
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
@@ -175,6 +181,14 @@ const limiter = rateLimit({
     message: 'Too many requests from this IP, please try again later.'
 });
 app.use('/api', limiter);
+
+// Strict Zero Trust rate limiting for all mutating endpoints
+app.use('/api', (req, res, next) => {
+    if (['POST', 'PUT', 'DELETE', 'PATCH'].includes(req.method)) {
+        return apiMutationLimiter(req, res, next);
+    }
+    next();
+});
 
 // Admin UI protection: if ADMIN_PATH env var set, only allow access to that secret path
 if (process.env.ADMIN_PATH) {
@@ -190,6 +204,9 @@ if (process.env.ADMIN_PATH) {
 // Body parser
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Zero Trust Payload Sanitization
+app.use(sanitizePayload);
 
 // Cookie parser - enable signed cookies with secret
 app.use(cookieParser(process.env.COOKIE_SECRET || 'techstore-secret-key'));
@@ -227,6 +244,9 @@ app.use('/api/currency', currencyRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/newsletter', newsletterRoutes);
+app.use('/api/locations', locationRoutes);
+app.use('/api/settings', settingRoutes);
+app.use('/api/activities', activityRoutes);
 
 // Root Sitemap route
 app.use('/sitemap.xml', sitemapRoutes);

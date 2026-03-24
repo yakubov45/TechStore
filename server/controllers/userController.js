@@ -1,5 +1,6 @@
 import User from '../models/User.js';
 import Order from '../models/Order.js';
+import { logActivity } from '../utils/logger.js';
 
 // @desc    Get user profile
 // @route   GET /api/users/profile
@@ -332,6 +333,8 @@ export const updateUserRole = async (req, res) => {
 
         user.role = role;
         await user.save();
+
+        await logActivity(req, 'UPDATE', 'User', user._id, { role });
 
         res.json({
             success: true,

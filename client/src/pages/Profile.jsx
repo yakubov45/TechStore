@@ -6,6 +6,7 @@ import { useCurrencyStore } from '../store/currencyStore';
 import api from '../services/api';
 import toast from 'react-hot-toast';
 import { getImageUrl } from '../utils/image';
+import { useTranslation } from 'react-i18next';
 
 export default function Profile() {
     const { user, isAuthenticated, logout } = useAuthStore();
@@ -19,6 +20,7 @@ export default function Profile() {
     const [editingPhone, setEditingPhone] = useState(false);
     const [phoneValue, setPhoneValue] = useState(user?.phone || '');
     const [otpCode, setOtpCode] = useState('');
+    const { t } = useTranslation();
 
     useEffect(() => {
         if (!isAuthenticated) {
@@ -54,14 +56,14 @@ export default function Profile() {
     };
 
     const tabs = [
-        { id: 'profile', label: 'Profile', icon: User },
-        { id: 'orders', label: 'Orders', icon: Package },
-        { id: 'wishlist', label: 'Wishlist', icon: Heart }
+        { id: 'profile', label: t('profile.profile', 'Profile'), icon: User },
+        { id: 'orders', label: t('profile.orders', 'Orders'), icon: Package },
+        { id: 'wishlist', label: t('profile.wishlist', 'Wishlist'), icon: Heart }
     ];
 
     return (
         <div className="container mx-auto px-4 py-8">
-            <h1 className="text-4xl font-bold mb-8">My Account</h1>
+            <h1 className="text-4xl font-bold mb-8">{t('profile.account', 'My Account')}</h1>
 
             <div className="grid md:grid-cols-4 gap-8">
                 {/* Sidebar */}
@@ -84,7 +86,7 @@ export default function Profile() {
                         className="w-full flex items-center gap-3 p-4 bg-dark-secondary hover:bg-red-600/20 rounded-lg text-left transition"
                     >
                         <LogOut size={20} />
-                        Logout
+                        {t('profile.logout', 'Logout')}
                     </button>
                 </aside>
 
@@ -92,18 +94,18 @@ export default function Profile() {
                 <div className="md:col-span-3">
                     {activeTab === 'profile' && (
                         <div className="card p-6">
-                            <h2 className="text-2xl font-bold mb-6">Profile Information</h2>
+                            <h2 className="text-2xl font-bold mb-6">{t('profile.profileInfo', 'Profile Information')}</h2>
                             <div className="space-y-4">
                                 <div>
-                                    <label className="text-text-secondary text-sm">Name</label>
+                                    <label className="text-text-secondary text-sm">{t('profile.name', 'Name')}</label>
                                     <p className="text-lg">{user?.name}</p>
                                 </div>
                                 <div>
-                                    <label className="text-text-secondary text-sm">Email</label>
+                                    <label className="text-text-secondary text-sm">{t('profile.email', 'Email')}</label>
                                     <p className="text-lg">{user?.email}</p>
                                     {!user?.isEmailVerified && (
                                         <div className="flex items-center gap-4">
-                                            <span className="text-yellow-500 text-xs">Not verified</span>
+                                            <span className="text-yellow-500 text-xs">{t('profile.notVerified', 'Not verified')}</span>
                                             <button
                                                 onClick={async () => {
                                                     try {
@@ -122,11 +124,11 @@ export default function Profile() {
                                     )}
                                 </div>
                                 <div>
-                                    <label className="text-text-secondary text-sm">Phone</label>
+                                    <label className="text-text-secondary text-sm">{t('profile.phone', 'Phone')}</label>
                                     {!editingPhone ? (
                                         <div className="flex items-center gap-4">
-                                            <p className="text-lg">{user?.phone || 'Not provided'}</p>
-                                            <button onClick={() => { setEditingPhone(true); setPhoneValue(user?.phone || '') }} className="text-sm px-3 py-1 bg-primary/10 rounded text-primary">Edit</button>
+                                            <p className="text-lg">{user?.phone || t('profile.notProvided', 'Not provided')}</p>
+                                            <button onClick={() => { setEditingPhone(true); setPhoneValue(user?.phone || '') }} className="text-sm px-3 py-1 bg-primary/10 rounded text-primary">{t('profile.edit', 'Edit')}</button>
                                         </div>
                                     ) : (
                                         <div className="flex items-center gap-3">
@@ -145,9 +147,9 @@ export default function Profile() {
                                                 }}
                                                 className="text-sm px-3 py-1 bg-primary rounded text-white"
                                             >
-                                                Save
+                                                {t('profile.save', 'Save')}
                                             </button>
-                                            <button onClick={() => setEditingPhone(false)} className="text-sm px-3 py-1 bg-dark-secondary rounded">Cancel</button>
+                                            <button onClick={() => setEditingPhone(false)} className="text-sm px-3 py-1 bg-dark-secondary rounded">{t('profile.cancel', 'Cancel')}</button>
                                         </div>
                                     )}
 
@@ -167,7 +169,7 @@ export default function Profile() {
                                                         }}
                                                         className="text-sm px-3 py-1 bg-primary/10 rounded text-primary"
                                                     >
-                                                        Send SMS Code
+                                                        {t('profile.sendSmsCode', 'Send SMS Code')}
                                                     </button>
                                                     <input type="text" value={otpCode} onChange={(e) => setOtpCode(e.target.value)} placeholder="Enter code" className="input-field w-36" />
                                                     <button
@@ -194,7 +196,7 @@ export default function Profile() {
                                     )}
                                 </div>
                                 <div>
-                                    <label className="text-text-secondary text-sm">Member Since</label>
+                                    <label className="text-text-secondary text-sm">{t('profile.memberSince', 'Member Since')}</label>
                                     <p className="text-lg">
                                         {new Date(user?.createdAt).toLocaleDateString()}
                                     </p>

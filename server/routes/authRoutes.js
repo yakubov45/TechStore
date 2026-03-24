@@ -11,6 +11,7 @@ import {
     verifyOTP
 } from '../controllers/authController.js';
 import { protect } from '../middleware/authMiddleware.js';
+import { checkIPBlock } from '../middleware/bruteForceMiddleware.js';
 import rateLimit from 'express-rate-limit';
 
 const router = express.Router();
@@ -23,6 +24,7 @@ const authLimiter = rateLimit({
 });
 
 router.use(authLimiter);
+router.use(checkIPBlock);
 
 router.post('/register', register);
 router.post('/login', login);

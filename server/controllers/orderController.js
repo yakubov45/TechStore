@@ -3,6 +3,7 @@ import Order from '../models/Order.js';
 import Product from '../models/Product.js';
 import { sendOrderConfirmationEmail } from '../utils/emailService.js';
 import ExcelJS from 'exceljs';
+import { logActivity } from '../utils/logger.js';
 
 // @desc    Create new order
 // @route   POST /api/orders
@@ -118,6 +119,7 @@ export const createOrder = async (req, res) => {
             deliveryOption,
             deliveryFee,
             paymentMethod,
+            paymentStatus: 'pending',
             promoCode,
             subtotal,
             discount,
@@ -373,6 +375,8 @@ export const cancelOrder = async (req, res) => {
         });
         await order.save();
 
+        await logActivity(req, 'UPDATE', 'Order', order._id, { status: 'cancelled', reason: 'Cancelled by customer' });
+
         res.json({
             success: true,
             message: 'Order cancelled successfully',
@@ -454,6 +458,8 @@ export const updateOrderStatus = async (req, res) => {
         }
 
         await order.save();
+
+        await logActivity(req, 'UPDATE', 'Order', order._id, { status, note });
 
         res.json({
             success: true,

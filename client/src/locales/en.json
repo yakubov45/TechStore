@@ -359,6 +359,49 @@
         }
     },
     "admin": {
+        "table": {
+            "product": "Product",
+            "category": "Category",
+            "brand": "Brand",
+            "price": "Price",
+            "stock": "Stock",
+            "status": "Status",
+            "actions": "Actions",
+            "customer": "Customer",
+            "date": "Date",
+            "payment": "Payment",
+            "delivery": "Delivery",
+            "total": "Total"
+        },
+        "status": {
+            "pending": "Pending",
+            "processing": "Processing",
+            "delivered": "Delivered",
+            "cancelled": "Cancelled"
+        },
+        "filters": {
+            "allPayments": "All Payments",
+            "online": "Online",
+            "cash": "Cash",
+            "allDelivery": "All Delivery",
+            "pickup": "Pickup",
+            "standard": "Standard Delivery",
+            "allStatuses": "All Statuses",
+            "paid": "Paid",
+            "unpaid": "Unpaid",
+            "allDeliveries": "All Deliveries",
+            "refresh": "Refresh",
+            "details": "Details",
+            "view": "View",
+            "express": "Express"
+        },
+        "discountHint": "Applying a discount will set the current price as the \"Compare Price\" (Original Price) if not already set. Make sure to remove discounts before applying new ones to avoid stacking issues or incorrect base prices.",
+        "dailyDiscount": "Daily / temporary discount",
+        "removeDiscount": "Remove Discount",
+        "applyDiscount": "Apply Discount",
+        "discountType": "Discount Type",
+        "discountValue": "Discount Value",
+        "targetProducts": "Target Products",
         "users": "Users",
         "role": "Role",
         "joined": "Joined",
@@ -392,12 +435,6 @@
             "newThisWeek": "New this week"
         },
         "orderStatus": "Order Status",
-        "status": {
-            "pending": "Pending",
-            "processing": "Processing",
-            "delivered": "Delivered",
-            "cancelled": "Cancelled"
-        },
         "orderNotFound": "Order not found",
         "orderNumber": "Order #",
         "back": "Back",
@@ -407,9 +444,6 @@
         "summary": "Summary",
         "items": "Items",
         "qty": "Qty",
-        "table": {
-            "status": "Status"
-        },
         "backToDashboard": "Back to Dashboard",
         "editProduct": "Edit Product",
         "basicInfo": "Basic Information",
@@ -425,18 +459,12 @@
         "addNewProduct": "Add New Product",
         "saveProduct": "Save Product",
         "discountManagement": "Discount Management",
-        "targetProducts": "Target Products",
         "allProducts": "All Products",
         "byCategory": "By Category",
         "byBrand": "By Brand",
         "specificProduct": "Specific Product",
-        "discountType": "Discount Type",
         "percentage": "Percentage (%)",
         "fixedAmount": "Fixed Amount",
-        "discountValue": "Discount Value",
-        "dailyDiscount": "Daily / temporary discount",
-        "applyDiscount": "Apply Discount",
-        "removeDiscount": "Remove Discount (Restore Prices)",
         "currencyExchange": "Currency Exchange Rate",
         "exchangeDesc": "Set the exchange rate for USD to UZS conversion. This rate will be used to calculate prices across the store.",
         "currentRate": "Current Rate",
@@ -453,19 +481,6 @@
         "addCategory": "Add Category",
         "addBrand": "Add Brand",
         "featured": "Featured",
-        "filters": {
-            "allPayments": "All Payments",
-            "paid": "Paid",
-            "unpaid": "Unpaid",
-            "allDeliveries": "All Deliveries",
-            "allStatuses": "All Statuses",
-            "refresh": "Refresh",
-            "details": "Details",
-            "view": "View",
-            "standard": "Standard",
-            "express": "Express",
-            "pickup": "Pickup"
-        },
         "posScannerTitle": "POS Scanner",
         "posScannerDesc": "Scan product QR code to sell",
         "placeQrCode": "Place the QR code inside the frame to scan",
@@ -500,6 +515,7 @@
         }
     },
     "products": {
+        "wouldRecommend": "98% would recommend",
         "filter": "Filters",
         "clearAll": "Clear All",
         "category": "Category",
@@ -600,5 +616,23 @@
             "weekdays": "Monday - Saturday",
             "sunday": "Sunday"
         }
+    },
+    "profile": {
+        "account": "My Account",
+        "profile": "Profile",
+        "orders": "Orders",
+        "wishlist": "Wishlist",
+        "logout": "Logout",
+        "profileInfo": "Profile Information",
+        "name": "Name",
+        "email": "Email",
+        "phone": "Phone",
+        "memberSince": "Member Since",
+        "notVerified": "Not verified",
+        "notProvided": "Not provided",
+        "edit": "Edit",
+        "save": "Save",
+        "cancel": "Cancel",
+        "sendSmsCode": "Send SMS Code"
     }
 }

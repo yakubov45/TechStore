@@ -2,10 +2,41 @@ import User from '../models/User.js';
 import PendingUser from '../models/PendingUser.js';
 import bcrypt from 'bcryptjs';
 import { generateAccessToken, generateRefreshToken, generateEmailToken, generateResetToken, verifyRefreshToken } from '../utils/tokenUtils.js';
-import { sendVerificationEmail, sendPasswordResetEmail } from '../utils/emailService.js';
+import { sendVerificationEmail, sendPasswordResetEmail, sendSecurityAlertEmail } from '../utils/emailService.js';
 import { generateOTP, sendEmailOTP, sendSMSOTP } from '../utils/otpUtils.js';
 import { setTokenCookies, clearTokenCookies } from '../middleware/cookieMiddleware.js';
 import crypto from 'crypto';
+import IPBlock from '../models/IPBlock.js';
+
+const handleFailedAttempt = async (ip, userEmail) => {
+    let block = await IPBlock.findOne({ ipAddress: ip });
+    if (!block) {
+        block = await IPBlock.create({ ipAddress: ip, failures: 1 });
+    } else {
+        block.failures += 1;
+        if (block.failures === 3) {
+            block.lockUntil = new Date(Date.now() + 1 * 60000); // 1 min lock
+        } else if (block.failures >= 5) {
+            block.lockUntil = new Date(Date.now() + 15 * 60000); // 15 mins lock
+        }
+        await block.save();
+    }
+
+    if (userEmail) {
+        const user = await User.findOne({ email: userEmail });
+        if (user) {
+            user.failedLoginAttempts = (user.failedLoginAttempts || 0) + 1;
+            if (user.failedLoginAttempts >= 10) {
+                user.accountLockedUntil = new Date(Date.now() + 24 * 60 * 60000); // 24 hours
+                await user.save();
+                sendSecurityAlertEmail(user.email, user.name, ip).catch(err => console.error("Failed to send security alert", err));
+                return { isAccountLocked: true };
+            }
+            await user.save();
+        }
+    }
+    return { failures: block.failures, lockUntil: block.lockUntil };
+};
 
 // @desc    Register new user
 // @route   POST /api/auth/register
@@ -85,12 +116,21 @@ export const register = async (req, res) => {
 // @access  Public
 export const login = async (req, res) => {
     try {
+        const clientIp = req.ip || req.connection.remoteAddress || req.headers['x-forwarded-for'];
         const { email, password } = req.body;
 
         // Check for user
         const user = await User.findOne({ email }).select('+password');
 
+        if (user && user.accountLockedUntil && user.accountLockedUntil > Date.now()) {
+            return res.status(403).json({
+                success: false,
+                message: 'Xavfsizlik sababli hisobingiz vaqtincha muzlatilgan. Iltimos keyinroq urinib ko\'ring yoki pochtangizni tekshiring.'
+            });
+        }
+
         if (!user) {
+            await handleFailedAttempt(clientIp, email);
             return res.status(401).json({
                 success: false,
                 message: 'Invalid email or password'
@@ -101,6 +141,13 @@ export const login = async (req, res) => {
         const isMatch = await user.comparePassword(password);
 
         if (!isMatch) {
+            const attemptStatus = await handleFailedAttempt(clientIp, email);
+            if (attemptStatus && attemptStatus.isAccountLocked) {
+                return res.status(403).json({
+                    success: false,
+                    message: 'Hisobingiz vaqtincha muzlatildi (10 ta xato). Xavfsizlik bo\'yicha emailingizga xabar yuborildi.'
+                });
+            }
             return res.status(401).json({
                 success: false,
                 message: 'Invalid email or password'
@@ -111,7 +158,10 @@ export const login = async (req, res) => {
         const accessToken = generateAccessToken(user._id);
         const refreshToken = generateRefreshToken(user._id);
 
-        // Save refresh token and update last login
+        // Reset strike counters on success
+        await IPBlock.deleteOne({ ipAddress: clientIp });
+        user.failedLoginAttempts = 0;
+        user.accountLockedUntil = undefined;
         user.refreshToken = refreshToken;
         user.lastLogin = Date.now();
         await user.save();

@@ -88,7 +88,18 @@ export default function Footer() {
                     </div>
                 </div>
 
-                <div className="border-t border-gray-800 mt-8 pt-8 text-center text-sm text-text-secondary">
+                <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row items-center justify-between text-sm text-text-secondary gap-4">
+                    <div className="flex items-center gap-3">
+                        <span className="font-medium text-white/70">{t('footer.weAccept', 'We accept:')}</span>
+                        <div className="flex flex-wrap items-center justify-center gap-2">
+                            <span className="px-2 py-1 bg-white/5 rounded border border-white/10 text-xs font-bold text-white tracking-wider">VISA</span>
+                            <span className="px-2 py-1 bg-white/5 rounded border border-white/10 text-xs font-bold text-white tracking-wider">MASTERCARD</span>
+                            <span className="px-2 py-1 bg-white/5 rounded border border-white/10 text-[10px] font-bold text-white tracking-wider">UZCARD</span>
+                            <span className="px-2 py-1 bg-white/5 rounded border border-white/10 text-[10px] font-bold text-white tracking-wider">HUMO</span>
+                            <span className="px-2 py-1 bg-white/5 rounded border border-white/10 text-[10px] font-bold text-cyan-400 tracking-wider">PAYME</span>
+                            <span className="px-2 py-1 bg-white/5 rounded border border-white/10 text-[10px] font-bold text-blue-400 tracking-wider">CLICK</span>
+                        </div>
+                    </div>
                     <p>{t('footer.allRights', { year })}</p>
                 </div>
             </div>

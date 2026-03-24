@@ -387,6 +387,49 @@
         "noResults": "\"{{query}}\" uchun natija topilmadi"
     },
     "admin": {
+        "table": {
+            "product": "Mahsulot",
+            "category": "Kategoriya",
+            "brand": "Brend",
+            "price": "Narx",
+            "stock": "Zaxira",
+            "status": "Holati",
+            "actions": "Amallar",
+            "customer": "Mijoz",
+            "date": "Sana",
+            "payment": "To'lov",
+            "delivery": "Yetkazib berish",
+            "total": "Jami"
+        },
+        "status": {
+            "pending": "Kutilmoqda",
+            "processing": "Jarayonda",
+            "delivered": "Yetkazib berildi",
+            "cancelled": "Bekor qilingan"
+        },
+        "filters": {
+            "allPayments": "Barcha to'lovlar",
+            "online": "Onlayn",
+            "cash": "Naqd pul",
+            "allDelivery": "Barcha yetkazib berishlar",
+            "pickup": "Olib ketish",
+            "standard": "Standart etkazib berish",
+            "allStatuses": "Barcha holatlar",
+            "paid": "To'langan",
+            "unpaid": "To'lanmagan",
+            "allDeliveries": "Barcha yetkazishlar",
+            "refresh": "Yangilash",
+            "details": "Tafsilotlar",
+            "view": "Ko'rish",
+            "express": "Tezkor"
+        },
+        "discountHint": "Chegirmani qo'llash joriy narxni \"Taqqoslash narxi\" (Asl narx) sifatida o'rnatadi. Noto'g'ri asosiy narxlar paydo bo'lishining oldini olish uchun yangi chegirmalarni qo'llashdan oldin eskilarni olib tashlang.",
+        "dailyDiscount": "Kunlik / vaqtinchalik chegirma",
+        "removeDiscount": "Chegirmani olib tashlash",
+        "applyDiscount": "Chegirmani qo'llash",
+        "discountType": "Chegirma turi",
+        "discountValue": "Chegirma qiymati",
+        "targetProducts": "Maqsadli mahsulotlar",
         "users": "Foydalanuvchilar",
         "role": "Rol",
         "joined": "Qo'shilgan",
@@ -420,12 +463,6 @@
             "newThisWeek": "Shu hafta yangi"
         },
         "orderStatus": "Buyurtma Holati",
-        "status": {
-            "pending": "Kutilmoqda",
-            "processing": "Jarayonda",
-            "delivered": "Yetkazildi",
-            "cancelled": "Bekor qilindi"
-        },
         "orderNotFound": "Buyurtma topilmadi",
         "orderNumber": "Buyurtma #",
         "back": "Orqaga",
@@ -435,9 +472,6 @@
         "summary": "Qisqacha ma'lumot",
         "items": "Mahsulotlar",
         "qty": "Soni",
-        "table": {
-            "status": "Holati"
-        },
         "backToDashboard": "Boshqaruv paneliga qaytish",
         "editProduct": "Mahsulotni tahrirlash",
         "basicInfo": "Asosiy ma'lumot",
@@ -453,18 +487,12 @@
         "addNewProduct": "Yangi mahsulot qo'shish",
         "saveProduct": "Mahsulotni saqlash",
         "discountManagement": "Chegirmalarni boshqarish",
-        "targetProducts": "Maqsadli mahsulotlar",
         "allProducts": "Barcha mahsulotlar",
         "byCategory": "Kategoriya bo'yicha",
         "byBrand": "Brend bo'yicha",
         "specificProduct": "Muayyan mahsulot",
-        "discountType": "Chegirma turi",
         "percentage": "Foiz (%)",
         "fixedAmount": "Qat'iy summa",
-        "discountValue": "Chegirma qiymati",
-        "dailyDiscount": "Kunlik / vaqtinchalik chegirma",
-        "applyDiscount": "Chegirmani qo'llash",
-        "removeDiscount": "Chegirmani olib tashlash (Narxlarni tiklash)",
         "currencyExchange": "Valyuta ayirboshlash kursi",
         "exchangeDesc": "USD dan UZS ga konvertatsiya kursini o'rnating. Bu ko'rsatkich do'kon bo'ylab narxlarni hisoblash uchun ishlatiladi.",
         "currentRate": "Joriy kurs",
@@ -481,19 +509,6 @@
         "addCategory": "Kategoriya qo'shish",
         "addBrand": "Brend qo'shish",
         "featured": "Tanlangan",
-        "filters": {
-            "allPayments": "Barcha to'lovlar",
-            "paid": "To'langan",
-            "unpaid": "To'lanmagan",
-            "allDeliveries": "Barcha yetkazishlar",
-            "allStatuses": "Barcha holatlar",
-            "refresh": "Yangilash",
-            "details": "Tafsilotlar",
-            "view": "Ko'rish",
-            "standard": "Standart",
-            "express": "Tezkor",
-            "pickup": "Olib ketish"
-        },
         "posScannerTitle": "POS Skaner",
         "posScannerDesc": "Sotish uchun mahsulot QR kodini skanerlang",
         "placeQrCode": "Skanerlash uchun QR kodni ramkaga kiriting",
@@ -528,6 +543,7 @@
         }
     },
     "products": {
+        "wouldRecommend": "98% mijozlar tavsiya qiladi",
         "filter": "Filtrlar",
         "clearAll": "Barchasini tozalash",
         "category": "Kategoriya",
@@ -579,5 +595,23 @@
             "weekdays": "Dushanba - Shanba",
             "sunday": "Yakshanba"
         }
+    },
+    "profile": {
+        "account": "Mening hisobim",
+        "profile": "Profil",
+        "orders": "Buyurtmalar",
+        "wishlist": "Saralanganlar",
+        "logout": "Chiqish",
+        "profileInfo": "Profil ma'lumotlari",
+        "name": "Ism",
+        "email": "Elektron pochta",
+        "phone": "Telefon",
+        "memberSince": "A'zo bo'lgan sana",
+        "notVerified": "Tasdiqlanmagan",
+        "notProvided": "Kiritilmagan",
+        "edit": "Tahrirlash",
+        "save": "Saqlash",
+        "cancel": "Bekor qilish",
+        "sendSmsCode": "SMS kod yuborish"
     }
 }

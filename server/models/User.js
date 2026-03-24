@@ -71,7 +71,12 @@ const userSchema = new mongoose.Schema({
     resetPasswordToken: String,
     resetPasswordExpire: Date,
     refreshToken: String,
-    lastLogin: Date
+    lastLogin: Date,
+    failedLoginAttempts: {
+        type: Number,
+        default: 0
+    },
+    accountLockedUntil: Date
 }, {
     timestamps: true
 });
@@ -101,6 +106,8 @@ userSchema.methods.toJSON = function () {
     delete user.emailVerificationToken;
     delete user.resetPasswordToken;
     delete user.resetPasswordExpire;
+    delete user.failedLoginAttempts;
+    delete user.accountLockedUntil;
     return user;
 };
 

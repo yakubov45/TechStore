@@ -1,5 +1,6 @@
 import User from '../models/User.js';
 import { verifyAccessToken } from '../utils/tokenUtils.js';
+import { verifyContext } from './zeroTrustMiddleware.js';
 
 export const protect = async (req, res, next) => {
     try {
@@ -29,6 +30,22 @@ export const protect = async (req, res, next) => {
                 message: 'User not found'
             });
         }
+
+        // Zero Trust: Strict Token Validation
+        // If user document was updated (e.g., password changed, role changed) AFTER token is issued, revoke it!
+        if (req.user.updatedAt) {
+            const tokenIssuedAt = decoded.iat * 1000;
+            // Add a 1s buffer for processing times
+            if (req.user.updatedAt.getTime() > tokenIssuedAt + 1000) {
+                return res.status(401).json({
+                    success: false,
+                    message: 'Session revoked due to security changes. Please log in again.'
+                });
+            }
+        }
+
+        // Zero Trust: IP and Device contextual verification
+        await new Promise(resolve => verifyContext(req, res, resolve));
 
         next();
     } catch (error) {

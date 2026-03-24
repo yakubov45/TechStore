@@ -236,6 +236,12 @@ export const sendNewsletterEmail = async (email, subject, content) => {
   return sendMailGeneric({ to: email, subject, html: content });
 };
 
+export const sendSecurityAlertEmail = async (email, name, ipAddress) => {
+  const body = `<!doctype html><html><body><h2>Security Alert: Suspicious Login Attempts</h2><p>Hi ${name},</p><p>We detected multiple failed login attempts on your account from IP address: <b>${ipAddress}</b>.</p><p>As a security precaution, your account has been temporarily frozen. If this was not you, please contact support immediately or reset your password.</p></body></html>`;
+  const text = `Security Alert: Suspicious Login Attempts\n\nHi ${name},\nWe detected multiple failed login attempts on your account from IP address: ${ipAddress}.\nAs a security precaution, your account has been temporarily frozen.`;
+  return sendMailGeneric({ to: email, subject: 'Security Alert: Account Temporarily Frozen', html: body, text });
+};
+
 export { smtpAvailable };
 export { sendMailGeneric };
 

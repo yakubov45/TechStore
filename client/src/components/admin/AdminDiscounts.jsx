@@ -14,6 +14,12 @@ export default function AdminDiscounts() {
     const [loading, setLoading] = useState(false);
     const [daily, setDaily] = useState(false);
     const [durationHours, setDurationHours] = useState(24);
+    const [discountReason, setDiscountReason] = useState('');
+    const [isDiscountActive, setIsDiscountActive] = useState(true);
+    const [inFlashDeal, setInFlashDeal] = useState(false);
+
+    const [flashDealsActive, setFlashDealsActive] = useState(false);
+    const [flashDealsSaving, setFlashDealsSaving] = useState(false);
 
     const [categories, setCategories] = useState([]);
     const [brands, setBrands] = useState([]);
@@ -27,17 +33,39 @@ export default function AdminDiscounts() {
 
     const fetchOptions = async () => {
         try {
-            const [categoriesRes, brandsRes, productsRes] = await Promise.all([
+            const [categoriesRes, brandsRes, productsRes, settingsRes] = await Promise.all([
                 api.get('/categories'),
                 api.get('/brands'),
-                api.get('/products?limit=1000') // Fetch all products (or a large limit) for the dropdown
+                api.get('/products?limit=1000'), // Fetch all products (or a large limit) for the dropdown
+                api.get('/settings')
             ]);
             setCategories(categoriesRes.data.data);
             setBrands(brandsRes.data.data);
             setProducts(productsRes.data.data);
+            if (settingsRes.data?.data) {
+                setFlashDealsActive(settingsRes.data.data.flashDealsActive);
+            }
         } catch (error) {
             console.error('Error fetching options:', error);
             toast.error('Failed to load filter options');
+        }
+    };
+
+    const toggleFlashDeals = async () => {
+        setFlashDealsSaving(true);
+        try {
+            const res = await api.put('/settings/flash-deals', {
+                flashDealsActive: !flashDealsActive,
+                // Optional: flashDealsEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000)
+            });
+            if (res.data.success) {
+                setFlashDealsActive(res.data.data.flashDealsActive);
+                toast.success(res.data.data.flashDealsActive ? 'Flash Deals banner enabled on homepage' : 'Flash Deals banner disabled');
+            }
+        } catch (error) {
+            toast.error('Failed to toggle Flash Deals');
+        } finally {
+            setFlashDealsSaving(false);
         }
     };
 
@@ -66,7 +94,10 @@ export default function AdminDiscounts() {
                 discountType,
                 discountValue: Number(value),
                 daily: daily,
-                durationHours: Number(durationHours || 24)
+                durationHours: Number(durationHours || 24),
+                discountReason,
+                isDiscountActive,
+                inFlashDeal
             });
 
             if (response.data.success) {
@@ -107,9 +138,23 @@ export default function AdminDiscounts() {
 
     return (
         <div className="bg-dark-card p-6 rounded-xl border border-gray-800">
-            <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
-                <Tag className="text-primary" />
-                {t('admin.discountManagement', 'Discount Management')}
+            <h2 className="text-xl font-bold mb-6 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                    <Tag className="text-primary" />
+                    {t('admin.discountManagement', 'Discount Management')}
+                </div>
+                {/* Global Toggle for Homepage Flash Deals */}
+                <div className="flex items-center gap-3 bg-dark-bg px-4 py-2 rounded-lg border border-gray-800">
+                    <span className="text-sm font-medium">Homepage Flash Deals Banner:</span>
+                    <button 
+                        onClick={toggleFlashDeals}
+                        disabled={flashDealsSaving}
+                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${flashDealsActive ? 'bg-primary' : 'bg-gray-600'}`}
+                    >
+                        <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${flashDealsActive ? 'translate-x-6' : 'translate-x-1'}`} />
+                    </button>
+                    <span className="text-xs text-text-secondary w-12">{flashDealsActive ? 'Active' : 'Hidden'}</span>
+                </div>
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -258,6 +303,47 @@ export default function AdminDiscounts() {
 
                         <div>
                             <label className="block text-sm font-medium text-text-secondary mb-1">
+                                {t('admin.discountReasonTitle', 'Discount Reason')}
+                            </label>
+                            <select
+                                value={discountReason}
+                                onChange={(e) => setDiscountReason(e.target.value)}
+                                className="input-field w-full"
+                                required
+                            >
+                                <option value="">{t('admin.selectReason', 'Select Reason')}</option>
+                                <option value="daily">{t('admin.discountReason.daily', 'Daily')}</option>
+                                <option value="weekly">{t('admin.discountReason.weekly', 'Weekly')}</option>
+                                <option value="monthly">{t('admin.discountReason.monthly', 'Monthly')}</option>
+                                <option value="ramadan">{t('admin.discountReason.ramadan', 'Ramadan')}</option>
+                                <option value="new_year">{t('admin.discountReason.newYear', 'New Year')}</option>
+                                <option value="other">{t('admin.discountReason.other', 'Other')}</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label className="flex items-center gap-2 cursor-pointer pt-2">
+                                <input
+                                    type="checkbox"
+                                    checked={isDiscountActive}
+                                    onChange={(e) => setIsDiscountActive(e.target.checked)}
+                                    className="text-primary focus:ring-primary w-4 h-4 rounded"
+                                />
+                                <span className="font-medium text-sm text-text-secondary">{t('admin.enableDiscount', 'Enable this discount')}</span>
+                            </label>
+                            <label className="flex items-center gap-2 cursor-pointer pt-2">
+                                <input
+                                    type="checkbox"
+                                    checked={inFlashDeal}
+                                    onChange={(e) => setInFlashDeal(e.target.checked)}
+                                    className="text-primary focus:ring-primary w-4 h-4 rounded"
+                                />
+                                <span className="font-medium text-sm text-text-secondary">{t('admin.inFlashDeal', 'Add to Homepage Flash Deals Banner')}</span>
+                            </label>
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-text-secondary mb-1">
                                 {t('admin.discountValue', 'Discount Value')}
                             </label>
                             <input
@@ -304,8 +390,7 @@ export default function AdminDiscounts() {
                             <div className="bg-yellow-500/10 border border-yellow-500/20 rounded p-3 flex items-start gap-2 text-sm text-yellow-500">
                                 <AlertTriangle size={16} className="mt-0.5 shrink-0" />
                                 <p>
-                                    Applying a discount will set the current price as the "Compare Price" (Original Price) if not already set.
-                                    Make sure to remove discounts before applying new ones to avoid stacking issues or incorrect base prices.
+                                    {t('admin.discountHint', 'Applying a discount will set the current price as the "Compare Price" (Original Price) if not already set. Make sure to remove discounts before applying new ones to avoid stacking issues or incorrect base prices.')}
                                 </p>
                             </div>
 

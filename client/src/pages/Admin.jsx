@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Edit, Trash2, Package, Grid, Tag, DollarSign, Users, ShoppingBag, Layers, Activity, TrendingUp, Clock, QrCode } from 'lucide-react';
+import { Plus, Edit, Trash2, Package, Grid, Tag, DollarSign, Users, ShoppingBag, Layers, Activity, TrendingUp, Clock, QrCode, MapPin, ClipboardList } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import { useAuthStore } from '../store/authStore';
 import api from '../services/api';
@@ -11,6 +11,8 @@ import BrandModal from '../components/admin/BrandModal';
 import AdminCurrency from '../components/admin/AdminCurrency';
 import AdminDiscounts from '../components/admin/AdminDiscounts';
 import AdminUsers from '../components/admin/AdminUsers';
+import AdminLocations from '../components/admin/AdminLocations';
+import AdminLogs from '../components/admin/AdminLogs';
 import { useCurrencyStore } from '../store/currencyStore';
 import { useTranslation } from 'react-i18next';
 
@@ -145,7 +147,9 @@ export default function Admin() {
         tabs.push(
             { id: 'users', label: t('admin.users', 'Users'), icon: Users, count: null },
             { id: 'discounts', label: t('admin.discounts', 'Discounts'), icon: Tag, count: null },
-            { id: 'currency', label: t('admin.currency', 'Currency'), icon: DollarSign, count: null }
+            { id: 'currency', label: t('admin.currency', 'Currency'), icon: DollarSign, count: null },
+            { id: 'locations', label: t('admin.locations', 'Locations'), icon: MapPin, count: null },
+            { id: 'logs', label: t('admin.logs.title', 'Activity Logs'), icon: ClipboardList, count: null }
         );
     }
 
@@ -693,6 +697,12 @@ export default function Admin() {
 
             {/* Users Tab */}
             {activeTab === 'users' && <AdminUsers />}
+
+            {/* Locations Tab */}
+            {activeTab === 'locations' && <AdminLocations />}
+
+            {/* Logs Tab */}
+            {activeTab === 'logs' && <AdminLogs />}
 
             {/* Modals */}
             <CategoryModal

@@ -28,12 +28,23 @@ const productSchema = new mongoose.Schema({
         min: 0,
         default: null
     },
-    // Monthly discount percentage that applies persistently (0-100)
     monthlyDiscountPercent: {
         type: Number,
         min: 0,
         max: 100,
         default: 0
+    },
+    discountReason: {
+        type: String,
+        default: null
+    },
+    isDiscountActive: {
+        type: Boolean,
+        default: true
+    },
+    inFlashDeal: {
+        type: Boolean,
+        default: false
     },
     sku: {
         type: String,

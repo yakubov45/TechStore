@@ -48,33 +48,53 @@ export const createStripeSession = asyncHandler(async (req, res) => {
     });
 });
 
-// @desc    Mock Payme integration (Placeholder)
+// @desc    Create Payme integration URL
 // @route   POST /api/payments/payme/create
 // @access  Private
 export const createPaymePayment = asyncHandler(async (req, res) => {
     const { orderId } = req.body;
 
-    // In a real Payme integration, you would generate a base64 encoded URL 
-    // with your merchant ID and order details.
+    const order = await Order.findById(orderId);
+    if (!order) {
+        return res.status(404).json({ success: false, message: 'Order not found' });
+    }
+
+    // Amount should be in tiyins (1 UZS = 100 tiyin)
+    const amountInTiyin = Math.round(order.total * 100);
+    const merchantId = config.payme?.merchantId || 'YOUR_PAYME_MERCHANT_ID';
+
+    // Formulate string and convert to base64
+    const data = `m=${merchantId};ac.order_id=${order._id};a=${amountInTiyin}`;
+    const base64Data = Buffer.from(data).toString('base64');
 
     res.json({
         success: true,
-        message: 'Payme integration placeholder',
-        url: `https://checkout.paycom.uz/...`
+        message: 'Payme URL generated',
+        url: `https://checkout.paycom.uz/${base64Data}`
     });
 });
 
-// @desc    Mock Click integration (Placeholder)
+// @desc    Create Click integration URL
 // @route   POST /api/payments/click/create
 // @access  Private
 export const createClickPayment = asyncHandler(async (req, res) => {
     const { orderId } = req.body;
 
-    // Simulating Click redirect URL generation
+    const order = await Order.findById(orderId);
+    if (!order) {
+        return res.status(404).json({ success: false, message: 'Order not found' });
+    }
+
+    const merchantId = config.click?.merchantId || 'YOUR_CLICK_MERCHANT_ID';
+    const serviceId = config.click?.serviceId || 'YOUR_CLICK_SERVICE_ID';
+    const amount = order.total;
+
+    // Generate Click URL
+    const url = `https://my.click.uz/services/pay?service_id=${serviceId}&merchant_id=${merchantId}&amount=${amount}&transaction_param=${order._id}`;
 
     res.json({
         success: true,
-        message: 'Click integration placeholder',
-        url: `https://my.click.uz/services/pay...`
+        message: 'Click URL generated',
+        url: url
     });
 });

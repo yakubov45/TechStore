@@ -86,9 +86,21 @@ export default function Payment() {
             };
 
             const response = await api.post('/orders', orderData);
-            toast.success(t('order.successPlaced'));
-            clearCart();
-            navigate('/order-success', { state: { order: response.data.data } });
+            const createdOrder = response.data.data;
+
+            if (formData.paymentMethod === 'payme') {
+                const paymeRes = await api.post('/payments/payme/create', { orderId: createdOrder._id });
+                clearCart();
+                window.location.href = paymeRes.data.url;
+            } else if (formData.paymentMethod === 'click') {
+                const clickRes = await api.post('/payments/click/create', { orderId: createdOrder._id });
+                clearCart();
+                window.location.href = clickRes.data.url;
+            } else {
+                toast.success(t('order.successPlaced'));
+                clearCart();
+                navigate('/order-success', { state: { order: createdOrder } });
+            }
         } catch (error) {
             toast.error(error.response?.data?.message || t('order.failed'));
         } finally {
@@ -224,8 +236,8 @@ export default function Payment() {
                                     className="input-field"
                                 >
                                     <option value="cash">{t('order.cashOnDelivery')}</option>
-                                    <option value="card">{t('order.creditCard')}</option>
-                                    <option value="online">{t('order.onlinePayment')}</option>
+                                    <option value="payme">Payme</option>
+                                    <option value="click">Click</option>
                                 </select>
                             </div>
 

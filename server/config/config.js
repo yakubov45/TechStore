@@ -23,5 +23,14 @@ export default {
     upload: {
         maxFileSize: parseInt(process.env.MAX_FILE_SIZE) || 5242880, // 5MB
         allowedTypes: process.env.ALLOWED_FILE_TYPES?.split(',') || ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
+    },
+    payme: {
+        merchantId: process.env.PAYME_MERCHANT_ID,
+        secretKey: process.env.PAYME_SECRET_KEY
+    },
+    click: {
+        merchantId: process.env.CLICK_MERCHANT_ID,
+        serviceId: process.env.CLICK_SERVICE_ID,
+        secretKey: process.env.CLICK_SECRET_KEY
     }
 };

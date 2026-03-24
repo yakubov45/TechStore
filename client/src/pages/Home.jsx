@@ -21,6 +21,8 @@ export default function Home() {
     const [recentlyViewed, setRecentlyViewed] = useState([]);
     const [email, setEmail] = useState('');
     const [submitting, setSubmitting] = useState(false);
+    const [flashDealsActive, setFlashDealsActive] = useState(false);
+    const [allProducts, setAllProducts] = useState([]);
 
     const handleNewsletterSignup = async (e) => {
         e.preventDefault();
@@ -60,15 +62,23 @@ export default function Home() {
 
     const fetchData = async () => {
         try {
-            const [productsRes, categoriesRes, brandsRes] = await Promise.all([
-                api.get('/products/featured'),
+            const [productsRes, categoriesRes, brandsRes, settingsRes, allProductsRes] = await Promise.all([
+                api.get('/products?inFlashDeal=true&limit=8'), // fetch flash deal products
                 api.get('/categories'),
-                api.get('/brands?featured=true')
+                api.get('/brands?featured=true'),
+                api.get('/settings'),
+                api.get('/products?limit=100') // fetch products to group by category
             ]);
 
             setFeaturedProducts(productsRes.data.data);
             setCategories(categoriesRes.data.data);
             setBrands(brandsRes.data.data);
+            if (settingsRes.data?.data) {
+                setFlashDealsActive(settingsRes.data.data.flashDealsActive);
+            }
+            if (allProductsRes.data?.data) {
+                setAllProducts(allProductsRes.data.data);
+            }
         } catch (error) {
             console.error('Error fetching data:', error);
         } finally {
@@ -254,6 +264,7 @@ export default function Home() {
                 </div>
 
                 {/* Flash Deals Section */}
+                {flashDealsActive && (
                 <section className="my-16">
                     <div className="flex flex-col md:flex-row items-start md:items-center md:justify-between gap-4 mb-8 bg-gradient-to-r from-red-600/20 to-transparent p-6 rounded-2xl border border-red-600/30">
                         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-6 w-full md:w-auto">
@@ -310,32 +321,10 @@ export default function Home() {
                         })}
                     </div>
                 </section>
+                )}
 
                 {/* Smart Filters Chips (removed 'Trending' label per localization request) */}
                 {/* If you need chips, they should be generated dynamically from categories or a translated list. */}
-
-                {/* Categories Grid */}
-                <section className="my-16 animate-fade-in">
-                    <h2 className="section-title">{t('home.categories')}</h2>
-                    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
-                        {categories.slice(0, 14).map((category, index) => (
-                            <Link
-                                key={category._id}
-                                to={`/category/${category.slug}`}
-                                className="card-glow p-6 text-center group animate-slide-up"
-                                style={{ animationDelay: `${index * 50}ms` }}
-                            >
-                                <div className="text-4xl mb-3 transition-transform group-hover:scale-125">{category.icon || '📦'}</div>
-                                <h3 className="font-semibold text-sm group-hover:text-primary transition">
-                                    {category.name}
-                                </h3>
-                                <p className="text-xs text-text-secondary mt-1">
-                                    {category.productCount} items
-                                </p>
-                            </Link>
-                        ))}
-                    </div>
-                </section>
 
                 {/* Featured Products */}
                 <section className="my-16 animate-fade-in">
@@ -364,6 +353,33 @@ export default function Home() {
                     <div className="mt-6">
                         <BrandGrid brands={brands} />
                     </div>
+                </section>
+
+                {/* Categories with Products Grid (Replacing old icon grid) */}
+                <section className="my-16 animate-fade-in">
+                    {categories.slice(0, 5).map((category, idx) => {
+                        // find products for this category
+                        const categoryProducts = allProducts.filter(p => p.category?._id === category._id || p.category === category._id);
+                        if (categoryProducts.length === 0) return null;
+
+                        return (
+                            <div key={category._id} className="mb-12">
+                                <div className="flex items-center justify-between mb-6 border-b border-gray-800 pb-2">
+                                    <h2 className="text-2xl pt-2 font-bold relative after:content-[''] after:absolute after:-bottom-[9px] after:left-0 after:w-16 after:h-1 after:bg-primary">
+                                        {category.translations?.[i18n.language]?.name || category.name}
+                                    </h2>
+                                    <Link to={`/category/${category.slug}`} className="text-primary hover:underline text-sm font-medium">
+                                        {t('home.viewAll', 'View All')}
+                                    </Link>
+                                </div>
+                                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                                    {categoryProducts.slice(0, 5).map(product => (
+                                        <ProductCard key={product._id} product={product} />
+                                    ))}
+                                </div>
+                            </div>
+                        );
+                    })}
                 </section>
 
                 {/* Newsletter */}

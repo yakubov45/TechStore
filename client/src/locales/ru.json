@@ -388,6 +388,49 @@
         "noResults": "По запросу \"{{query}}\" ничего не найдено"
     },
     "admin": {
+        "table": {
+            "product": "Товар",
+            "category": "Категория",
+            "brand": "Бренд",
+            "price": "Цена",
+            "stock": "Запас",
+            "status": "Статус",
+            "actions": "Действия",
+            "customer": "Клиент",
+            "date": "Дата",
+            "payment": "Оплата",
+            "delivery": "Доставка",
+            "total": "Итого"
+        },
+        "status": {
+            "pending": "В ожидании",
+            "processing": "В обработке",
+            "delivered": "Доставлен",
+            "cancelled": "Отменен"
+        },
+        "filters": {
+            "allPayments": "Все платежи",
+            "online": "Онлайн",
+            "cash": "Наличными",
+            "allDelivery": "Вся доставка",
+            "pickup": "Самовывоз",
+            "standard": "Стандартная доставка",
+            "allStatuses": "Все статусы",
+            "paid": "Оплачено",
+            "unpaid": "Не оплачено",
+            "allDeliveries": "Все доставки",
+            "refresh": "Обновить",
+            "details": "Детали",
+            "view": "Просмотр",
+            "express": "Экспресс"
+        },
+        "discountHint": "Применение скидки установит текущую цену в качестве \"Цены для сравнения\" (Оригинальной цены). Обязательно удаляйте старые скидки перед применением новых, чтобы избежать неправильных базовых цен.",
+        "dailyDiscount": "Ежедневная / временная скидка",
+        "removeDiscount": "Удалить скидку",
+        "applyDiscount": "Применить скидку",
+        "discountType": "Тип скидки",
+        "discountValue": "Значение скидки",
+        "targetProducts": "Целевые продукты",
         "users": "Пользователи",
         "role": "Роль",
         "joined": "Присоединился",
@@ -421,12 +464,6 @@
             "newThisWeek": "Новые на этой неделе"
         },
         "orderStatus": "Статус заказа",
-        "status": {
-            "pending": "В ожидании",
-            "processing": "В обработке",
-            "delivered": "Доставлен",
-            "cancelled": "Отменен"
-        },
         "orderNotFound": "Заказ не найден",
         "orderNumber": "Заказ №",
         "back": "Назад",
@@ -436,9 +473,6 @@
         "summary": "Сводка",
         "items": "Товары",
         "qty": "Кол-во",
-        "table": {
-            "status": "Статус"
-        },
         "backToDashboard": "Назад в панель",
         "editProduct": "Редактировать товар",
         "basicInfo": "Основная информация",
@@ -454,18 +488,12 @@
         "addNewProduct": "Добавить новый товар",
         "saveProduct": "Сохранить товар",
         "discountManagement": "Управление скидками",
-        "targetProducts": "Целевые товары",
         "allProducts": "Все товары",
         "byCategory": "По категории",
         "byBrand": "По бренду",
         "specificProduct": "Конкретный товар",
-        "discountType": "Тип скидки",
         "percentage": "Процент (%)",
         "fixedAmount": "Фиксированная сумма",
-        "discountValue": "Значение скидки",
-        "dailyDiscount": "Ежедневная / временная скидка",
-        "applyDiscount": "Применить скидку",
-        "removeDiscount": "Убрать скидку (Восстановить цены)",
         "currencyExchange": "Курс обмена валют",
         "exchangeDesc": "Установите курс обмена долларов на сумы. Данная ставка будет использоваться для расчета цен по всему магазину.",
         "currentRate": "Текущий курс",
@@ -482,19 +510,6 @@
         "addCategory": "Добавить категорию",
         "addBrand": "Добавить бренд",
         "featured": "Избранные",
-        "filters": {
-            "allPayments": "Все платежи",
-            "paid": "Оплачено",
-            "unpaid": "Не оплачено",
-            "allDeliveries": "Все доставки",
-            "allStatuses": "Все статусы",
-            "refresh": "Обновить",
-            "details": "Детали",
-            "view": "Просмотр",
-            "standard": "Стандарт",
-            "express": "Экспресс",
-            "pickup": "Самовывоз"
-        },
         "posScannerTitle": "POS Сканер",
         "posScannerDesc": "Сканируйте QR-код товара для продажи",
         "placeQrCode": "Поместите QR-код в рамку для сканирования",
@@ -529,6 +544,7 @@
         }
     },
     "products": {
+        "wouldRecommend": "98% рекомендуют",
         "filter": "Фильтры",
         "clearAll": "Очистить все",
         "category": "Категория",
@@ -580,5 +596,23 @@
             "weekdays": "Понедельник - Суббота",
             "sunday": "Воскресенье"
         }
+    },
+    "profile": {
+        "account": "Мой аккаунт",
+        "profile": "Профиль",
+        "orders": "Заказы",
+        "wishlist": "Избранное",
+        "logout": "Выйти",
+        "profileInfo": "Информация профиля",
+        "name": "Имя",
+        "email": "Почта",
+        "phone": "Телефон",
+        "memberSince": "С нами с",
+        "notVerified": "Не подтвержден",
+        "notProvided": "Не указан",
+        "edit": "Изменить",
+        "save": "Сохранить",
+        "cancel": "Отмена",
+        "sendSmsCode": "Отправить SMS код"
     }
 }

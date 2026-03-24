@@ -3,6 +3,7 @@ import Category from '../models/Category.js';
 import Brand from '../models/Brand.js';
 import Review from '../models/Review.js';
 import { generateTranslations } from '../utils/translate.js';
+import { logActivity } from '../utils/logger.js';
 
 // @desc    Get all products with filters
 // @route   GET /api/products
@@ -17,6 +18,7 @@ export const getProducts = async (req, res) => {
             maxPrice,
             minRating,
             discountOnly,
+            inFlashDeal,
             sort,
             page = 1,
             limit = 12
@@ -30,6 +32,9 @@ export const getProducts = async (req, res) => {
         if (minRating) baseQuery.averageRating = { $gte: Number(minRating) };
         if (discountOnly === 'true') {
             baseQuery.comparePrice = { $exists: true, $gt: 0 };
+        }
+        if (inFlashDeal === 'true') {
+            baseQuery.inFlashDeal = true;
         }
         if (search) {
             baseQuery.$or = [
@@ -264,6 +269,8 @@ export const createProduct = async (req, res) => {
             await Brand.findByIdAndUpdate(product.brand, { $inc: { productCount: 1 } });
         }
 
+        await logActivity(req, 'CREATE', 'Product', product._id, { name: product.name });
+
         res.status(201).json({
             success: true,
             message: 'Product created successfully',
@@ -372,6 +379,8 @@ export const updateProduct = async (req, res) => {
             await Brand.findByIdAndUpdate(product.brand, { $inc: { productCount: 1 } });
         }
 
+        await logActivity(req, 'UPDATE', 'Product', product._id, { name: product.name });
+
         res.json({
             success: true,
             message: 'Product updated successfully',
@@ -408,7 +417,11 @@ export const deleteProduct = async (req, res) => {
         }
 
         await Review.deleteMany({ product: product._id });
+        const productName = product.name;
+        const productId = product._id;
         await product.deleteOne();
+
+        await logActivity(req, 'DELETE', 'Product', productId, { name: productName });
 
         res.json({
             success: true,
@@ -465,8 +478,8 @@ export const uploadProductImages = async (req, res) => {
 // @access  Private/Admin
 export const applyBulkDiscount = async (req, res) => {
     try {
-        // Accepts: { action: 'apply'|'remove', targetType, targetId, discountType, discountValue, daily, durationHours }
-        const { action = 'apply', targetType, targetId, discountType, discountValue, daily = false, durationHours = 24 } = req.body;
+        // Accepts: { action: 'apply'|'remove', targetType, targetId, discountType, discountValue, daily, durationHours, discountReason, isDiscountActive, inFlashDeal }
+        const { action = 'apply', targetType, targetId, discountType, discountValue, daily = false, durationHours = 24, discountReason = null, isDiscountActive = true, inFlashDeal = false } = req.body;
 
         let query = {};
         if (targetType === 'category') query.category = targetId;
@@ -482,6 +495,9 @@ export const applyBulkDiscount = async (req, res) => {
                     product.comparePrice = null;
                 }
                 product.dailyDiscountExpire = null;
+                product.discountReason = null;
+                product.isDiscountActive = true;
+                product.inFlashDeal = false;
             } else if (action === 'apply') {
                 // Determine base price (prevent compounding discounts)
                 const basePrice = (product.comparePrice && product.comparePrice > 0) ? product.comparePrice : product.price;
@@ -504,6 +520,9 @@ export const applyBulkDiscount = async (req, res) => {
                 } else {
                     product.dailyDiscountExpire = null;
                 }
+                product.discountReason = discountReason;
+                product.isDiscountActive = isDiscountActive === undefined ? true : isDiscountActive;
+                product.inFlashDeal = inFlashDeal;
             }
 
             await product.save();
