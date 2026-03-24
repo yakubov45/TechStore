@@ -1,11 +1,14 @@
 import { useEffect, Suspense, lazy } from 'react';
-import { Routes, Route, useNavigate, Navigate } from 'react-router-dom';
+import { Routes, Route, useNavigate, Navigate, useLocation } from 'react-router-dom';
+import { AnimatePresence } from 'framer-motion';
 import Layout from './components/layout/Layout';
 import { useCurrencyStore } from './store/currencyStore';
 import ProtectedRoute from './components/common/ProtectedRoute';
 import CookieConsent from './components/common/CookieConsent';
 import { usePageTracking } from './utils/analytics';
 import { useThemeStore } from './store/themeStore';
+import TopLoader from './components/common/TopLoader';
+import PageTransitionLayout from './components/common/PageTransitionLayout';
 
 // Lazy load all pages for better mobile performance - reduces initial bundle size
 const Home = lazy(() => import('./pages/Home'));
@@ -55,6 +58,7 @@ function App() {
     }, []);
 
     const navigate = useNavigate();
+    const location = useLocation();
 
     // Initialize GA tracking for page views
     usePageTracking();
@@ -71,78 +75,83 @@ function App() {
     return (
         <>
             <CookieConsent />
+            <TopLoader />
             <Layout>
                 <Suspense fallback={<PageLoader />}>
-                    <Routes>
-                        <Route path="/" element={<Home />} />
-                        <Route path="/products" element={<Products />} />
-                        <Route path="/product/:slug" element={<ProductDetails />} />
-                        <Route path="/category/:slug" element={<Category />} />
-                        <Route path="/brand/:slug" element={<Brand />} />
-                        <Route path="/signin" element={<SignIn />} />
-                        <Route path="/forgot-password" element={<ForgotPassword />} />
-                        <Route path="/forgot-password/:token" element={<ForgotPassword />} />
-                        <Route path="/signup" element={<SignUp />} />
+                    <AnimatePresence mode="wait">
+                        <Routes location={location} key={location.pathname}>
+                            <Route element={<PageTransitionLayout />}>
+                                <Route path="/" element={<Home />} />
+                                <Route path="/products" element={<Products />} />
+                                <Route path="/product/:slug" element={<ProductDetails />} />
+                                <Route path="/category/:slug" element={<Category />} />
+                                <Route path="/brand/:slug" element={<Brand />} />
+                                <Route path="/signin" element={<SignIn />} />
+                                <Route path="/forgot-password" element={<ForgotPassword />} />
+                                <Route path="/forgot-password/:token" element={<ForgotPassword />} />
+                                <Route path="/signup" element={<SignUp />} />
 
-                        {/* Protected User Routes */}
-                        <Route path="/profile" element={
-                            <ProtectedRoute>
-                                <Profile />
-                            </ProtectedRoute>
-                        } />
-                        <Route path="/payment" element={
-                            <ProtectedRoute>
-                                <Payment />
-                            </ProtectedRoute>
-                        } />
+                                {/* Protected User Routes */}
+                                <Route path="/profile" element={
+                                    <ProtectedRoute>
+                                        <Profile />
+                                    </ProtectedRoute>
+                                } />
+                                <Route path="/payment" element={
+                                    <ProtectedRoute>
+                                        <Payment />
+                                    </ProtectedRoute>
+                                } />
 
-                        {/* Backwards-compatible route: some places/linkers use /checkout */}
-                        <Route path="/checkout" element={<Navigate to="/payment" replace />} />
+                                {/* Backwards-compatible route: some places/linkers use /checkout */}
+                                <Route path="/checkout" element={<Navigate to="/payment" replace />} />
 
-                        <Route path="/about" element={<About />} />
-                        <Route path="/contact" element={<Contact />} />
-                        <Route path="/faq" element={<FAQ />} />
-                        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                                <Route path="/about" element={<About />} />
+                                <Route path="/contact" element={<Contact />} />
+                                <Route path="/faq" element={<FAQ />} />
+                                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
 
-                        {/* Protected Admin & Staff Routes */}
-                        <Route path="/admin" element={
-                            <ProtectedRoute allowedRoles={['admin', 'assistant']}>
-                                <Admin />
-                            </ProtectedRoute>
-                        } />
-                        <Route path="/pos-scanner" element={
-                            <ProtectedRoute allowedRoles={['admin', 'assistant', 'delivery']}>
-                                <PosScanner />
-                            </ProtectedRoute>
-                        } />
-                        <Route path="/admin/products/new" element={
-                            <ProtectedRoute allowedRoles={['admin', 'assistant']}>
-                                <AddProduct />
-                            </ProtectedRoute>
-                        } />
-                        <Route path="/admin/products/edit/:id" element={
-                            <ProtectedRoute allowedRoles={['admin', 'assistant']}>
-                                <EditProduct />
-                            </ProtectedRoute>
-                        } />
-                        <Route path="/admin/orders/:id" element={
-                            <ProtectedRoute allowedRoles={['admin', 'assistant']}>
-                                <AdminOrderDetail />
-                            </ProtectedRoute>
-                        } />
+                                {/* Protected Admin & Staff Routes */}
+                                <Route path="/admin" element={
+                                    <ProtectedRoute allowedRoles={['admin', 'assistant']}>
+                                        <Admin />
+                                    </ProtectedRoute>
+                                } />
+                                <Route path="/pos-scanner" element={
+                                    <ProtectedRoute allowedRoles={['admin', 'assistant', 'delivery']}>
+                                        <PosScanner />
+                                    </ProtectedRoute>
+                                } />
+                                <Route path="/admin/products/new" element={
+                                    <ProtectedRoute allowedRoles={['admin', 'assistant']}>
+                                        <AddProduct />
+                                    </ProtectedRoute>
+                                } />
+                                <Route path="/admin/products/edit/:id" element={
+                                    <ProtectedRoute allowedRoles={['admin', 'assistant']}>
+                                        <EditProduct />
+                                    </ProtectedRoute>
+                                } />
+                                <Route path="/admin/orders/:id" element={
+                                    <ProtectedRoute allowedRoles={['admin', 'assistant']}>
+                                        <AdminOrderDetail />
+                                    </ProtectedRoute>
+                                } />
 
-                        {/* Delivery Route */}
-                        <Route path="/delivery" element={
-                            <ProtectedRoute allowedRoles={['admin', 'delivery']}>
-                                <DeliveryPanel />
-                            </ProtectedRoute>
-                        } />
+                                {/* Delivery Route */}
+                                <Route path="/delivery" element={
+                                    <ProtectedRoute allowedRoles={['admin', 'delivery']}>
+                                        <DeliveryPanel />
+                                    </ProtectedRoute>
+                                } />
 
-                        <Route path="/order-success" element={<OrderSuccess />} />
-                        <Route path="/verify-order/:id" element={<VerifyOrder />} />
-                        <Route path="/cart" element={<Cart />} />
-                        <Route path="/verify-otp" element={<OTPVerification />} />
-                    </Routes>
+                                <Route path="/order-success" element={<OrderSuccess />} />
+                                <Route path="/verify-order/:id" element={<VerifyOrder />} />
+                                <Route path="/cart" element={<Cart />} />
+                                <Route path="/verify-otp" element={<OTPVerification />} />
+                            </Route>
+                        </Routes>
+                    </AnimatePresence>
                 </Suspense>
             </Layout>
         </>

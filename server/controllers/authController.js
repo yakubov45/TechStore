@@ -29,7 +29,7 @@ const handleFailedAttempt = async (ip, userEmail) => {
             if (user.failedLoginAttempts >= 10) {
                 user.accountLockedUntil = new Date(Date.now() + 24 * 60 * 60000); // 24 hours
                 await user.save();
-                sendSecurityAlertEmail(user.email, user.name, ip).catch(err => console.error("Failed to send security alert", err));
+                sendSecurityAlertEmail(user.email, user.name, ip, user.language).catch(err => console.error("Failed to send security alert", err));
                 return { isAccountLocked: true };
             }
             await user.save();
@@ -122,11 +122,16 @@ export const login = async (req, res) => {
         // Check for user
         const user = await User.findOne({ email }).select('+password');
 
+        // Language setup
+        const lang = req.headers['accept-language']?.split(',')[0].substring(0, 2) || 'uz';
+
         if (user && user.accountLockedUntil && user.accountLockedUntil > Date.now()) {
-            return res.status(403).json({
-                success: false,
-                message: 'Xavfsizlik sababli hisobingiz vaqtincha muzlatilgan. Iltimos keyinroq urinib ko\'ring yoki pochtangizni tekshiring.'
-            });
+            const msgFrozenUz = 'Xavfsizlik sababli hisobingiz vaqtincha muzlatilgan. Iltimos keyinroq urinib ko\'ring yoki pochtangizni tekshiring.';
+            const msgFrozenRu = 'Ваша учетная запись временно заморожена в целях безопасности. Пожалуйста, попробуйте позже или проверьте почту.';
+            const msgFrozenEn = 'Your account has been temporarily frozen for security reasons. Please try again later or check your email.';
+            const message = lang === 'uz' ? msgFrozenUz : (lang === 'ru' ? msgFrozenRu : msgFrozenEn);
+
+            return res.status(403).json({ success: false, message });
         }
 
         if (!user) {
@@ -143,10 +148,12 @@ export const login = async (req, res) => {
         if (!isMatch) {
             const attemptStatus = await handleFailedAttempt(clientIp, email);
             if (attemptStatus && attemptStatus.isAccountLocked) {
-                return res.status(403).json({
-                    success: false,
-                    message: 'Hisobingiz vaqtincha muzlatildi (10 ta xato). Xavfsizlik bo\'yicha emailingizga xabar yuborildi.'
-                });
+                const msgAlertUz = 'Hisobingiz vaqtincha muzlatildi (10 ta xato). Xavfsizlik bo\'yicha emailingizga xabar yuborildi.';
+                const msgAlertRu = 'Ваша учетная запись временно заморожена (10 ошибок). На вашу почту отправлено предупреждение о безопасности.';
+                const msgAlertEn = 'Your account has been temporarily frozen (10 errors). A security alert has been sent to your email.';
+                const message = lang === 'uz' ? msgAlertUz : (lang === 'ru' ? msgAlertRu : msgAlertEn);
+
+                return res.status(403).json({ success: false, message });
             }
             return res.status(401).json({
                 success: false,

@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { translateText } from '../utils/autoTranslate.js';
 
 const categorySchema = new mongoose.Schema({
     name: {
@@ -50,6 +51,27 @@ const categorySchema = new mongoose.Schema({
 categorySchema.pre('validate', function (next) {
     if (this.isModified('name') && this.name) {
         this.slug = this.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    }
+    next();
+});
+
+// Auto-translate name and description on save
+categorySchema.pre('save', async function (next) {
+    if (this.isModified('name') || this.isModified('description')) {
+        try {
+            if (this.name) {
+                const nameTrans = await translateText(this.name, ['uz', 'ru']);
+                if (nameTrans.uz) this.set('translations.uz.name', nameTrans.uz);
+                if (nameTrans.ru) this.set('translations.ru.name', nameTrans.ru);
+            }
+            if (this.description && this.description.trim() !== '') {
+                const descTrans = await translateText(this.description, ['uz', 'ru']);
+                if (descTrans.uz) this.set('translations.uz.description', descTrans.uz);
+                if (descTrans.ru) this.set('translations.ru.description', descTrans.ru);
+            }
+        } catch (error) {
+            console.error('Auto-translation failed for Category during save', error);
+        }
     }
     next();
 });
