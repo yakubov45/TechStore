@@ -1,227 +1,106 @@
-# TechStore - Full Stack E-Commerce Platform
+# 🚀 TechStore - Premium E-Commerce & ERP Platform
 
-A production-ready e-commerce platform for computer hardware and IT accessories, featuring a modern dark tech UI, complete authentication system, shopping cart, payment processing, and admin management.
+![MERN Stack](https://img.shields.io/badge/Stack-MERN-blue?style=for-the-badge&logo=mongodb)
+![React](https://img.shields.io/badge/Frontend-React.js_18-61DAFB?style=for-the-badge&logo=react&logoColor=black)
+![Nodejs](https://img.shields.io/badge/Backend-Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/Styling-Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![Security](https://img.shields.io/badge/Security-Zero_Trust-red?style=for-the-badge&logo=security)
 
-## 🚀 Features
+**TechStore** is a state-of-the-art, enterprise-grade e-commerce platform built with the MERN stack. It features an advanced Zero-Trust security architecture, background AI-driven auto-translation, dynamic multi-currency systems, and role-based access control (RBAC) with dedicated panels for Admins, Assistants, Deliveries, and Customers.
 
-### Customer Features
-- Browse products with advanced filtering (category, brand, price range)
-- Product search and sorting
-- Detailed product pages with image galleries and specifications
-- Shopping cart with quantity management
-- User authentication (Sign Up, Sign In, Email Verification, Password Reset)
-- User profiles with order history and wishlist
-- Secure checkout process with multiple payment options (**Stripe, Payme, Click**)
-- Order tracking
-- Category and brand-specific product pages
+## ✨ Kalit Imkoniyatlar (Key Features)
 
-### Admin & Security Features
-- **Admin Analytics Dashboard** (Sales, Revenue, Orders, User statistics)
-- **Role-based Route Protection** (Middleware & Frontend guards)
-- **Product Management** (Add, Edit, Delete with image support)
-- **Category & Brand Management**
+### 🛡️ Kiber-Xavfsizlik (Zero-Trust Security)
+- **Progressiv Brute-Force Himoyasi:** IP manzil va akkaunt darajasida mudofaa (3 xato = 1 min blok; 5 xato = 15 min blok; 10 xato = Akkaunt 24 soatga muzlatiladi + Email ogohlantirish).
+- **Qat'iy Rate Limiter:** API mutatsiyalariga (POST/PUT/DELETE) qarshi qat'iy DDOS himoyasi.
+- **Payload Sanitization:** Barcha kiritilgan ma'lumotlar XSS va NoSQL Injection xavflariga qarshi tozalanadi.
+- **Xavfsiz JWT Sessiyalar:** Kriptografik HTTP-only cookie'lar va kontekstual IP o'zgarishini nazorat qiluvchi audit mexanizmlari.
 
-### Technical Features
-- JWT authentication with refresh tokens
-- RESTful API architecture
-- MongoDB database with Mongoose ODM
-- File upload functionality
-- Email notifications (order confirmation, password reset)
-- Security middleware (rate limiting, helmet, CORS)
-- Responsive dark tech UI with glow effects and animations
-- SEO optimized pages
+### 🌍 Avtomatlashtirilgan Multi-Lingval Tizim
+- **Dinamik Avto-Tarjimon:** MongoDB `pre-save` hook'lari orqali Ingliz/O'zbek tilida kiritilgan ma'lumotlar (Mahsulotlar, Kategoriyalar) avtomatik tarzda Google Translate API yordamida boshqa tillarga (Rus, Ingliz) o'girilib bazaga saqlanadi. Frontendda kechikish bo'lmaydi (Zero-latency).
+- **Admin Backfill API:** Ilgari qo'shilgan eski mahsulotlarni ommaviy tarjima qilish moduli.
+- **Multi-Valyuta:** UZS va USD formatlari o'rtasida real vaqt kursida sinxron ishlash.
 
-## 📦 Tech Stack
+### 👥 Rolga Asoslangan Boshqaruv (RBAC)
+- **Super Admin:** Dashboard analitika, POS (Kassa) skanneri orqali sotuv qilish, Bannerlar, Xodimlar rollari va xaritalarni tizim ichidan boshqarish.
+- **Assistant:** Inventar (zaxira) qoldig'ini tekshirish va buyurtmalarni tasdiqlash uchun mo'ljallangan yordamchi oyna.
+- **Delivery (Kuryer):** Kuryerlarga GPS manzil beruvchi tizim va xaridorni qabulida QR skaner orqali yetkazib berish tranzaksiyasini yopish.
+- **Mijozlar:** Profil, xaridlar tarixi, sharhlar yozish, interaktiv savatcha va sevimlilar. 
 
-### Backend
-- Node.js + Express
-- MongoDB + Mongoose
-- JWT Authentication
-- Multer (File uploads)
-- Nodemailer (Email service)
-- Stripe (Payment processing)
-- Security: Helmet, CORS, Rate Limiting
+### 🎨 Zamonaviy UI/UX (Framer Motion)
+- **Framer Motion Animatsiyalari:** Barcha sahifalarga `AnimatePresence` orqali mantiqiy silliq "fade and slide" o'tishlari berilgan.
+- **Neon Top Loader:** Marshrutlar almashganda tepadagi vizual chiziqli progress qismi.
+- **Debounced Live Search:** Qidiruvga harf kiritilishi bilan soniya ulushida avto-takliflar (Sticky Search) chiqarish tizimi.
+- **Dark/Light Mode:** Interfeys kechasi yoki mijoz tanloviga qarab qorong'u rejimga o'ta oladi.
 
-### Frontend
-- React 18
-- Vite
-- Tailwind CSS
-- React Router
-- Zustand (State management)
-- Axios
-- React Hot Toast
+## 🛠 Texnologiyalar
+* **Frontend:** React.js, Vite, Zustand (State Management), Tailwind CSS, Framer Motion, React-i18next.
+* **Backend:** Node.js, Express.js, JWT, Bcrypt.
+* **Ma'lumotlar Bazasi:** MongoDB (Mongoose).
+* **Aloqa & Xizmatlar:** SendGrid/Brevo (Email), Google Translate API (google-translate-api-x), HTML5-QRCode.
 
-## 🛠️ Installation
+## 🚀 Loyihani Ishga Tushirish (Installation)
 
-### Prerequisites
-- Node.js (v16 or higher)
-- MongoDB (local or cloud instance)
-- npm or yarn
+### 1-qadam: Repozitoriyni yuklab olish va paketlarni o'rnatish
+```bash
+# Backend uchun
+cd server
+npm install
 
-### Backend Setup
+# Frontend uchun
+cd ../client
+npm install
+```
 
-1. Navigate to server directory:
+### 2-qadam: Muhit O'zgaruvchilari (Environment Variables)
+`server` jildida `.env` fayl yarating:
+```env
+NODE_ENV=development
+PORT=5000
+MONGO_URI=mongodb+srv://<user>:<password>@cluster.mongodb.net/techstore
+JWT_SECRET=maxfiy_kalit
+COOKIE_SECRET=cookie_maxfiy_kalit
+CLIENT_URL=http://localhost:5173
+SENDGRID_API_KEY=your_sendgrid_api_key
+```
+
+### 3-qadam: Dasturni yuritish
+Bir vaqtning o'zida ikkita terminalni oching:
+
+**Terminal 1 (Backend):**
 ```bash
 cd server
+npm start
+# Server localhost:5000 da ishga tushadi
 ```
 
-2. Install dependencies:
-```bash
-npm install
-```
-
-3. Create `.env` file(copy from `.env.example`):
-```bash
-copy .env.example .env
-```
-
-4. Update `.env` with your configuration:
-```env
-MONGODB_URI=mongodb://localhost:27017/techstore
-JWT_SECRET=your_secret_key
-SMTP_HOST=smtp.gmail.com
-SMTP_USER=your_email@gmail.com
-SMTP_PASS=your_app_password
-```
-
-5. Seed the database with sample data:
-```bash
-npm run seed
-```
-
-6. Start the server:
-```bash
-npm run dev
-```
-
-Server runs on `http://localhost:5000`
-
-## 🚀 Deployment
-
-For production deployment instructions, see [DEPLOY.md](file:///c:/Users/yoqub/OneDrive/Desktop/TechStore/DEPLOY.md).
-
-### Frontend Setup
-
-1. Navigate to client directory:
+**Terminal 2 (Frontend):**
 ```bash
 cd client
-```
-
-2. Install dependencies:
-```bash
-npm install
-```
-
-3. Start the development server:
-```bash
 npm run dev
+# React sayt localhost:5173 da ishga tushadi
 ```
 
-Client runs on `http://localhost:5173`
-
-## 👤 Default Admin Credentials
-
-After running the seed script:
-- **Email:** admin@techstore.uz
-- **Password:** admin123
-
-⚠️ **Change these credentials in production!**
-
-## 📁 Project Structure
-
+## 📂 Loyiha Strukturasi (Folder Structure)
 ```
-techstore/
-├── server/
-│   ├── config/          # Database and app configuration
-│   ├── models/          # Mongoose models
-│   ├── controllers/     # Request handlers
-│   ├── routes/          # API routes
-│   ├── middleware/      # Custom middleware
-│   ├── utils/           # Helper functions
-│   ├── uploads/         # File uploads directory
-│   └── server.js        # Entry point
-│
-└── client/
-    ├── src/
-    │   ├── components/  # Reusable components
-    │   ├── pages/       # Page components
-    │   ├── services/    # API service
-    │   ├── store/       # State management
-    │   ├── App.jsx      # Main app component
-    │   └── main.jsx     # Entry point
-    ├── index.html
-    └── vite.config.js
+TechStore/
+├── client/                 # React.js Frontend
+│   ├── src/
+│   │   ├── components/     # UI Qismlari (Loaderlar, Buttonlar, Layout)
+│   │   ├── pages/          # Asosiy Sahifalar (Home, Admin, Profile)
+│   │   ├── store/          # Zustand State taminoti
+│   │   ├── locales/        # i18n statik tarjima lug'atlari
+│   │   └── App.jsx         # Marshrutlar (Routes & Animations)
+├── server/                 # Node.js Backend
+│   ├── controllers/        # Mantiqiy kontrollerlar (auth, products)
+│   ├── models/             # Mongoose Schemalari (Pre-save hook'lari bilan)
+│   ├── routes/             # API Yo'llari
+│   ├── middleware/         # Xavfsizlik, JWT tekshiruv va Rate limiterlar
+│   ├── utils/              # AvtoTarjimon, Email servislari
+│   └── server.js           # Express App Initsializatsiyasi
+└── README.md
 ```
 
-## 🔑 API Endpoints
-
-### Authentication
-- `POST /api/auth/register` - Register new user
-- `POST /api/auth/login` - User login
-- `POST /api/auth/logout` - User logout
-- `POST /api/auth/refresh-token` - Refresh access token
-- `GET /api/auth/verify-email/:token` - Verify email
-- `POST /api/auth/forgot-password` - Request password reset
-- `POST /api/auth/reset-password/:token` - Reset password
-
-### Products
-- `GET /api/products` - Get all products (with filters)
-- `GET /api/products/featured` - Get featured products
-- `GET /api/products/:slug` - Get product by slug
-- `GET /api/products/:slug/related` - Get related products
-
-### Categories & Brands
-- `GET /api/categories` - Get all categories
-- `GET /api/categories/:slug` - Get category with products
-- `GET /api/brands` - Get all brands
-- `GET /api/brands/:slug` - Get brand with products
-
-### Orders
-- `POST /api/orders` - Create order
-- `GET /api/orders` - Get user orders
-- `GET /api/orders/:id` - Get order details
-- `POST /api/orders/:id/cancel` - Cancel order
-
-### User
-- `GET /api/users/profile` - Get user profile
-- `PUT /api/users/profile` - Update profile
-- `GET /api/users/wishlist` - Get wishlist
-- `POST /api/users/wishlist/:productId` - Add to wishlist
-- `GET /api/users/orders` - Get user orders
-
-## 🎨 Design System
-
-### Color Palette
-- **Primary:** #00b8d9 (Cyan)
-- **Dark Base:** #0a0a0f
-- **Dark Secondary:** #1a1a24
-- **Text Primary:** #ffffff
-- **Text Secondary:** #a0a0b0
-
-### UI Features
-- Glow effects on hover
-- Neon borders
-- Smooth animations and transitions
-- Skeleton loaders
-- Toast notifications
-- Responsive grid layouts
-
-## 📞 Business Information
-
-**TechStore**
-- **Type:** Computer & Electronics Store
-- **Location:** Tech Park District, Tashkent, Uzbekistan
-- **Emails:** support@techstore.uz, sales@techstore.uz
-- **Phones:** +998 90 123 45 67, +998 91 765 43 21
-- **Hours:** Mon-Sat 09:00-20:00, Sun 10:00-18:00
-
-## 🔐 Security Features
-
-- Password hashing with bcrypt
-- JWT access and refresh tokens
-- Rate limiting (100 requests per 15 minutes)
-- Helmet security headers
-- CORS protection
-- Input validation
-- XSS protection
-
+## 📜 Muallif va Litsenziya
+Ushbu loyiha yakuniy (startup) tijorat stendartlari asosida ishlab chiqildi.
+Litsenziya: MIT License

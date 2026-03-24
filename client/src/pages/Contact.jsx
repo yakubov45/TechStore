@@ -11,7 +11,6 @@ export default function Contact() {
         name: '',
         email: '',
         subject: '',
-        subject: '',
         message: ''
     });
 
@@ -19,24 +18,24 @@ export default function Contact() {
         const inputUrl = loc?.mapUrl;
         const defaultUrl = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2994.887858632688!2d69.34005697551066!3d41.339893400612!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x38aef48a8ed4d0e9%3A0x3772abeffc72e7b8!2sIT%20Park!5e0!3m2!1sen!2s!4v1709405452243!5m2!1sen!2s";
         if (!inputUrl) return defaultUrl;
-        
+
         if (inputUrl.includes('<iframe')) {
             const match = inputUrl.match(/src="([^"]+)"/);
             return match ? match[1] : inputUrl;
         }
-        
+
         if (!inputUrl.includes('embed')) {
             // Check for coordinates in the URL first (e.g., /@41.3177944,69.1682292)
             const coordMatch = inputUrl.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
             if (coordMatch) {
                 return `https://maps.google.com/maps?q=${coordMatch[1]},${coordMatch[2]}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
             }
-            
+
             // If no coordinates, fall back to location name + address
             const query = encodeURIComponent(`${loc?.name || ''} ${loc?.address || ''}`.trim());
             return `https://maps.google.com/maps?q=${query || 'Tashkent'}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
         }
-        
+
         return inputUrl;
     };
 
@@ -182,7 +181,7 @@ export default function Contact() {
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <div className="card p-6">
                                 <h3 className="font-bold mb-3">{t('contact.workingHours.title')}</h3>
                                 <div className="space-y-2 text-text-secondary text-sm">
