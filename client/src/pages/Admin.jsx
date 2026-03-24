@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Edit, Trash2, Package, Grid, Tag, DollarSign, Users, ShoppingBag, Layers, Activity, TrendingUp, Clock, QrCode, MapPin, ClipboardList } from 'lucide-react';
+import { Plus, Edit, Trash2, Package, Grid, Tag, DollarSign, Users, ShoppingBag, Layers, Activity, TrendingUp, Clock, QrCode, MapPin, ClipboardList, Star } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import { useAuthStore } from '../store/authStore';
 import api from '../services/api';
@@ -132,6 +132,20 @@ export default function Admin() {
             fetchData();
         } catch (error) {
             toast.error('Failed to delete brand');
+        }
+    };
+
+    const handleToggleBrandFeatured = async (brand) => {
+        try {
+            const data = new FormData();
+            data.append('featured', String(!brand.featured));
+            await api.put(`/brands/${brand._id}`, data, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+            toast.success(brand.featured ? 'Brendni bosh sahifadan olib tashlandi' : 'Brend bosh sahifaga qo\'shildi!');
+            fetchData();
+        } catch (error) {
+            toast.error('Failed to update brand');
         }
     };
 
@@ -638,7 +652,13 @@ export default function Admin() {
             {activeTab === 'brands' && (
                 <div>
                     <div className="flex justify-between items-center mb-6">
-                        <h2 className="text-2xl font-bold">{t('admin.brands', 'Brands')}</h2>
+                        <div>
+                            <h2 className="text-2xl font-bold">{t('admin.brands', 'Brands')}</h2>
+                            <p className="text-sm text-text-secondary mt-1">
+                                <Star size={12} className="inline text-yellow-400 mr-1" />
+                                Yulduz belgili brendlar bosh sahifadagi <strong>Top Brendlar</strong> bo'limida ko'rinadi
+                            </p>
+                        </div>
                         <button
                             onClick={() => {
                                 setEditingBrand(null);
@@ -653,10 +673,29 @@ export default function Admin() {
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         {brands.map(brand => (
-                            <div key={brand._id} className="card p-6">
+                            <div key={brand._id} className={`card p-6 transition border-2 ${brand.featured ? 'border-yellow-500/50' : 'border-transparent'}`}>
                                 <div className="flex items-start justify-between mb-3">
-                                    <h3 className="font-bold text-lg">{brand.name}</h3>
+                                    <div className="flex items-center gap-3">
+                                        {brand.logo && (
+                                            <img src={brand.logo} alt={brand.name} className="w-10 h-10 rounded object-contain bg-dark-secondary p-1" />
+                                        )}
+                                        <div>
+                                            <h3 className="font-bold text-lg">{brand.name}</h3>
+                                            {brand.featured && (
+                                                <span className="text-xs text-yellow-400 flex items-center gap-1">
+                                                    <Star size={10} className="fill-yellow-400" /> Bosh sahifada ko'rinadi
+                                                </span>
+                                            )}
+                                        </div>
+                                    </div>
                                     <div className="flex gap-2">
+                                        <button
+                                            onClick={() => handleToggleBrandFeatured(brand)}
+                                            title={brand.featured ? 'Bosh sahifadan olib tashlash' : 'Bosh sahifaga qo\'shish'}
+                                            className={`p-2 rounded transition ${brand.featured ? 'text-yellow-400 bg-yellow-500/20 hover:bg-yellow-500/30' : 'text-text-secondary hover:bg-yellow-500/10 hover:text-yellow-400'}`}
+                                        >
+                                            <Star size={16} className={brand.featured ? 'fill-yellow-400' : ''} />
+                                        </button>
                                         <button
                                             onClick={() => {
                                                 setEditingBrand(brand);
@@ -678,11 +717,6 @@ export default function Admin() {
                                 <p className="text-xs text-primary">
                                     {brand.productCount} {t('admin.products', 'products')}
                                 </p>
-                                {brand.featured && (
-                                    <span className="mt-2 inline-block px-2 py-1 bg-primary/20 text-primary rounded text-xs">
-                                        {t('admin.featured', 'Featured')}
-                                    </span>
-                                )}
                             </div>
                         ))}
                     </div>

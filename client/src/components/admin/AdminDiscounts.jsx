@@ -7,9 +7,9 @@ import { useTranslation } from 'react-i18next';
 
 export default function AdminDiscounts() {
     const { t } = useTranslation();
-    const [targetType, setTargetType] = useState('all'); // all, category, brand, product
+    const [targetType, setTargetType] = useState('all');
     const [targetId, setTargetId] = useState('');
-    const [discountType, setDiscountType] = useState('percentage'); // percentage, fixed
+    const [discountType, setDiscountType] = useState('percentage');
     const [value, setValue] = useState('');
     const [loading, setLoading] = useState(false);
     const [daily, setDaily] = useState(false);
@@ -19,13 +19,40 @@ export default function AdminDiscounts() {
     const [inFlashDeal, setInFlashDeal] = useState(false);
 
     const [flashDealsActive, setFlashDealsActive] = useState(false);
+    const [flashDealsEndTime, setFlashDealsEndTime] = useState('');
     const [flashDealsSaving, setFlashDealsSaving] = useState(false);
+    const [countdown, setCountdown] = useState('');
 
     const [categories, setCategories] = useState([]);
     const [brands, setBrands] = useState([]);
     const [products, setProducts] = useState([]);
 
     const { formatPrice } = useCurrencyStore();
+
+    // Live countdown to flash deals end time
+    useEffect(() => {
+        if (!flashDealsActive || !flashDealsEndTime) { setCountdown(''); return; }
+        const tick = () => {
+            const diff = new Date(flashDealsEndTime) - new Date();
+            if (diff <= 0) {
+                setCountdown('Vaqt tugadi');
+                setFlashDealsActive(false);
+                try {
+                    const ch = new BroadcastChannel('techstore-settings');
+                    ch.postMessage({ type: 'flash-deals-toggle', value: false });
+                    ch.close();
+                } catch (_) { }
+                return;
+            }
+            const h = Math.floor(diff / 3600000);
+            const m = Math.floor((diff % 3600000) / 60000);
+            const s = Math.floor((diff % 60000) / 1000);
+            setCountdown(`${h}s ${m}d ${s}s qoldi`);
+        };
+        tick();
+        const id = setInterval(tick, 1000);
+        return () => clearInterval(id);
+    }, [flashDealsActive, flashDealsEndTime]);
 
     useEffect(() => {
         fetchOptions();
@@ -36,7 +63,7 @@ export default function AdminDiscounts() {
             const [categoriesRes, brandsRes, productsRes, settingsRes] = await Promise.all([
                 api.get('/categories'),
                 api.get('/brands'),
-                api.get('/products?limit=1000'), // Fetch all products (or a large limit) for the dropdown
+                api.get('/products?limit=1000'),
                 api.get('/settings')
             ]);
             setCategories(categoriesRes.data.data);
@@ -44,6 +71,13 @@ export default function AdminDiscounts() {
             setProducts(productsRes.data.data);
             if (settingsRes.data?.data) {
                 setFlashDealsActive(settingsRes.data.data.flashDealsActive);
+                if (settingsRes.data.data.flashDealsEndTime) {
+                    const dt = new Date(settingsRes.data.data.flashDealsEndTime);
+                    // Format as datetime-local value
+                    const local = new Date(dt.getTime() - dt.getTimezoneOffset() * 60000)
+                        .toISOString().slice(0, 16);
+                    setFlashDealsEndTime(local);
+                }
             }
         } catch (error) {
             console.error('Error fetching options:', error);
@@ -54,16 +88,31 @@ export default function AdminDiscounts() {
     const toggleFlashDeals = async () => {
         setFlashDealsSaving(true);
         try {
-            const res = await api.put('/settings/flash-deals', {
-                flashDealsActive: !flashDealsActive,
-                // Optional: flashDealsEndTime: new Date(Date.now() + 24 * 60 * 60 * 1000)
-            });
+            // Always re-read fresh state from server first, then invert
+            const freshSettings = await api.get('/settings');
+            const currentVal = freshSettings.data?.data?.flashDealsActive ?? false;
+            const newVal = !currentVal;
+
+            const payload = { flashDealsActive: newVal };
+            // Attach end time only when enabling and a time is set
+            if (newVal && flashDealsEndTime) {
+                payload.flashDealsEndTime = new Date(flashDealsEndTime).toISOString();
+            }
+
+            const res = await api.put('/settings/flash-deals', payload);
             if (res.data.success) {
-                setFlashDealsActive(res.data.data.flashDealsActive);
-                toast.success(res.data.data.flashDealsActive ? 'Flash Deals banner enabled on homepage' : 'Flash Deals banner disabled');
+                const confirmedVal = res.data.data.flashDealsActive;
+                setFlashDealsActive(confirmedVal);
+                toast.success(confirmedVal ? 'Flash Deals yoqildi ✅' : "Flash Deals o'chirildi ❌");
+                try {
+                    const ch = new BroadcastChannel('techstore-settings');
+                    ch.postMessage({ type: 'flash-deals-toggle', value: confirmedVal });
+                    ch.close();
+                } catch (_) { }
             }
         } catch (error) {
-            toast.error('Failed to toggle Flash Deals');
+            console.error('Toggle error:', error);
+            toast.error("Flash Deals holatini o'zgartirish muvaffaqiyatsiz");
         } finally {
             setFlashDealsSaving(false);
         }
@@ -138,24 +187,61 @@ export default function AdminDiscounts() {
 
     return (
         <div className="bg-dark-card p-6 rounded-xl border border-gray-800">
-            <h2 className="text-xl font-bold mb-6 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                    <Tag className="text-primary" />
-                    {t('admin.discountManagement', 'Discount Management')}
-                </div>
-                {/* Global Toggle for Homepage Flash Deals */}
-                <div className="flex items-center gap-3 bg-dark-bg px-4 py-2 rounded-lg border border-gray-800">
-                    <span className="text-sm font-medium">Homepage Flash Deals Banner:</span>
-                    <button 
-                        onClick={toggleFlashDeals}
-                        disabled={flashDealsSaving}
-                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${flashDealsActive ? 'bg-primary' : 'bg-gray-600'}`}
-                    >
-                        <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${flashDealsActive ? 'translate-x-6' : 'translate-x-1'}`} />
-                    </button>
-                    <span className="text-xs text-text-secondary w-12">{flashDealsActive ? 'Active' : 'Hidden'}</span>
-                </div>
+            <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+                <Tag className="text-primary" />
+                {t('admin.discountManagement', 'Discount Management')}
             </h2>
+
+            {/* Flash Deals Global Control Card */}
+            <div className="mb-8 p-4 rounded-xl border border-gray-700 bg-dark-secondary/40">
+                <div className="flex flex-wrap items-center justify-between gap-4">
+                    <div>
+                        <p className="font-semibold text-sm">⚡ Homepage Flash Deals Banner</p>
+                        <p className="text-xs text-text-secondary mt-0.5">
+                            Yoqilganda bosh sahifada Flash Deals bo'limi ko'rinadi
+                        </p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                        <span className={`text-xs font-bold px-2 py-1 rounded ${flashDealsActive ? 'bg-green-500/20 text-green-400' : 'bg-gray-500/20 text-gray-400'}`}>
+                            {flashDealsActive ? 'YOQIQ' : 'O\'CHIQ'}
+                        </span>
+                        <button
+                            onClick={toggleFlashDeals}
+                            disabled={flashDealsSaving}
+                            className={`relative inline-flex h-7 w-13 min-w-[52px] items-center rounded-full transition-colors disabled:opacity-50 ${flashDealsActive ? 'bg-primary' : 'bg-gray-600'}`}
+                        >
+                            <span className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform shadow ${flashDealsActive ? 'translate-x-7' : 'translate-x-1'}`} />
+                        </button>
+                    </div>
+                </div>
+
+                {/* End time picker */}
+                <div className="mt-4 flex flex-wrap items-end gap-4">
+                    <div className="flex-1 min-w-[200px]">
+                        <label className="block text-xs text-text-secondary mb-1">
+                            🕐 Avtomatik o'chirish vaqti (ixtiyoriy)
+                        </label>
+                        <input
+                            type="datetime-local"
+                            value={flashDealsEndTime}
+                            onChange={(e) => setFlashDealsEndTime(e.target.value)}
+                            min={new Date(Date.now() + 60000).toISOString().slice(0, 16)}
+                            className="input-field text-sm w-full"
+                        />
+                        <p className="text-[10px] text-text-secondary mt-1">
+                            Belgilanmasa — qo'lda o'chirilguncha ishlaydi
+                        </p>
+                    </div>
+
+                    {/* Countdown */}
+                    {flashDealsActive && countdown && (
+                        <div className="bg-red-500/10 border border-red-500/30 rounded-lg px-4 py-2 text-center">
+                            <p className="text-[10px] text-text-secondary">Tugashiga</p>
+                            <p className="text-sm font-bold text-red-400 font-mono">{countdown}</p>
+                        </div>
+                    )}
+                </div>
+            </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="space-y-6">

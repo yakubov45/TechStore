@@ -156,13 +156,26 @@ export default function ProductCard({ product }) {
 
                 {/* Price */}
                 <div className="flex items-end justify-between mb-3">
-                    <div>
-                        <div className="text-lg font-bold text-primary">
-                            {formatPrice(product.price)}
-                        </div>
-                        {product.comparePrice && product.comparePrice > product.price && (
-                            <div className="text-xs text-text-secondary line-through">
-                                {formatPrice(product.comparePrice)}
+                    <div className="flex flex-col gap-0.5">
+                        {product.comparePrice && product.comparePrice > product.price ? (
+                            <>
+                                {/* Original price with strikethrough */}
+                                <div className="flex items-center gap-2">
+                                    <span className="text-xs text-text-secondary line-through">
+                                        {formatPrice(product.comparePrice)}
+                                    </span>
+                                    <span className="text-[10px] font-bold bg-red-500/20 text-red-400 px-1.5 py-0.5 rounded">
+                                        -{Math.round((1 - product.price / product.comparePrice) * 100)}%
+                                    </span>
+                                </div>
+                                {/* Discounted (current) price */}
+                                <div className="text-lg font-bold text-primary">
+                                    {formatPrice(product.price)}
+                                </div>
+                            </>
+                        ) : (
+                            <div className="text-lg font-bold text-primary">
+                                {formatPrice(product.price)}
                             </div>
                         )}
                     </div>

@@ -24,6 +24,20 @@ export default function Home() {
     const [flashDealsActive, setFlashDealsActive] = useState(false);
     const [allProducts, setAllProducts] = useState([]);
 
+    // Listen for admin toggling flash deals from any tab/panel
+    useEffect(() => {
+        let channel;
+        try {
+            channel = new BroadcastChannel('techstore-settings');
+            channel.onmessage = (e) => {
+                if (e.data?.type === 'flash-deals-toggle') {
+                    setFlashDealsActive(e.data.value);
+                }
+            };
+        } catch (_) { }
+        return () => channel?.close();
+    }, []);
+
     const handleNewsletterSignup = async (e) => {
         e.preventDefault();
         if (!email) return;
@@ -62,7 +76,8 @@ export default function Home() {
 
     const fetchData = async () => {
         try {
-            const [productsRes, categoriesRes, brandsRes, settingsRes, allProductsRes] = await Promise.all([
+            const [featuredRes, flashRes, categoriesRes, brandsRes, settingsRes, allProductsRes] = await Promise.all([
+                api.get('/products?featured=true&limit=8'), // fetch featured products for main section
                 api.get('/products?inFlashDeal=true&limit=8'), // fetch flash deal products
                 api.get('/categories'),
                 api.get('/brands?featured=true'),
@@ -70,9 +85,16 @@ export default function Home() {
                 api.get('/products?limit=100') // fetch products to group by category
             ]);
 
-            setFeaturedProducts(productsRes.data.data);
+            // Use featured products for main section; fall back to latest if none marked featured
+            const featured = featuredRes.data.data?.length
+                ? featuredRes.data.data
+                : flashRes.data.data?.length
+                    ? flashRes.data.data
+                    : allProductsRes.data?.data?.slice(0, 8) || [];
+
+            setFeaturedProducts(featured);
             setCategories(categoriesRes.data.data);
-            setBrands(brandsRes.data.data);
+            setBrands(brandsRes.data.data?.length ? brandsRes.data.data : []);
             if (settingsRes.data?.data) {
                 setFlashDealsActive(settingsRes.data.data.flashDealsActive);
             }
@@ -265,62 +287,62 @@ export default function Home() {
 
                 {/* Flash Deals Section */}
                 {flashDealsActive && (
-                <section className="my-16">
-                    <div className="flex flex-col md:flex-row items-start md:items-center md:justify-between gap-4 mb-8 bg-gradient-to-r from-red-600/20 to-transparent p-6 rounded-2xl border border-red-600/30">
-                        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-6 w-full md:w-auto">
-                            <h2 className="text-xl sm:text-2xl font-bold flex flex-wrap items-center gap-2">
-                                <Zap className="text-red-500 fill-red-500 flex-shrink-0" />
-                                <span className="break-words">{t('home.flashDeals')}</span>
-                            </h2>
-                            <div className="flex items-center gap-2 w-full sm:w-auto mt-2 sm:mt-0">
-                                <Clock size={18} className="text-text-secondary flex-shrink-0" />
-                                <div className="flex gap-1 font-mono text-lg sm:text-xl">
-                                    <span className="bg-red-600 text-white px-2 rounded">
-                                        {timeLeft.hours.toString().padStart(2, '0')}
-                                    </span>
-                                    <span>:</span>
-                                    <span className="bg-red-600 text-white px-2 rounded">
-                                        {timeLeft.minutes.toString().padStart(2, '0')}
-                                    </span>
-                                    <span>:</span>
-                                    <span className="bg-red-600 text-white px-2 rounded">
-                                        {timeLeft.seconds.toString().padStart(2, '0')}
-                                    </span>
+                    <section className="my-16">
+                        <div className="flex flex-col md:flex-row items-start md:items-center md:justify-between gap-4 mb-8 bg-gradient-to-r from-red-600/20 to-transparent p-6 rounded-2xl border border-red-600/30">
+                            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-6 w-full md:w-auto">
+                                <h2 className="text-xl sm:text-2xl font-bold flex flex-wrap items-center gap-2">
+                                    <Zap className="text-red-500 fill-red-500 flex-shrink-0" />
+                                    <span className="break-words">{t('home.flashDeals')}</span>
+                                </h2>
+                                <div className="flex items-center gap-2 w-full sm:w-auto mt-2 sm:mt-0">
+                                    <Clock size={18} className="text-text-secondary flex-shrink-0" />
+                                    <div className="flex gap-1 font-mono text-lg sm:text-xl">
+                                        <span className="bg-red-600 text-white px-2 rounded">
+                                            {timeLeft.hours.toString().padStart(2, '0')}
+                                        </span>
+                                        <span>:</span>
+                                        <span className="bg-red-600 text-white px-2 rounded">
+                                            {timeLeft.minutes.toString().padStart(2, '0')}
+                                        </span>
+                                        <span>:</span>
+                                        <span className="bg-red-600 text-white px-2 rounded">
+                                            {timeLeft.seconds.toString().padStart(2, '0')}
+                                        </span>
+                                    </div>
+                                    <span className="text-[10px] sm:text-xs text-text-secondary uppercase ml-1 sm:ml-2 whitespace-nowrap">{t('home.endsIn')}</span>
                                 </div>
-                                <span className="text-[10px] sm:text-xs text-text-secondary uppercase ml-1 sm:ml-2 whitespace-nowrap">{t('home.endsIn')}</span>
                             </div>
+                            <Link to="/products?sort=discount" className="text-red-500 font-bold hover:underline flex items-center gap-1 self-end md:self-auto text-sm sm:text-base mt-2 md:mt-0">
+                                {t('home.viewAll')} <ArrowRight size={16} />
+                            </Link>
                         </div>
-                        <Link to="/products?sort=discount" className="text-red-500 font-bold hover:underline flex items-center gap-1 self-end md:self-auto text-sm sm:text-base mt-2 md:mt-0">
-                            {t('home.viewAll')} <ArrowRight size={16} />
-                        </Link>
-                    </div>
 
-                    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                        {featuredProducts.slice(0, 4).map((product, index) => {
-                            // Prefer monthlyDiscountPercent if provided (admin-set), otherwise use existing comparePrice-based discount
-                            const monthly = product.monthlyDiscountPercent ?? product.monthlyDiscount ?? 0;
+                        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                            {featuredProducts.slice(0, 4).map((product, index) => {
+                                // Prefer monthlyDiscountPercent if provided (admin-set), otherwise use existing comparePrice-based discount
+                                const monthly = product.monthlyDiscountPercent ?? product.monthlyDiscount ?? 0;
 
-                            // Prepare a non-mutating copy to pass to ProductCard
-                            const p = { ...product };
+                                // Prepare a non-mutating copy to pass to ProductCard
+                                const p = { ...product };
 
-                            if (monthly && monthly > 0) {
-                                // Determine original price: prefer comparePrice if present, else use product.price as original
-                                const original = product.comparePrice && product.comparePrice > product.price ? product.comparePrice : product.price;
-                                const discounted = Math.round(original * (1 - monthly / 100));
-                                p.price = discounted;
-                                p.comparePrice = original > discounted ? original : null;
-                                p.badge = `-${monthly}%`;
-                            } else if (product.comparePrice && product.comparePrice > product.price) {
-                                // Use existing comparePrice difference
-                                p.badge = `-${product.discountPercentage}%`;
-                            }
+                                if (monthly && monthly > 0) {
+                                    // Determine original price: prefer comparePrice if present, else use product.price as original
+                                    const original = product.comparePrice && product.comparePrice > product.price ? product.comparePrice : product.price;
+                                    const discounted = Math.round(original * (1 - monthly / 100));
+                                    p.price = discounted;
+                                    p.comparePrice = original > discounted ? original : null;
+                                    p.badge = `-${monthly}%`;
+                                } else if (product.comparePrice && product.comparePrice > product.price) {
+                                    // Use existing comparePrice difference
+                                    p.badge = `-${product.discountPercentage}%`;
+                                }
 
-                            return (
-                                <ProductCard key={product._id} product={p} />
-                            );
-                        })}
-                    </div>
-                </section>
+                                return (
+                                    <ProductCard key={product._id} product={p} />
+                                );
+                            })}
+                        </div>
+                    </section>
                 )}
 
                 {/* Smart Filters Chips (removed 'Trending' label per localization request) */}

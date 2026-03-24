@@ -2,8 +2,10 @@ import { useState, useEffect } from 'react';
 import { X, Save } from 'lucide-react';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
 
 export default function BrandModal({ isOpen, onClose, onSuccess, initialData = null }) {
+    const { t } = useTranslation();
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         name: '',
