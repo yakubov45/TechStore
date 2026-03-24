@@ -105,6 +105,8 @@ if (process.env.ALLOW_ALL_ORIGINS === 'true') {
     // Frontend: techstore-kphy.onrender.com
     // Backend: techstore-u0w8.onrender.com
     const renderDomains = [
+        'https://techstores.uz',
+        'https://www.techstores.uz',
         'https://techstore-kphy.onrender.com',
         'https://techstore-u0w8.onrender.com',
         'https://techstore-o6y7.onrender.com'
