@@ -174,21 +174,25 @@ export default function Home() {
             <SEO
                 title={t('nav.home') || 'Home'}
                 description="Welcome to TechStore, the best place for top-tier electronics, laptops, phones, and more."
+                preloadImage={heroSlides[0].image}
             />
             {/* Hero Carousel */}
             <section className="relative h-[650px] lg:h-[500px] overflow-hidden">
                 {heroSlides.map((slide, index) => (
                     <div
                         key={index}
-                        className={`absolute inset-0 transition-all duration-1000 ${index === currentSlide ? 'opacity-100 scale-100' : 'opacity-0 scale-105'
+                        className={`absolute inset-0 transition-all duration-1000 ${index === currentSlide ? 'opacity-100 scale-100 z-10' : 'opacity-0 scale-105 z-0'
                             }`}
-                        style={{
-                            backgroundImage: `linear-gradient(rgba(10, 10, 15, 0.7), rgba(10, 10, 15, 0.7)), url(${slide.image})`,
-                            backgroundSize: 'cover',
-                            backgroundPosition: 'center'
-                        }}
                     >
-                        <div className="container mx-auto px-4 h-full flex items-center">
+                        <img
+                            src={slide.image}
+                            alt={t(slide.title)}
+                            className="absolute inset-0 w-full h-full object-cover"
+                            fetchpriority={index === 0 ? "high" : "auto"}
+                            loading={index === 0 ? "eager" : "lazy"}
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0f] via-black/50 to-black/30"></div>
+                        <div className="container mx-auto px-4 h-full flex items-center relative z-20">
                             <div className="max-w-2xl mt-12 sm:mt-0">
                                 <h1 className={`text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 text-glow transition-all duration-700 ${index === currentSlide ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
                                     }`}>
@@ -231,12 +235,14 @@ export default function Home() {
                 {/* Navigation Arrows */}
                 <button
                     onClick={prevSlide}
+                    aria-label="Previous slide"
                     className="absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-black/50 hover:bg-primary rounded-full transition-all hover:scale-110"
                 >
                     <ChevronLeft size={24} />
                 </button>
                 <button
                     onClick={nextSlide}
+                    aria-label="Next slide"
                     className="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-black/50 hover:bg-primary rounded-full transition-all hover:scale-110"
                 >
                     <ChevronRight size={24} />
@@ -264,22 +270,22 @@ export default function Home() {
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                         <div className="flex flex-col items-center text-center p-6 bg-dark-secondary/50 rounded-2xl border border-gray-800 hover:border-primary transition group">
                             <Truck className="text-primary mb-4 group-hover:scale-110 transition" size={32} />
-                            <h3 className="font-bold mb-1">{t('home.features.shipping')}</h3>
+                            <h2 className="text-base font-bold mb-1">{t('home.features.shipping')}</h2>
                             <p className="text-xs text-text-secondary">{t('home.features.shippingDesc')}</p>
                         </div>
                         <div className="flex flex-col items-center text-center p-6 bg-dark-secondary/50 rounded-2xl border border-gray-800 hover:border-primary transition group">
                             <Shield className="text-primary mb-4 group-hover:scale-110 transition" size={32} />
-                            <h3 className="font-bold mb-1">{t('home.features.paymentTitle')}</h3>
+                            <h2 className="text-base font-bold mb-1">{t('home.features.paymentTitle')}</h2>
                             <p className="text-xs text-text-secondary">{t('home.features.paymentDesc')}</p>
                         </div>
                         <div className="flex flex-col items-center text-center p-6 bg-dark-secondary/50 rounded-2xl border border-gray-800 hover:border-primary transition group">
                             <RotateCcw className="text-primary mb-4 group-hover:scale-110 transition" size={32} />
-                            <h3 className="font-bold mb-1">{t('home.features.returnTitle')}</h3>
+                            <h2 className="text-base font-bold mb-1">{t('home.features.returnTitle')}</h2>
                             <p className="text-xs text-text-secondary">{t('home.features.returnDesc')}</p>
                         </div>
                         <div className="flex flex-col items-center text-center p-6 bg-dark-secondary/50 rounded-2xl border border-gray-800 hover:border-primary transition group">
                             <Headphones className="text-primary mb-4 group-hover:scale-110 transition" size={32} />
-                            <h3 className="font-bold mb-1">{t('home.features.warranty')}</h3>
+                            <h2 className="text-base font-bold mb-1">{t('home.features.warranty')}</h2>
                             <p className="text-xs text-text-secondary">{t('home.features.warrantyDesc')}</p>
                         </div>
                     </div>
@@ -435,8 +441,8 @@ export default function Home() {
                         <h2 className="section-title">{t('home.recentlyViewed')}</h2>
                         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
                             {recentlyViewed.slice(0, 6).map(product => (
-                                <Link key={product._id} to={`/product/${product.slug}`} className="bg-dark-secondary/30 p-4 rounded-xl border border-gray-800 hover:border-primary transition group text-center">
-                                    <img src={product.image} alt={product.name} className="w-24 h-24 object-contain mx-auto mb-3 group-hover:scale-110 transition" />
+                                <Link key={product._id} to={`/product/${product.slug}`} className="bg-dark-secondary/30 p-4 rounded-xl border border-gray-800 hover:border-primary transition group text-center block">
+                                    <img loading="lazy" src={product.image} alt={product.name} className="w-24 h-24 object-contain mx-auto mb-3 group-hover:scale-110 transition" />
                                     <h4 className="text-xs font-medium truncate">{product.name}</h4>
                                 </Link>
                             ))}

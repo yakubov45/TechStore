@@ -107,7 +107,7 @@ export default function Navbar() {
                     {/* Logo */}
                     <Link to="/" className="flex items-center space-x-2 relative group overflow-visible">
                         <div className="background-light absolute -left-12 -top-16 pointer-events-none opacity-80 group-hover:opacity-100 transition-opacity duration-500 hidden md:block"></div>
-                        <img src="/logo.png" alt="TechStore" className="h-10 w-auto relative z-10 object-contain" />
+                        <img src="/logo.png" alt="TechStore" width="120" height="40" className="h-10 w-auto relative z-10 object-contain" />
                         <span className="text-xl font-bold inline-block relative z-10 text-white">
                             TechStore
                         </span>
@@ -136,13 +136,14 @@ export default function Navbar() {
 
                         <button
                             onClick={() => setIsSearchOpen(true)}
+                            aria-label={t('nav.search', 'Search')}
                             className="md:hidden p-1.5 hover:text-primary transition relative group"
                         >
                             <Search size={18} />
                         </button>
 
                         {isAuthenticated && (
-                            <Link to="/profile" className="p-1.5 hover:text-primary transition hidden sm:block">
+                            <Link to="/profile" aria-label={t('nav.wishlist', 'Wishlist')} className="p-1.5 hover:text-primary transition hidden sm:block">
                                 <Heart size={18} />
                             </Link>
                         )}
@@ -158,6 +159,7 @@ export default function Navbar() {
                         <button
                             id="nav-cart-button"
                             onClick={() => setIsCartOpen(true)}
+                            aria-label={t('nav.cart', 'Cart')}
                             className="relative p-1.5 hover:text-primary transition"
                         >
                             <ShoppingCart size={18} />
@@ -230,7 +232,7 @@ export default function Navbar() {
                         <div className="flex items-center justify-between p-4 border-b border-border-color/60 bg-dark-secondary relative overflow-hidden">
                             <div className="background-light absolute -left-20 -top-20 pointer-events-none opacity-60"></div>
                             <Link to="/" className="flex items-center space-x-2 relative z-10" onClick={() => setIsMenuOpen(false)}>
-                                <img src="/logo.png" alt="TechStore" className="h-8 w-auto object-contain" />
+                                <img src="/logo.png" alt="TechStore" width="96" height="32" className="h-8 w-auto object-contain" />
                                 <span className="text-xl font-bold tracking-tight uppercase flex items-center text-white">
                                     TechStore
                                 </span>

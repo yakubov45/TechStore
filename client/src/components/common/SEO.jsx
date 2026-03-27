@@ -1,6 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 
-const SEO = ({ title, description, keywords, image, url, type = 'website' }) => {
+const SEO = ({ title, description, keywords, image, url, type = 'website', preloadImage }) => {
     const defaultTitle = 'TechStore - Your Ultimate Electronic Destination';
     const defaultDescription = 'Shop the latest electronics, smartphones, laptops, and accessories at TechStore. Best prices and fast delivery guaranteed.';
     const defaultKeywords = 'electronics, tech, smartphones, laptops, gadgets, techstore';
@@ -17,6 +17,9 @@ const SEO = ({ title, description, keywords, image, url, type = 'website' }) => 
             <title>{seoTitle}</title>
             <meta name="description" content={seoDescription} />
             <meta name="keywords" content={seoKeywords} />
+
+            {/* Preload critical image for LCP */}
+            {preloadImage && <link rel="preload" as="image" href={preloadImage} />}
 
             {/* Open Graph metadata */}
             <meta property="og:title" content={seoTitle} />

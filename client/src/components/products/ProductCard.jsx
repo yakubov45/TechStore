@@ -91,10 +91,11 @@ export default function ProductCard({ product }) {
             <div className="relative overflow-hidden bg-dark-secondary aspect-square">
                 {product.images && product.images.length > 0 ? (
                     <img
+                        loading="lazy"
                         src={getImageUrl(product.images[0])}
                         alt={product.name}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                        onError={(e) => { e.target.src = '/placeholder.png'; e.target.onerror = null; }}
+                        onError={(e) => { if (!e.target.src.includes('placeholder.png')) e.target.src = '/placeholder.png'; }}
                     />
                 ) : (
                     <div className="w-full h-full flex items-center justify-center text-gray-600 text-xs">
@@ -186,6 +187,7 @@ export default function ProductCard({ product }) {
                     <button
                         onClick={handleAddToCart}
                         disabled={product.stock === 0}
+                        aria-label={t('products.addToCart', 'Add to Cart')}
                         className="btn-primary py-1.5 md:py-2 text-[10px] sm:text-[11px] md:text-sm px-2 sm:px-3 flex items-center justify-center space-x-1 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         <ShoppingCart size={14} className="md:w-4 md:h-4 flex-shrink-0" />
@@ -193,6 +195,7 @@ export default function ProductCard({ product }) {
                     </button>
                     <button
                         onClick={handleWishlist}
+                        aria-label={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
                         className={`p-1.5 sm:p-2 border-2 rounded-lg transition flex-shrink-0 flex items-center justify-center ${isWishlisted
                             ? 'bg-primary border-primary text-white'
                             : 'border-primary text-primary hover:bg-primary hover:text-white'
